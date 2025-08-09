@@ -2,6 +2,7 @@ import { useState } from "react";
 import {LocateFixed} from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
+import { useTelegramLogin } from "../hooks/useTelegramLogin";
 
 const categories = [
   'Meals',
@@ -56,6 +57,7 @@ const sarqyts = [
 
 const Home = () => {
   const [category, setCategory] = useState('');
+  const {user} = useTelegramLogin();
 
 
   return (
@@ -69,7 +71,7 @@ const Home = () => {
             Chosen Location
           </p>
           <p className="text-nowrap">
-            User location
+            {user.address}
           </p> 
         </div>
       </div>

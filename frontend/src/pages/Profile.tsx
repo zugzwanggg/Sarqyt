@@ -1,5 +1,6 @@
 import { Settings, ShoppingBag } from "lucide-react"
 import { Link } from "react-router-dom"
+import { useTelegramLogin } from "../hooks/useTelegramLogin"
 
 const sarqyts = [
   {
@@ -72,6 +73,7 @@ const sarqyts = [
 
 const Profile = () => {
 
+  const {user} = useTelegramLogin();
 
   return (
     <>
@@ -79,7 +81,7 @@ const Profile = () => {
         <div className="flex items-center gap-4">
           <img className="w-14 h-14 bg-lightGreen rounded-full" alt="" />
           <h1 className="text-lg">
-            Ansar
+            {user.username}
           </h1>
         </div>
         <Link to={'/settings'} className="text-primaryColor">
