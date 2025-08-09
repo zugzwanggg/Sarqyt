@@ -4,6 +4,7 @@ CREATE TABLE users (
   google_id TEXT UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   username VARCHAR(200),
+  address TEXT,
   password TEXT,
   role VARCHAR DEFAULT 'user',
   country INT REFERENCES countries(id),
