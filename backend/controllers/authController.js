@@ -2,9 +2,82 @@ import jwt from "jsonwebtoken";
 import { db } from "../db.js";
 import bcryptjs, { hash } from "bcryptjs";
 import validator from "validator";
+import { verifyTelegramAuth } from "../telegramAuth.js";
 
 const JWT_SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'best_secret_2025';
+const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+export const telegramAuth = async (req,res) => {
+  try {
+    const { initData } = req.body;
+
+    if (!initData) {
+      return res.status(400).json({ message: 'Missing initData' });
+    }
+
+    if (!verifyTelegramAuth(initData, TG_BOT_TOKEN)) {
+      return res.status(403).json({ message: 'Invalid Telegram signature' });
+    }
+
+    const params = new URLSearchParams(initData);
+    const userData = JSON.parse(params.get('user') || '{}');
+
+    if (!userData.id || !userData.first_name) {
+      return res.status(400).json({ message: 'Invalid Telegram user object' });
+    }
+
+    const placeholderEmail = `tg_${userData.id}@telegram.local`;
+
+    const existingUser = await db.query(
+      'SELECT id FROM users WHERE telegram_id = $1',
+      [userData.id]
+    );
+
+    let userId;
+
+    if (existingUser.rows.length > 0) {
+      await db.query(
+        `UPDATE users
+         SET username = $1
+         WHERE telegram_id = $2`,
+        [userData.username || userData.first_name, userData.id]
+      );
+      userId = existingUser.rows[0].id;
+    } else {
+      const insertRes = await db.query(
+        `INSERT INTO users (telegram_id, email, username)
+         VALUES ($1, $2, $3)
+         RETURNING id`,
+        [
+          userData.id,
+          placeholderEmail,
+          userData.username || userData.first_name
+        ]
+      );
+      userId = insertRes.rows[0].id;
+    }
+
+    const payload = { id: userId, telegram_id: userData.id };
+    const token = jwt.sign(payload, JWT_SECRET);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax',
+      maxAge: sevenDays
+    });
+
+    res.status(200).json({
+      message: 'Telegram authentication successful',
+      user: { id: userId, ...userData }
+    });
+
+  } catch (error) {
+    console.error('Error at tgAuth:', error.message, '\n', error.stack);
+    res.status(500).json({ message: error.message });
+  }
+}
 
 export const login = async (req,res) => {
   try {

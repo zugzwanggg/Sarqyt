@@ -8,6 +8,7 @@ import { authRouter } from "./routes/authRoute.js";
 import { userRouter } from "./routes/userRoute.js";
 import { shopRouter } from "./routes/shopRoute.js";
 import { sarqytRoute } from "./routes/sarqytRoute.js";
+import { initBot } from "./bot/telegramBot.js";
 
 const app = express();
 
@@ -24,7 +25,10 @@ app.use('/api', userRouter);
 app.use('/api', shopRouter);
 app.use('/api', sarqytRoute);
 
+
+initBot();
+
 const PORT = process.env.PORT || 8080;
 app.listen(PORT, ()=>{
   console.log('Server is running');
-})
+});

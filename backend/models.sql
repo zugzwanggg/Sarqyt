@@ -1,5 +1,6 @@
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
+  telegram_id BIGINT UNIQUE,
   google_id TEXT UNIQUE,
   email VARCHAR(255) NOT NULL UNIQUE,
   username VARCHAR(200),
