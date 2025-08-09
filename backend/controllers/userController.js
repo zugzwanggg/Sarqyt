@@ -140,3 +140,19 @@ export const becomeSeller = async (req,res) => {
     })
   }
 }
+
+
+export const getCities = async (req,res) => {
+  try { 
+    const {id} = req.user;
+    const countryId = await db.query("SELECT country  FROM users WHERE id = $1", [id]);
+    const cities = await db.query("SELECT * FROM cities WHERE country_id = $1", [countryId]);
+    
+    res.status(200).json(cities.rows);
+  } catch (error) {
+    console.log('Error at getCities:', error.message + '\n' + error.stack);
+    res.status(500).json({
+      message: error.message
+    })
+  }
+}
