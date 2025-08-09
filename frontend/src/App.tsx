@@ -12,6 +12,7 @@ import Shop from "./pages/Shop";
 import axios from 'axios';
 import { useTelegramLogin } from "./hooks/useTelegramLogin";
 import { Loader2 } from "lucide-react";
+import ChooseLocation from "./components/ChooseLocation";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -19,12 +20,16 @@ export const api = axios.create({
 });
 
 function App() {
-  const {loading} = useTelegramLogin();
+  const {user, loading} = useTelegramLogin();
   
   if (loading) {
     return <div className="bg-primaryColor w-full h-screen flex items-center justify-center text-white">
       <Loader2 size={'4rem'} className="animate-spin"/>
     </div>
+  }
+
+  if (!user.address) {
+    return <ChooseLocation/>
   }
 
   return (

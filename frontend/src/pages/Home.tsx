@@ -71,7 +71,7 @@ const Home = () => {
             Chosen Location
           </p>
           <p className="text-nowrap">
-            {user.address}
+            {user.address||''}
           </p> 
         </div>
       </div>

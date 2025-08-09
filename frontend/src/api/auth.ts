@@ -7,6 +7,5 @@ export async function telegramAuth(initData: string) {
 
 export const getMe =async () => {
   const res = await api.get('/api/user');
-
   return res.data;
 }

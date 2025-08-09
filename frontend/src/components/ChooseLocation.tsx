@@ -1,10 +1,39 @@
-import {useState} from "react";
-import {ChevronLeft} from "lucide-react";
+import {useEffect, useState} from "react";
+import {Check, ChevronLeft} from "lucide-react";
 import {Search} from "lucide-react";
+import type { ICity } from "../types";
+import { api } from "../App";
 
 const ChooseLocation = () => {
 
-  const [address, setAddress] = useState('');
+  const [address, setAddress] = useState<null|number>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [cities, setCities] = useState<ICity[]>([]);
+ 
+  const getCities = async () => {
+    const data = (await api.get('/api/cities')).data;
+    setCities(data)
+  }
+
+  useEffect(()=> {
+    getCities();
+  }, [])
+
+  const handleSelectAddress = (id:number, value:string) => {
+    setAddress(id)
+    setSearchValue(value)
+  }
+
+  const saveUserAddress = async () => {
+    try {
+      await api.patch('/api/user/city', {
+        cityId: address
+      })
+      window.location.reload();
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
 
   return (
@@ -27,11 +56,32 @@ const ChooseLocation = () => {
         </div>
         <div className="flex flex-col">
           <small className="text-zinc-400">
-            New address
+            New searchValue
           </small>
-          <input onChange={(e)=>setAddress(e.target.value)} value={address} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your address" />
+          <input onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your address" />
         </div>
+        {
+          address
+          ?
+          <button onClick={saveUserAddress} className="bg-primaryColor text-white p-2 rounded-md">
+            <Check/>
+          </button>
+          :
+          ''
+        }
       </label>
+
+      <ul className="mt-4">
+        {
+          cities.map(item => {
+            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className="py-4">
+              <p>
+                {item.name}
+              </p>
+            </li>
+          })
+        }
+      </ul>
     </div>
   )
 }

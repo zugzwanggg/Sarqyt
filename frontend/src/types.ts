@@ -19,3 +19,8 @@ export interface TelegramUser {
   language_code?: string;
   photo_url?: string;
 }
+
+export interface ICity {
+  id: number;
+  name: string;
+}
