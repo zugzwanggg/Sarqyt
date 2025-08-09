@@ -21,7 +21,7 @@ export const api = axios.create({
 function App() {
   const {loading} = useTelegramLogin();
   
-  if (!loading) {
+  if (loading) {
     return <div className="bg-primaryColor w-full h-screen flex items-center justify-center text-white">
       <Loader2 size={'4rem'} className="animate-spin"/>
     </div>
