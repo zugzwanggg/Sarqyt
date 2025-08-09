@@ -5,7 +5,7 @@ import validator from "validator";
 import { verifyTelegramAuth } from "../telegramAuth.js";
 
 const JWT_SECRET = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'best_secret_2025';
-const TG_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+const TG_BOT_TOKEN = process.env.TG_BOT_TOKEN;
 const sevenDays = 7 * 24 * 60 * 60 * 1000;
 
 export const telegramAuth = async (req,res) => {
