@@ -28,7 +28,7 @@ function App() {
     </div>
   }
 
-  if (!user.address) {
+  if (!user?.address) {
     return <ChooseLocation/>
   }
 
