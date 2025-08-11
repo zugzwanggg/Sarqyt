@@ -3,10 +3,12 @@ import {Check, ChevronLeft} from "lucide-react";
 import {Search} from "lucide-react";
 import type { ICity } from "../types";
 import { api } from "../App";
+import { useTelegramLogin } from "../hooks/useTelegramLogin";
 
 const ChooseLocation = () => {
 
-  const [address, setAddress] = useState<null|number>(null);
+  const {user} = useTelegramLogin();
+  const [city, setCity] = useState<null|number>(null);
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState<ICity[]>([]);
  
@@ -20,14 +22,14 @@ const ChooseLocation = () => {
   }, [])
 
   const handleSelectAddress = (id:number, value:string) => {
-    setAddress(id)
+    setCity(id)
     setSearchValue(value)
   }
 
   const saveUserAddress = async () => {
     try {
       await api.patch('/api/user/city', {
-        cityId: address
+        cityId: city
       })
       window.location.reload();
     } catch (error) {
@@ -39,9 +41,15 @@ const ChooseLocation = () => {
   return (
     <div className='px-4 fixed w-full h-full left-0 top-0 bg-white'>
       <div className="relative py-5 w-full">
-        <button>
-          <ChevronLeft className="text-grayColor" size={'2rem'} />
-        </button>
+        {
+          !user
+          ?
+          ''
+          :
+          <button>
+            <ChevronLeft className="text-grayColor" size={'2rem'} />
+          </button>
+        }
         <h2 className="left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 absolute text-center">
           Choose location
         </h2>
@@ -56,12 +64,12 @@ const ChooseLocation = () => {
         </div>
         <div className="flex flex-col">
           <small className="text-zinc-400">
-            New searchValue
+            City
           </small>
-          <input onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your address" />
+          <input onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your city" />
         </div>
         {
-          address
+          city
           ?
           <button onClick={saveUserAddress} className="bg-primaryColor text-white p-2 rounded-md">
             <Check/>
