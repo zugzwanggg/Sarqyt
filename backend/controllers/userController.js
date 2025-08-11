@@ -145,8 +145,8 @@ export const becomeSeller = async (req,res) => {
 export const getCities = async (req,res) => {
   try { 
     const {id} = req.user;
-    const countryId = await db.query("SELECT country  FROM users WHERE id = $1", [id]);
-    const cities = await db.query("SELECT * FROM cities WHERE country_id = $1", [countryId]);
+    const countryId = await db.query("SELECT country FROM users WHERE id = $1", [id]);
+    const cities = await db.query("SELECT * FROM cities WHERE country_id = $1", [countryId.rows[0].country]);
     
     res.status(200).json(cities.rows);
   } catch (error) {
