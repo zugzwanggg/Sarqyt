@@ -55,7 +55,7 @@ const ChooseLocation = () => {
         </h2>
       </div>
 
-      <label className="flex items-center gap-4 py-2 w-full bg-lightGrayColor rounded px-4" htmlFor="newaddress">
+      <label className="flex items-center justify-between gap-4 py-2 w-full bg-lightGrayColor rounded px-4" htmlFor="newaddress">
         <span>
           <Search size={'1.5rem'}/>
         </span>
@@ -79,10 +79,10 @@ const ChooseLocation = () => {
         }
       </label>
 
-      <ul className="mt-4">
+      <ul className="p-4">
         {
           cities.map(item => {
-            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className="py-4">
+            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`py-4 border-2 rounded-md mb-2 ${user?.city === item.id ? 'text-primaryColor' : ''}`}>
               <p>
                 {item.name}
               </p>
