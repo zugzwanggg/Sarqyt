@@ -67,7 +67,7 @@ export const telegramAuth = async (req,res) => {
       sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'Lax',
       maxAge: sevenDays
     });
-
+    
     res.status(200).json({
       message: 'Telegram authentication successful',
       user: { id: userId, ...userData }
