@@ -5,7 +5,12 @@ export async function telegramAuth(initData: string) {
   return res.data; 
 }
 
-export const getMe =async () => {
-  const res = await api.get('/api/user');
+export const getMe = async (token?: string) => {
+  const authToken = token || localStorage.getItem('authToken');
+  const res = await api.get('/api/user', {
+    headers: {
+      Authorization: `Bearer ${authToken}`
+    }
+  });
   return res.data;
 }
