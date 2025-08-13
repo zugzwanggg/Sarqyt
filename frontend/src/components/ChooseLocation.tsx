@@ -28,9 +28,10 @@ const ChooseLocation = () => {
 
   const saveUserAddress = async () => {
     try {
-      await api.patch('/api/user/city', {
-        cityId: city
-      })
+      await api.patch('/api/user/city',{
+        cityId: city,
+      }
+      )
       window.location.reload();
     } catch (error) {
       console.log(error);

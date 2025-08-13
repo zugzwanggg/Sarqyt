@@ -22,7 +22,7 @@ export function useTelegramLogin() {
       telegramAuth(initData)
         .then((res) =>{
               localStorage.setItem('authToken', res.token);
-              return getMe(res?.token)
+              return getMe()
             }
           )
         .then((data) => {
