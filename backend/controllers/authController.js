@@ -70,7 +70,8 @@ export const telegramAuth = async (req,res) => {
     
     res.status(200).json({
       message: 'Telegram authentication successful',
-      user: { id: userId, ...userData }
+      user: { id: userId, ...userData },
+      token
     });
 
   } catch (error) {
