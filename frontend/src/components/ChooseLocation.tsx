@@ -57,17 +57,19 @@ const ChooseLocation = () => {
       </div>
 
       <label className="flex items-center justify-between gap-4 py-2 w-full bg-lightGrayColor rounded px-4" htmlFor="newaddress">
-        <span>
-          <Search size={'1.5rem'}/>
-        </span>
-        <div className="w-0.5 h-7 bg-grayColor">
-          {/* line */}
-        </div>
-        <div className="flex flex-col">
-          <small className="text-zinc-400">
-            City
-          </small>
-          <input onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your city" />
+        <div className="flex items-center gap-4">
+          <span>
+            <Search size={'1.5rem'}/>
+          </span>
+          <div className="w-0.5 h-7 bg-grayColor">
+            {/* line */}
+          </div>
+          <div className="flex flex-col">
+            <small className="text-zinc-400">
+              City
+            </small>
+            <input onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your city" />
+          </div>
         </div>
         {
           city
@@ -80,10 +82,10 @@ const ChooseLocation = () => {
         }
       </label>
 
-      <ul className="p-4">
+      <ul className="py-4">
         {
           cities.map(item => {
-            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`py-4 border-2 rounded-md mb-2 ${user?.city === item.id ? 'text-primaryColor' : ''}`}>
+            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`p-4 border-2 border-zinc-400 rounded-md mb-2 ${user?.city === item.id || city === item.id ? 'text-primaryColor border-primaryColor' : ''}`}>
               <p>
                 {item.name}
               </p>
