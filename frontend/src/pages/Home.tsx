@@ -3,6 +3,7 @@ import {LocateFixed} from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useTelegramLogin } from "../hooks/useTelegramLogin";
+import ChooseLocation from "../components/ChooseLocation";
 
 const categories = [
   'Meals',
@@ -58,11 +59,16 @@ const sarqyts = [
 const Home = () => {
   const [category, setCategory] = useState('');
   const {user} = useTelegramLogin();
+  const [isSelectLocation, setIsSelectLocation] = useState(false);
+
+  if (isSelectLocation) {
+    return <ChooseLocation/>
+  }
 
 
   return (
     <div>
-      <div className="flex items-center py-5 gap-4">
+      <div onClick={()=>setIsSelectLocation(prev=>!prev)} className="flex items-center py-5 gap-4">
         <span className="bg-lightGreen w-10 h-10 grid place-content-center rounded-full">
           <LocateFixed className="text-primaryColor"/>
         </span>

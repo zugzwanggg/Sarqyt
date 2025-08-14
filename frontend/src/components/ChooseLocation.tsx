@@ -1,10 +1,11 @@
 import {useEffect, useState} from "react";
-import {ChevronLeft, Loader2} from "lucide-react";
+import {ChevronLeft} from "lucide-react";
 import {Search} from "lucide-react";
 import type { ICity } from "../types";
 import { api } from "../App";
 import { useTelegramLogin } from "../hooks/useTelegramLogin";
-import { getMe } from "../api/auth";
+import Loader from "./Loader";
+import { useNavigate } from "react-router-dom";
 
 const ChooseLocation = () => {
 
@@ -14,6 +15,7 @@ const ChooseLocation = () => {
   const [cities, setCities] = useState<ICity[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const nav = useNavigate();
 
   const getCities = async () => {
     const data = (await api.get('/api/cities')).data;
@@ -36,7 +38,7 @@ const ChooseLocation = () => {
         cityId: city,
       }
       )
-      getMe();
+      useTelegramLogin();
     } catch (error) {
       console.log(error);
     } finally {
@@ -49,11 +51,11 @@ const ChooseLocation = () => {
     <div className='px-4 fixed w-full h-full left-0 top-0 bg-white'>
       <div className="relative py-5 w-full">
         {
-          !user
+          !user.city
           ?
           ''
           :
-          <button>
+          <button onClick={()=>nav(-1)}>
             <ChevronLeft className="text-grayColor" size={'2rem'} />
           </button>
         }
@@ -79,7 +81,7 @@ const ChooseLocation = () => {
 
       <ul className="py-4">
         {
-          cities.filter(item=> item.name.toLowerCase() !== searchValue.toLowerCase()).map(item => {
+          cities.map(item => {
             return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`p-4 border-2 rounded-md mb-2 ${user?.city === item.id || city === item.id ? 'text-primaryColor border-primaryColor' : 'border-zinc-400'}`}>
               <p>
                 {item.name}
@@ -94,7 +96,7 @@ const ChooseLocation = () => {
           {
             isLoading
             ?
-            <Loader2 size={'1rem'} className="text-white animate-spin"/>
+            <Loader/>
             :
             'Apply'
           }
