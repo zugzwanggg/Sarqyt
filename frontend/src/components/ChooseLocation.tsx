@@ -30,6 +30,7 @@ const ChooseLocation = () => {
   }
 
   const saveUserCity = async () => {
+    setIsLoading(true)
     try {
       await api.patch('/api/user/city',{
         cityId: city,
@@ -38,6 +39,8 @@ const ChooseLocation = () => {
       getMe();
     } catch (error) {
       console.log(error);
+    } finally {
+      setIsLoading(false)
     }
   }
 
