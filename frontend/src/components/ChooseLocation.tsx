@@ -4,6 +4,7 @@ import {Search} from "lucide-react";
 import type { ICity } from "../types";
 import { api } from "../App";
 import { useTelegramLogin } from "../hooks/useTelegramLogin";
+import { getMe } from "../api/auth";
 
 const ChooseLocation = () => {
 
@@ -26,13 +27,13 @@ const ChooseLocation = () => {
     setSearchValue(value)
   }
 
-  const saveUserAddress = async () => {
+  const saveUserCity = async () => {
     try {
       await api.patch('/api/user/city',{
         cityId: city,
       }
       )
-      window.location.reload();
+      getMe();
     } catch (error) {
       console.log(error);
     }
@@ -74,7 +75,7 @@ const ChooseLocation = () => {
         {
           city
           ?
-          <button onClick={saveUserAddress} className="bg-primaryColor text-white p-2 rounded-md">
+          <button onClick={saveUserCity} className="bg-primaryColor text-white p-2 rounded-md">
             <Check/>
           </button>
           :
