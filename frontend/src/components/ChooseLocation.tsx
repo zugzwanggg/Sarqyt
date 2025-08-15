@@ -36,10 +36,7 @@ const ChooseLocation = () => {
   }
 
   useEffect(()=> {
-    if (debouncedSearch.trim() !== '') {
-      getCities(debouncedSearch);
-    }
-    
+    getCities(debouncedSearch);
   }, [debouncedSearch])
 
   const handleSelectAddress = (id:number, value:string) => {
@@ -99,34 +96,11 @@ const ChooseLocation = () => {
           isCitiesLoading
           ?
           <>
-            <Skeleton>
-              <li className={`p-4 border-2 rounded-md mb-2`}>
-                <p>
-                  'City'
-                </p>
-              </li>
-            </Skeleton>
-            <Skeleton>
-              <li className={`p-4 border-2 rounded-md mb-2`}>
-                <p>
-                  'City'
-                </p>
-              </li>
-            </Skeleton>
-            <Skeleton>
-              <li className={`p-4 border-2 rounded-md mb-2`}>
-                <p>
-                  'City'
-                </p>
-              </li>
-            </Skeleton>
-            <Skeleton>
-              <li className={`p-4 border-2 rounded-md mb-2`}>
-                <p>
-                  'City'
-                </p>
-              </li>
-            </Skeleton>
+            <>
+              {[...Array(5)].map((_, i) => (
+                <Skeleton key={i} width="100%" height="48px" />
+              ))}
+            </>
           </>
           :
           cities.map(item => {
