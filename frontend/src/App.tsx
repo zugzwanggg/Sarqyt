@@ -36,7 +36,7 @@ function App() {
     </div>
   }
 
-  if (!user?.city) {
+  if (user?.city === null || user?.city === undefined) {
     return <ChooseLocation/>
   }
 

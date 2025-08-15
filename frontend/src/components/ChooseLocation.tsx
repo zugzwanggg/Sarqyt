@@ -51,7 +51,7 @@ const ChooseLocation = () => {
         cityId: city,
         }
       )
-      useTelegramLogin();
+      nav('/')
     } catch (error) {
       console.log(error);
     } finally {
