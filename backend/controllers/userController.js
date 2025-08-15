@@ -147,7 +147,18 @@ export const getCities = async (req,res) => {
     const {id} = req.user;
     const {search = ''} = req.query;
     const countryId = await db.query("SELECT country FROM users WHERE id = $1", [id]);
-    const cities = await db.query("SELECT * FROM cities WHERE country_id = $1 AND LOWER(name) LIKE LOWER($2)", [countryId.rows[0].country, `%${search}%`]);
+    let cities;
+    if (search) {
+      cities = await db.query(
+        "SELECT * FROM cities WHERE country_id = $1 AND name ILIKE $2",
+        [countryId.rows[0].country, `%${search}%`]
+      );
+    } else {
+      cities = await db.query(
+        "SELECT * FROM cities WHERE country_id = $1",
+        [countryId.rows[0].country]
+      );
+    }
     
     res.status(200).json(cities.rows);
   } catch (error) {
