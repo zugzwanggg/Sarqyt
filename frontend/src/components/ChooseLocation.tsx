@@ -6,6 +6,8 @@ import { api } from "../App";
 import { useTelegramLogin } from "../hooks/useTelegramLogin";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
+import { Skeleton } from "@radix-ui/themes";
+import useDebounce from "../hooks/useDebounce";
 
 const ChooseLocation = () => {
 
@@ -13,18 +15,32 @@ const ChooseLocation = () => {
   const [city, setCity] = useState<null|number>(null);
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState<ICity[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isCitiesLoading, setIsCitiesLoading] = useState<boolean>(false)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const nav = useNavigate();
 
-  const getCities = async () => {
-    const data = (await api.get('/api/cities')).data;
-    setCities(data)
+  const debouncedSearch = useDebounce(searchValue, 300);
+
+  const getCities = async (query:string) => {
+    
+    setIsCitiesLoading(true);
+    try {
+      const data = (await api.get(`/api/cities?search=${encodeURIComponent(query)}`)).data;
+      setCities(data)
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsCitiesLoading(false);
+    }
   }
 
   useEffect(()=> {
-    getCities();
-  }, [])
+    if (debouncedSearch.trim() !== '') {
+      getCities(debouncedSearch);
+    }
+    
+  }, [debouncedSearch])
 
   const handleSelectAddress = (id:number, value:string) => {
     setCity(id)
@@ -36,7 +52,7 @@ const ChooseLocation = () => {
     try {
       await api.patch('/api/user/city',{
         cityId: city,
-      }
+        }
       )
       useTelegramLogin();
     } catch (error) {
@@ -45,7 +61,6 @@ const ChooseLocation = () => {
       setIsLoading(false)
     }
   }
-
 
   return (
     <div className='px-4 fixed w-full h-full left-0 top-0 bg-white'>
@@ -78,9 +93,42 @@ const ChooseLocation = () => {
           <input onChange={(e)=>setSearchValue(e.target.value)} value={searchValue} autoFocus={true} className="bg-transparent outline-none" id="newaddress" type="text" placeholder="Your city" />
         </div>
       </label>
-
+      
       <ul className="py-4">
         {
+          isCitiesLoading
+          ?
+          <>
+            <Skeleton>
+              <li className={`p-4 border-2 rounded-md mb-2`}>
+                <p>
+                  'City'
+                </p>
+              </li>
+            </Skeleton>
+            <Skeleton>
+              <li className={`p-4 border-2 rounded-md mb-2`}>
+                <p>
+                  'City'
+                </p>
+              </li>
+            </Skeleton>
+            <Skeleton>
+              <li className={`p-4 border-2 rounded-md mb-2`}>
+                <p>
+                  'City'
+                </p>
+              </li>
+            </Skeleton>
+            <Skeleton>
+              <li className={`p-4 border-2 rounded-md mb-2`}>
+                <p>
+                  'City'
+                </p>
+              </li>
+            </Skeleton>
+          </>
+          :
           cities.map(item => {
             return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`p-4 border-2 rounded-md mb-2 ${user?.city === item.id || city === item.id ? 'text-primaryColor border-primaryColor' : 'border-zinc-400'}`}>
               <p>
@@ -90,6 +138,7 @@ const ChooseLocation = () => {
           })
         }
       </ul>
+
 
       <div className="fixed w-full bg-white left-0 bottom-0 border-t-2 px-4 py-6">
         <button onClick={saveUserCity} className="w-full bg-primaryColor text-white rounded-2xl p-3">
