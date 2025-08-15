@@ -145,8 +145,9 @@ export const becomeSeller = async (req,res) => {
 export const getCities = async (req,res) => {
   try { 
     const {id} = req.user;
+    const {search = ''} = req.query;
     const countryId = await db.query("SELECT country FROM users WHERE id = $1", [id]);
-    const cities = await db.query("SELECT * FROM cities WHERE country_id = $1", [countryId.rows[0].country]);
+    const cities = await db.query("SELECT * FROM cities WHERE country_id = $1 AND LOWER(name) = LOWER($2)", [countryId.rows[0].country, `%${search}%`]);
     
     res.status(200).json(cities.rows);
   } catch (error) {
