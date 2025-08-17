@@ -3,15 +3,15 @@ import {ChevronLeft} from "lucide-react";
 import {Search} from "lucide-react";
 import type { ICity } from "../types";
 import { api } from "../App";
-import { useTelegramLogin } from "../hooks/useTelegramLogin";
 import Loader from "./Loader";
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@radix-ui/themes";
 import useDebounce from "../hooks/useDebounce";
+import { useUser } from "../context/UserContext";
 
 const ChooseLocation = () => {
 
-  const {user} = useTelegramLogin();
+  const {user} = useUser();
   const [city, setCity] = useState<null|number>(null);
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState<ICity[]>([]);
