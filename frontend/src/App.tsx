@@ -10,9 +10,10 @@ import Profile from "./pages/Profile";
 import Shop from "./pages/Shop";
 
 import axios from 'axios';
-import { useTelegramLogin } from "./hooks/useTelegramLogin";
 import { Loader2 } from "lucide-react";
 import ChooseLocation from "./components/ChooseLocation";
+
+import { UserProvider, useUser } from "./context/UserContext";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -28,7 +29,7 @@ api.interceptors.request.use((config) => {
 });
 
 function App() {
-  const {user, loading} = useTelegramLogin();
+  const {user, loading} = useUser();
   
   if (loading) {
     return <div className="bg-primaryColor w-full h-screen flex items-center justify-center text-white">
@@ -41,17 +42,19 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={<Layout/>}>
-        <Route path="/" element={<Home/>}/>
-        <Route path="/search" element={<Search/>}/>
-        <Route path="/favorites" element={<Favorites/>}/>
-        <Route path="/profile" element={<Profile/>}/>
-      </Route>
+    <UserProvider>
+      <Routes>
+        <Route path="/" element={<Layout/>}>
+          <Route path="/" element={<Home/>}/>
+          <Route path="/search" element={<Search/>}/>
+          <Route path="/favorites" element={<Favorites/>}/>
+          <Route path="/profile" element={<Profile/>}/>
+        </Route>
 
-      <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
-      <Route path="/shops/:id" element={<Shop/>}/>
-    </Routes>
+        <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
+        <Route path="/shops/:id" element={<Shop/>}/>
+      </Routes>
+    </UserProvider>
   )
 }
 

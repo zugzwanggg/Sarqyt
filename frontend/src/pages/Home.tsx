@@ -2,8 +2,8 @@ import { useState } from "react";
 import {LocateFixed} from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
-import { useTelegramLogin } from "../hooks/useTelegramLogin";
 import ChooseLocation from "../components/ChooseLocation";
+import { useUser } from "../context/UserContext";
 
 const categories = [
   'Meals',
@@ -58,7 +58,7 @@ const sarqyts = [
 
 const Home = () => {
   const [category, setCategory] = useState('');
-  const {user} = useTelegramLogin();
+  const {user} = useUser();
   const [isSelectLocation, setIsSelectLocation] = useState(false);
 
   if (isSelectLocation) {
