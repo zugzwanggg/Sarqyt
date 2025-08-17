@@ -65,7 +65,6 @@ const Home = () => {
     return <ChooseLocation/>
   }
 
-
   return (
     <div>
       <div onClick={()=>setIsSelectLocation(prev=>!prev)} className="flex items-center py-5 gap-4">

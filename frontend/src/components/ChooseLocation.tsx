@@ -40,8 +40,13 @@ const ChooseLocation = () => {
   }, [debouncedSearch])
 
   const handleSelectAddress = (id:number, value:string) => {
-    setCity(id)
-    setSearchValue(value)
+    if (city === id) {
+     setCity(null)
+     setSearchValue('')
+    } else {
+      setCity(id)
+      setSearchValue(value)
+    }
   }
 
   const saveUserCity = async () => {
