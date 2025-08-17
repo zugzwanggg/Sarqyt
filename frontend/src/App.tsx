@@ -13,7 +13,7 @@ import axios from 'axios';
 import { Loader2 } from "lucide-react";
 import ChooseLocation from "./components/ChooseLocation";
 
-import { UserProvider, useUser } from "./context/UserContext";
+import { useUser } from "./context/UserContext";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -42,19 +42,17 @@ function App() {
   }
 
   return (
-    <UserProvider>
-      <Routes>
-        <Route path="/" element={<Layout/>}>
-          <Route path="/" element={<Home/>}/>
-          <Route path="/search" element={<Search/>}/>
-          <Route path="/favorites" element={<Favorites/>}/>
-          <Route path="/profile" element={<Profile/>}/>
-        </Route>
+    <Routes>
+      <Route path="/" element={<Layout/>}>
+        <Route path="/" element={<Home/>}/>
+        <Route path="/search" element={<Search/>}/>
+        <Route path="/favorites" element={<Favorites/>}/>
+        <Route path="/profile" element={<Profile/>}/>
+      </Route>
 
-        <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
-        <Route path="/shops/:id" element={<Shop/>}/>
-      </Routes>
-    </UserProvider>
+      <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
+      <Route path="/shops/:id" element={<Shop/>}/>
+    </Routes>
   )
 }
 
