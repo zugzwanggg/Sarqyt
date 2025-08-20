@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {LocateFixed} from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import ChooseLocation from "../components/ChooseLocation";
 import { useUser } from "../context/UserContext";
+import { getSarqyts } from "../api/user";
+import type { ISarqytCard } from "../types";
 
 const categories = [
   'Meals',
@@ -14,56 +16,31 @@ const categories = [
   'Meat & Fish'
 ]
 
-const sarqyts = [
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  }
-]
-
 const Home = () => {
   const [category, setCategory] = useState('');
+  const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const {user} = useUser();
-const {isSelectLocation, setIsSelectLocation} = useUser();
+  const {isSelectLocation, setIsSelectLocation} = useUser();
 
   if (isSelectLocation) {
     return <ChooseLocation/>
   }
+
+  const getSarqytsData = async () => {
+    try {
+
+      const data = await getSarqyts(category);
+      setSarqyts(data)
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getSarqytsData();
+  }, [])
+  
 
   return (
     <div>
