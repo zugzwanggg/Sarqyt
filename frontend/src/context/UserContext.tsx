@@ -8,6 +8,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   const { user: initialUser, loading: initialLoading } = useTelegramLogin();
   const [user, setUser] = useState<any>(initialUser);
   const [loading, setLoading] = useState(initialLoading);
+  const [isSelectLocation, setIsSelectLocation] = useState(false);
 
   useEffect(() => {
     if (!initialLoading) {
@@ -29,7 +30,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading, refreshUser }}>
+    <UserContext.Provider value={{ user, loading, refreshUser, isSelectLocation, setIsSelectLocation }}>
       {children}
     </UserContext.Provider>
   );

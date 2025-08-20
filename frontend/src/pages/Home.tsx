@@ -59,7 +59,7 @@ const sarqyts = [
 const Home = () => {
   const [category, setCategory] = useState('');
   const {user} = useUser();
-  const [isSelectLocation, setIsSelectLocation] = useState(false);
+const {isSelectLocation, setIsSelectLocation} = useUser();
 
   if (isSelectLocation) {
     return <ChooseLocation/>
@@ -67,7 +67,7 @@ const Home = () => {
 
   return (
     <div>
-      <div onClick={()=>setIsSelectLocation(prev=>!prev)} className="flex items-center py-5 gap-4">
+      <div onClick={()=>setIsSelectLocation((prev:boolean)=>!prev)} className="flex items-center py-5 gap-4">
         <span className="bg-lightGreen w-10 h-10 grid place-content-center rounded-full">
           <LocateFixed className="text-primaryColor"/>
         </span>

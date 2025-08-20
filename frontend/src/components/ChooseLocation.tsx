@@ -11,7 +11,7 @@ import { useUser } from "../context/UserContext";
 
 const ChooseLocation = () => {
 
-  const {user} = useUser();
+  const {user, setIsSelectLocation} = useUser();
   const [city, setCity] = useState<null|number>(null);
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState<ICity[]>([]);
@@ -72,8 +72,8 @@ const ChooseLocation = () => {
           ?
           ''
           :
-          <button onClick={()=>nav('/')}>
-            <ChevronLeft className="text-grayColor" size={'2rem'} />
+          <button onClick={()=>setIsSelectLocation(false)}>
+            <ChevronLeft size={'2rem'} />
           </button>
         }
         <h2 className="left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 absolute text-center">
