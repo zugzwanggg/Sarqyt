@@ -81,7 +81,7 @@ const Profile = () => {
         <div className="flex items-center gap-4">
           <div className="relative">
             <img className="w-14 h-14 bg-lightGreen rounded-full" alt="" />
-            <span className="absolute block w-full h-full left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+            <span className="absolute inset-0 flex items-center justify-center text-xl font-bold">
               {user.username[0].toUpperCase()}
             </span>
           </div>
