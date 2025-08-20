@@ -26,7 +26,7 @@ export function useTelegramLogin() {
             }
           )
         .then((data) => {
-          setUser(data.user);
+          setUser(data);
         })
         .catch((err) => {
           console.error('Telegram login error:', err);
