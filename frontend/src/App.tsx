@@ -37,7 +37,7 @@ function App() {
     </div>
   }
 
-  if (!loading && !user?.city) {
+  if (!user?.city) {
     return <ChooseLocation/>
   }
 
