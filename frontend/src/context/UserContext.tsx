@@ -21,7 +21,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     setLoading(true);
     try {
       const data = await getMe();
-      setUser(data.user ?? data);
+      setUser(data);
     } catch (err) {
       console.error("Failed to refresh user:", err);
     } finally {

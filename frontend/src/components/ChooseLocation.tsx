@@ -10,7 +10,7 @@ import { useUser } from "../context/UserContext";
 
 const ChooseLocation = () => {
 
-  const {user, setIsSelectLocation, refreshUser} = useUser();
+  const {user, setIsSelectLocation} = useUser();
   const [city, setCity] = useState<null|number>(null);
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState<ICity[]>([]);
@@ -54,7 +54,7 @@ const ChooseLocation = () => {
         }
       )
       setIsCitiesLoading(false);
-      refreshUser();
+      window.location.reload()
     } catch (error) {
       console.log(error);
     } finally {
