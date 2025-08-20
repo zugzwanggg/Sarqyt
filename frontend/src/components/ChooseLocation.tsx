@@ -72,7 +72,7 @@ const ChooseLocation = () => {
           ?
           ''
           :
-          <button onClick={()=>nav(-1)}>
+          <button onClick={()=>nav('/')}>
             <ChevronLeft className="text-grayColor" size={'2rem'} />
           </button>
         }
