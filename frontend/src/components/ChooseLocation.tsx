@@ -53,8 +53,8 @@ const ChooseLocation = () => {
         cityId: city,
         }
       )
-      refreshUser();
       setIsCitiesLoading(false);
+      refreshUser();
     } catch (error) {
       console.log(error);
     } finally {
