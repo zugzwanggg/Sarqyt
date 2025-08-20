@@ -5,7 +5,7 @@ export const getUserInfo = async (req,res) => {
 
     const {id} = req.user;
     
-    const info = await db.query(`SELECT username, email, address, countries.name AS country, cities.name AS city, role  FROM users JOIN countries ON countries.id = users.country LEFT JOIN cities ON cities.id = users.city WHERE users.id = $1`, [id]);
+    const info = await db.query(`SELECT username, email, address, countries.name AS country, cities.name AS city, users.city AS cityId, role  FROM users JOIN countries ON countries.id = users.country LEFT JOIN cities ON cities.id = users.city WHERE users.id = $1`, [id]);
 
     res.status(200).json(info.rows[0]);
 
