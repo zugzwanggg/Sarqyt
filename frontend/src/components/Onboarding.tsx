@@ -47,7 +47,7 @@ const Onboarding = ({onFinish}:Props) => {
   }
 
   return (
-    <div className="fixed w-full h-full top-0 left-0 bg-white px-5 py-10 flex flex-col justify-between just gap-4">
+    <div className="fixed z-50 w-full h-full top-0 left-0 bg-white px-5 py-10 flex flex-col justify-between just gap-4">
       <button onClick={handleSkip} className="text-gray-500 text-right">
         Skip
       </button>
