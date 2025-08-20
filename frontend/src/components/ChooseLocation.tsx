@@ -4,21 +4,18 @@ import {Search} from "lucide-react";
 import type { ICity } from "../types";
 import { api } from "../App";
 import Loader from "./Loader";
-import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@radix-ui/themes";
 import useDebounce from "../hooks/useDebounce";
 import { useUser } from "../context/UserContext";
 
 const ChooseLocation = () => {
 
-  const {user, setIsSelectLocation} = useUser();
+  const {user, setIsSelectLocation, refreshUser} = useUser();
   const [city, setCity] = useState<null|number>(null);
   const [searchValue, setSearchValue] = useState('');
   const [cities, setCities] = useState<ICity[]>([]);
   const [isCitiesLoading, setIsCitiesLoading] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  const nav = useNavigate();
 
   const debouncedSearch = useDebounce(searchValue, 300);
 
@@ -56,7 +53,8 @@ const ChooseLocation = () => {
         cityId: city,
         }
       )
-      nav('/')
+      refreshUser();
+      setIsCitiesLoading(false);
     } catch (error) {
       console.log(error);
     } finally {
