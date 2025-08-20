@@ -79,7 +79,12 @@ const Profile = () => {
     <>
       <div className="flex items-center justify-between mt-6 border-b-2 pb-4">
         <div className="flex items-center gap-4">
-          <img className="w-14 h-14 bg-lightGreen rounded-full" alt="" />
+          <div className="relative">
+            <img className="w-14 h-14 bg-lightGreen rounded-full" alt="" />
+            <span className="absolute block w-full h-full left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+              {user.username[0].toUpperCase()}
+            </span>
+          </div>
           <h1 className="text-lg">
             {user.username}
           </h1>
