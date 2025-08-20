@@ -65,7 +65,7 @@ const ChooseLocation = () => {
   }
 
   return (
-    <div className='px-4 fixed w-full h-full left-0 top-0 bg-white'>
+    <div className='px-4 fixed z-50 w-full h-full left-0 top-0 bg-white'>
       <div className="relative py-5 w-full">
         {
           !user?.city
