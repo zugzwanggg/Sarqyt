@@ -1,6 +1,6 @@
 import { Settings, ShoppingBag } from "lucide-react"
 import { Link } from "react-router-dom"
-import { useTelegramLogin } from "../hooks/useTelegramLogin"
+import { useUser } from "../context/UserContext"
 
 const sarqyts = [
   {
@@ -73,7 +73,7 @@ const sarqyts = [
 
 const Profile = () => {
 
-  const {user} = useTelegramLogin();
+  const {user} = useUser();
 
   return (
     <>
