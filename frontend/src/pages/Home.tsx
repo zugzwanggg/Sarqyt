@@ -86,18 +86,17 @@ const Home = () => {
         {
           sarqyts.map(item => {
             return <li className="flex-shrink-0">
-              <SarqytCard 
+              <SarqytCard
                 key={item.id}
                 id={item.id}
-                title={item.title} 
-                pickup_start={item.pickup_start} 
+                title={item.title}
+                pickup_start={item.pickup_start}
                 pickup_end={item.pickup_end}
                 image_url={item.image_url}
                 quantity_available={item.quantity_available}
                 original_price={item.original_price}
                 discounted_price={item.discounted_price}
               />
-              
             </li>
           })
         }

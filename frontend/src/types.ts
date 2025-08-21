@@ -9,6 +9,16 @@ export interface ISarqytCard {
   image_url: string;
 }
 
+export interface IExtendedSarqytCard extends ISarqytCard {
+  shop_id: number;
+  available_until: string;
+  created_at: string;
+  shop_img: string;
+  rate: number;
+  address: string;
+  description: string;
+  category: string;
+}
 
 export interface TelegramUser {
   id: number;
