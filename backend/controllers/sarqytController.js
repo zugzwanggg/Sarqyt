@@ -5,7 +5,7 @@ export const getSarqytsByUsersCity = async (req,res) => {
   try {
     
     const {id} = req.user;
-    const {categoryId = null} = req.query;
+    const {categoryId = ''} = req.query;
 
     const city = await db.query("SELECT city FROM users WHERE id = $1", [id]);
 
