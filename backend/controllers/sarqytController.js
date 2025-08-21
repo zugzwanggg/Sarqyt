@@ -64,13 +64,37 @@ export const getSarqytById = async (req,res) => {
   try {
     const {id} = req.params;
 
-    const sarqyt = await db.query("SELECT shops.image_url AS shop_logo, shops.name AS shop, shops.address, sarqyts.* FROM sarqyts JOIN shops ON shops.id = sarqyts.shop_id WHERE sarqyts.id = $1", [id]);
+    const sarqyt = await db.query(`
+      SELECT 
+        sarqyts.id,
+        sarqyts.shop_id,
+        sarqyts.title,
+        sarqyts.original_price,
+        sarqyts.discounted_price,
+        sarqyts.quantity_available,
+        sarqyts.pickup_start,
+        sarqyts.pickup_end,
+        sarqyts.available_until,
+        sarqyts.image_url,
+        sarqyts.created_at,
+        sarqyts.rate,
+        sarqyts.description,
+        sarqyts.category,
+        shops.image_url AS shop_img,
+        shops.name AS shop,
+        shops.address
+      FROM sarqyts
+      JOIN shops ON shops.id = sarqyts.shop_id
+      WHERE sarqyts.id = $1
+    `, [id]);
+
     if (sarqyt.rows.length <= 0) {
       return res.status(404).json({
         message: "Sarqyt doesn't exist"
       })
     }
-    res.status(200).json(sarqyt.rows);
+
+    res.status(200).json(sarqyt.rows[0]);
   } catch (error) {
     console.log('Error at getSarqytById:', error.message + '\n' + error.stack);
     res.status(500).json({
