@@ -66,25 +66,20 @@ export const getSarqytById = async (req,res) => {
 
     const sarqyt = await db.query(`
       SELECT 
-        sarqyts.id,
-        sarqyts.shop_id,
-        sarqyts.title,
-        sarqyts.original_price,
-        sarqyts.discounted_price,
-        sarqyts.quantity_available,
-        sarqyts.pickup_start,
-        sarqyts.pickup_end,
-        sarqyts.available_until,
-        sarqyts.image_url,
-        sarqyts.created_at,
-        sarqyts.description,
-        sarqyts.category,
-        shops.image_url AS shop_img,
-        shops.name AS shop,
-        shops.address
-      FROM sarqyts
-      JOIN shops ON shops.id = sarqyts.shop_id
-      WHERE sarqyts.id = $1
+        s.id,
+        s.title,
+        s.original_price,
+        s.discounted_price,
+        s.quantity_available,
+        s.pickup_start,
+        s.pickup_end,
+        s.image_url,
+        s.created_at,
+        json_agg(c.name) AS categories
+      FROM sarqyts s
+      LEFT JOIN sarqyt_category sc ON s.id = sc.sarqyt_id
+      LEFT JOIN categories c ON c.id = sc.category_id
+      GROUP BY s.id;
     `, [id]);
 
     if (sarqyt.rows.length <= 0) {
