@@ -17,7 +17,7 @@ export interface IExtendedSarqytCard extends ISarqytCard {
   rate: number;
   address: string;
   description: string;
-  category: string;
+  categories: string[];
 }
 
 export interface TelegramUser {

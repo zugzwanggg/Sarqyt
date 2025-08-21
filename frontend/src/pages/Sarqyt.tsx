@@ -27,7 +27,6 @@ const Sarqyt = () => {
   }, [id])
   
   const [isFavorite, setIsFavorite] = useState(false);
-
   const [textCrop, setTextCrop] = useState(true);
 
   return (
@@ -103,9 +102,13 @@ const Sarqyt = () => {
           {sarqyt?.description}
           <ChevronDown onClick={()=>setTextCrop(prev=>!prev)} className={`absolute right-0 bottom-0 text-primaryColor ${textCrop ? '' : 'hidden'}`}/>
         </p>
-        <span className="font-semibold text-sm bg-lightGrayColor py-2 px-4 rounded-2xl">
-          {sarqyt?.category}
-        </span>
+        {
+          sarqyt?.categories.map(c => {
+            return <span className="font-semibold text-sm bg-lightGrayColor py-2 px-4 rounded-2xl">
+            {c}
+          </span>
+          })
+        }
       </div>
 
 
