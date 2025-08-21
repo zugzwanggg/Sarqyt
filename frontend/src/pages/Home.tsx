@@ -4,26 +4,32 @@ import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import ChooseLocation from "../components/ChooseLocation";
 import { useUser } from "../context/UserContext";
-import { getSarqyts } from "../api/user";
-import type { ISarqytCard } from "../types";
+import { getSarqytCategories, getSarqyts } from "../api/user";
+import type { ICategory, ISarqytCard } from "../types";
 
-const categories = [
-  'Meals',
-  'Bakery & Pastry',
-  'Restaurants',
-  'Supermarkets',
-  'Fruits & Vegetables',
-  'Meat & Fish'
-]
 
 const Home = () => {
-  const [category, setCategory] = useState('');
+  const [category, setCategory] = useState<number|null>(null);
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const {user} = useUser();
   const {isSelectLocation, setIsSelectLocation} = useUser();
-
+  const [categories, setCategories] = useState<ICategory[]>([]);
+  
+  
   if (isSelectLocation) {
     return <ChooseLocation/>
+  }
+
+  const getCategories = async () => {
+    try {
+
+      const res = await getSarqytCategories();
+
+      setCategories(res);
+
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const getSarqytsData = async () => {
@@ -38,6 +44,7 @@ const Home = () => {
   }
 
   useEffect(() => {
+    getCategories();
     getSarqytsData();
   }, [])
   
@@ -59,14 +66,14 @@ const Home = () => {
       </div>
 
       <ul className="flex items-center gap-2 overflow-x-auto mb-5">
-        <li onClick={()=> setCategory('')} className={`${category === '' ? 'bg-primaryColor text-white' : 'bg-gray-200 text-black'} py-2 px-4 w-fit rounded`}>
+        <li onClick={()=> setCategory(null)} className={`${category === null ? 'bg-primaryColor text-white' : 'bg-gray-200 text-black'} py-2 px-4 w-fit rounded`}>
           All
         </li>
         {
           categories.map(item => (
-            <li onClick={()=> setCategory(item)} className={`${category === item ? 'bg-primaryColor text-white' : 'bg-gray-200 text-black'} py-2 px-4 w-fit rounded`}>
+            <li onClick={()=> setCategory(item.id)} className={`${category === item.id ? 'bg-primaryColor text-white' : 'bg-gray-200 text-black'} py-2 px-4 w-fit rounded`}>
               <p className="text-nowrap">
-                {item}
+                {item.name}
               </p>
             </li>
           ))
