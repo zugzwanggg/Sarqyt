@@ -1,7 +1,14 @@
 import { api } from "../App";
 
 export const getSarqyts = async (categoryId:number|string|null) => {
-  const res = await api.get(`/api/sarqyts?categoryId=${categoryId}`);
+  
+  let res;
+  if (categoryId === null) {
+    res = await api.get(`/api/sarqyts`);
+  } else {
+    res = await api.get(`/api/sarqyts?categoryId=${categoryId}`);
+  }
+
   return res.data;
 }
 

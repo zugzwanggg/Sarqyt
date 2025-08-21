@@ -34,7 +34,7 @@ const Home = () => {
 
   const getSarqytsData = async () => {
     try {
-
+      
       const data = await getSarqyts(category);
       setSarqyts(data)
 
