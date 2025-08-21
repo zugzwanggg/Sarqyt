@@ -142,29 +142,34 @@ export const becomeSeller = async (req,res) => {
 }
 
 
-export const getCities = async (req,res) => {
-  try { 
-    const {id} = req.user;
-    const {search = ''} = req.query;
-    const countryId = await db.query("SELECT country FROM users WHERE id = $1", [id]);
+export const getCities = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { search = '' } = req.query;
+
+    const userResult = await db.query("SELECT country FROM users WHERE id = $1", [id]);
+    if (!userResult.rows.length) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const countryId = userResult.rows[0].country;
+
     let cities;
-    if (search) {
+    if (search.trim()) {
       cities = await db.query(
-        "SELECT * FROM cities WHERE country_id = $1 AND name ILIKE $2",
-        [countryId.rows[0].country, `%${search}%`]
+        "SELECT id, name FROM cities WHERE country_id = $1 AND name ILIKE $2",
+        [countryId, `%${search}%`]
       );
     } else {
       cities = await db.query(
-        "SELECT * FROM cities WHERE country_id = $1",
-        [countryId.rows[0].country]
+        "SELECT id, name FROM cities WHERE country_id = $1",
+        [countryId]
       );
     }
-    
+
     res.status(200).json(cities.rows);
   } catch (error) {
-    console.log('Error at getCities:', error.message + '\n' + error.stack);
-    res.status(500).json({
-      message: error.message
-    })
+    console.error("Error at getCities:", error);
+    res.status(500).json({ message: error.message });
   }
-}
+};
