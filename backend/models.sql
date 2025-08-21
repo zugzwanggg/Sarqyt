@@ -51,6 +51,7 @@ CREATE TABLE sarqyts (
   quantity_available INTEGER,
   pickup_start TIME,
   pickup_end TIME,
+  rate NUMERIC(2,1) DEFAULT 0,
   available_until TIMESTAMP,
   image_url TEXT,
   created_at TIMESTAMP DEFAULT now()

@@ -77,7 +77,6 @@ export const getSarqytById = async (req,res) => {
         sarqyts.available_until,
         sarqyts.image_url,
         sarqyts.created_at,
-        sarqyts.rate,
         sarqyts.description,
         sarqyts.category,
         shops.image_url AS shop_img,
