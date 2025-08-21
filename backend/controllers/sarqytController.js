@@ -11,10 +11,45 @@ export const getSarqytsByUsersCity = async (req,res) => {
 
     let sarqyts;
     if (categoryId) {
-      sarqyts = await db.query("SELECT sarqyts.id AS sarqyt_id, shops.id AS shop_id, shops.image_url as logo, shops.name AS shop, sarqyts.image_url as cover, sarqyts.title AS title FROM sarqyts JOIN shops ON shops.id = sarqyts.shop_id LEFT JOIN sarqyt_category ON sarqyt_category.sarqyt_id = sarqyts.id WHERE shops.city = $1 AND sarqyt_category.category_id = $2", [city.rows[0].city, categoryId]);
+      sarqyts = await db.query(`
+        SELECT 
+          sarqyts.id AS id,
+          sarqyts.title,
+          sarqyts.original_price,
+          sarqyts.discounted_price,
+          sarqyts.quantity_available,
+          sarqyts.pickup_start,
+          sarqyts.pickup_end,
+          sarqyts.image_url,
+          shops.id AS shop_id,
+          shops.image_url as logo,
+          shops.name AS shop
+        FROM sarqyts 
+        JOIN shops ON shops.id = sarqyts.shop_id 
+        LEFT JOIN sarqyt_category 
+          ON sarqyt_category.sarqyt_id = sarqyts.id 
+        WHERE shops.city = $1 
+          AND sarqyt_category.category_id = $2
+      `, [city.rows[0].city, categoryId]);
     } else {
-      sarqyts = await db.query("SELECT sarqyts.id AS sarqyt_id, shops.id AS shop_id, shops.image_url as logo, shops.name AS shop, sarqyts.image_url as cover, sarqyts.title AS title FROM sarqyts JOIN shops ON shops.id = sarqyts.shop_id LEFT JOIN sarqyt_category ON sarqyt_category.sarqyt_id = sarqyts.id WHERE shops.city = $1", [city.rows[0].city]);
-    }
+      sarqyts = await db.query(`
+        SELECT 
+          sarqyts.id AS id,
+          sarqyts.title,
+          sarqyts.original_price,
+          sarqyts.discounted_price,
+          sarqyts.quantity_available,
+          sarqyts.pickup_start,
+          sarqyts.pickup_end,
+          sarqyts.image_url,
+          shops.id AS shop_id,
+          shops.image_url as logo,
+          shops.name AS shop
+        FROM sarqyts 
+        JOIN shops ON shops.id = sarqyts.shop_id 
+        WHERE shops.city = $1
+      `, [city.rows[0].city]);
+    }    
 
     res.status(200).json(sarqyts.rows);
   } catch (error) {
