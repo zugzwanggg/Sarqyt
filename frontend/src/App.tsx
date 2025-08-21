@@ -29,7 +29,7 @@ api.interceptors.request.use((config) => {
 });
 
 function App() {
-  const {user, loading} = useUser();
+  const {user, loading, isSelectLocation} = useUser();
   
   if (loading) {
     return <div className="bg-primaryColor w-full h-screen flex items-center justify-center text-white">
@@ -37,7 +37,7 @@ function App() {
     </div>
   }
 
-  if (!user?.city) {
+  if (!user?.city || isSelectLocation) {
     return <ChooseLocation/>
   }
 

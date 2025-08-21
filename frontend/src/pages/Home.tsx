@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import {LocateFixed} from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
-import ChooseLocation from "../components/ChooseLocation";
 import { useUser } from "../context/UserContext";
 import { getSarqytCategories, getSarqyts } from "../api/user";
 import type { ICategory, ISarqytCard } from "../types";
@@ -12,14 +11,10 @@ const Home = () => {
   const [category, setCategory] = useState<number|null>(null);
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const {user} = useUser();
-  const {isSelectLocation, setIsSelectLocation} = useUser();
+  const {setIsSelectLocation} = useUser();
   const [categories, setCategories] = useState<ICategory[]>([]);
   
   
-  if (isSelectLocation) {
-    return <ChooseLocation/>
-  }
-
   const getCategories = async () => {
     try {
 
