@@ -53,7 +53,6 @@ const ChooseLocation = () => {
         cityId: city,
         }
       )
-      setIsCitiesLoading(false);
       window.location.reload()
     } catch (error) {
       console.log(error);
@@ -107,7 +106,7 @@ const ChooseLocation = () => {
           </>
           :
           cities.map(item => {
-            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`p-4 border-2 rounded-md mb-2 ${user?.city === item.id || city === item.id ? 'text-primaryColor border-primaryColor' : 'border-zinc-400'}`}>
+            return <li key={item.id} onClick={()=>handleSelectAddress(item.id, item.name)} className={`p-4 border-2 rounded-md mb-2 ${user?.cityId === item.id || city === item.id ? 'text-primaryColor border-primaryColor' : 'border-zinc-400'}`}>
               <p>
                 {item.name}
               </p>
