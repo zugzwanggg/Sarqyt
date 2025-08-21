@@ -151,3 +151,16 @@ export const removeSarqytFromFavorites = async (req,res) => {
   }
 }
 
+export const getSarqytCategories = async (req,res) => {
+  try {
+    
+    const categories = await db.query("SELECT * FROM categories");
+    res.status(200).json(categories.rows);
+    
+  } catch (error) {
+    console.log('Error at getSarqytCategories:', error.message + '\n' + error.stack);
+    res.status(500).json({
+      message: error.message
+    })
+  }
+}
