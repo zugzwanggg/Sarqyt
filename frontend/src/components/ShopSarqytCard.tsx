@@ -16,10 +16,10 @@ const ShopSarqytCard = ({id,
             {title}
           </h3>
           <span className="text-sm">
-            Today: {pickup_start.toLocaleDateString()}:{pickup_end.toLocaleDateString()}
+            Today: {pickup_start.slice(0,5)} – {pickup_end.slice(0,5)}
           </span>
           <span className="text-primaryColor font-bold text-lg block">
-            {discounted_price}
+            {Number(discounted_price).toLocaleString()}
           </span>
         </div>
       </div>
