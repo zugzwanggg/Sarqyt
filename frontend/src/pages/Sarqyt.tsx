@@ -14,7 +14,7 @@ const Sarqyt = () => {
 
   const getSarqyt = async () => {
     try {
-      const res = await getSarqytById(parseInt(id!));
+      const res = await getSarqytById(id!);
       setSarqyt(res);
 
     } catch (error) {

@@ -12,7 +12,7 @@ export const getSarqyts = async (categoryId:number|string|null) => {
   return res.data;
 }
 
-export const getSarqytById = async (id:number) => {
+export const getSarqytById = async (id:number|string) => {
   const res = await api.get(`/api/sarqyts/${id}`);
   return res.data;
 }
