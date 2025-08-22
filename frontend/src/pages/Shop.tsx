@@ -24,7 +24,7 @@ const Shop = () => {
 
   useEffect(() => {
     getShop();
-  }, [])
+  }, [id])
   
 
   return (
