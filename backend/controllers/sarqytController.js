@@ -67,16 +67,20 @@ export const getSarqytById = async (req,res) => {
     const sarqyt = await db.query(`
       SELECT 
         s.id,
+        s.shop_id,
         s.title,
+        s.description,
         s.original_price,
         s.discounted_price,
         s.quantity_available,
         s.pickup_start,
         s.pickup_end,
         s.image_url,
+        shops.logo,
         s.created_at,
         json_agg(c.name) AS categories
       FROM sarqyts s
+      LEFT JOIN shops ON s.shop_id = shops.id
       LEFT JOIN sarqyt_category sc ON s.id = sc.sarqyt_id
       LEFT JOIN categories c ON c.id = sc.category_id
       WHERE s.id = $1
