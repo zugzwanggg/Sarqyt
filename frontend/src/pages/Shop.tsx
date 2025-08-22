@@ -1,5 +1,5 @@
 import { ChevronLeft, MapPin, Cake } from "lucide-react";
-import { useNavigate, useParams } from "react-router-dom";
+import { data, useNavigate, useParams } from "react-router-dom";
 import ShopSarqytCard from "../components/ShopSarqytCard";
 import {useState, useEffect} from "react";
 import type { IShop } from "../types";
@@ -21,6 +21,8 @@ const Shop = () => {
       console.log(error);
     }
   }
+
+  console.log(data);
 
   useEffect(() => {
     getShop();
