@@ -35,7 +35,7 @@ export const getShopSarqytsById = async (req,res) => {
       })
     }
 
-    const sarqyts = await db.query("SELECT sarqyts.id AS sarqyt_id, shops.id AS shop_id, shops.image_url as logo, shops.name AS shop, sarqyts.image_url as cover, sarqyts.title AS title FROM sarqyts JOIN shops ON shops.id = sarqyts.shop_id LEFT JOIN sarqyt_category ON sarqyt_category.sarqyt_id = sarqyts.id WHERE shops.id = $1", [shopId]);
+    const sarqyts = await db.query("SELECT sarqyts.* FROM sarqyts JOIN shops ON shops.id = sarqyts.shop_id LEFT JOIN sarqyt_category ON sarqyt_category.sarqyt_id = sarqyts.id WHERE shops.id = $1", [shopId]);
 
     res.status(200).json(sarqyts.rows);
     
