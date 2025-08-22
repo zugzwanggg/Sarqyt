@@ -25,7 +25,7 @@ const Sarqyt = () => {
   useEffect(()=> {
     getSarqyt()
   }, [id])
-  
+
   const [isFavorite, setIsFavorite] = useState(false);
   const [textCrop, setTextCrop] = useState(true);
 
