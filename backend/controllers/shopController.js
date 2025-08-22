@@ -13,7 +13,7 @@ export const getShopById = async (req,res) => {
       })
     }
 
-    res.status(200).json(shops.rows)
+    res.status(200).json(shops.rows[0])
 
   } catch (error) {
     console.log('Error at getShopById:', error.message + '\n' + error.stack);
