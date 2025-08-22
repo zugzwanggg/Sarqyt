@@ -78,13 +78,15 @@ export const getSarqytById = async (req,res) => {
         s.image_url,
         shops.image_url AS shop_img,
         s.created_at,
-        json_agg(c.name) AS categories
-      FROM sarqyts s
-      LEFT JOIN shops ON s.shop_id = shops.id
-      LEFT JOIN sarqyt_category sc ON s.id = sc.sarqyt_id
-      LEFT JOIN categories c ON c.id = sc.category_id
-      WHERE s.id = $1
-      GROUP BY s.id;
+        (
+          SELECT json_agg(c.name)
+          FROM sarqyt_category sc
+          JOIN categories c ON c.id = sc.category_id
+          WHERE sc.sarqyt_id = s.id
+        ) AS categories
+    FROM sarqyts s
+    LEFT JOIN shops ON s.shop_id = shops.id
+    WHERE s.id = $1;
     `, [id]);
 
     if (sarqyt.rows.length <= 0) {
