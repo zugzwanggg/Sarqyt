@@ -48,3 +48,13 @@ export interface ICategory {
   id: number;
   name: string;
 }
+
+export interface IShopSarqytCard {
+  id: number;
+  title: string;
+  discounted_price: string;
+  quantity_available?: number;
+  pickup_start: Date;
+  pickup_end: Date;
+  image_url: string;
+}

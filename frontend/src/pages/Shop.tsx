@@ -2,14 +2,15 @@ import { ChevronLeft, MapPin, Cake } from "lucide-react";
 import { data, useNavigate, useParams } from "react-router-dom";
 import ShopSarqytCard from "../components/ShopSarqytCard";
 import {useState, useEffect} from "react";
-import type { IShop } from "../types";
-import { getShopById } from "../api/shop";
+import type { IShop, IShopSarqytCard } from "../types";
+import { getShopById, getShopSarqytsByShopId } from "../api/shop";
 
 const Shop = () => {
   const {id} = useParams();
   const nav = useNavigate();
 
   const [shop, setShop] = useState<IShop|null>(null);
+  const [sarqyts, setSarqyts] = useState<IShopSarqytCard[]>([]);
 
   const getShop =async () => {
     try {
@@ -24,8 +25,19 @@ const Shop = () => {
 
   console.log(data);
 
+  const getShopSarqyts =async () => {
+    try {
+      const data = await getShopSarqytsByShopId(id!);
+      
+      setSarqyts(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     getShop();
+    getShopSarqyts();
   }, [id])
   
 
@@ -52,19 +64,36 @@ const Shop = () => {
         </p>
       </div>
 
-      <div className="mt-4 p-4 bg-white">
-        <h2 className="mb-4">
-          Sarqyts from this store
-        </h2>
-        <ul className="flex gap-4 overflow-x-scroll pb-4">
-          <li className="flex-shrink-0">
-            <ShopSarqytCard/>
-          </li>
-          <li className="flex-shrink-0">
-            <ShopSarqytCard/>
-          </li>
-        </ul>
-      </div>
+      {
+        sarqyts
+        ?
+        <div className="mt-4 p-4 bg-white">
+          <h2 className="mb-4">
+            Sarqyts from this store
+          </h2>
+          <ul className="flex gap-4 overflow-x-scroll pb-4">
+            {
+              sarqyts.map(item => {
+                return <li className="flex-shrink-0">
+                <ShopSarqytCard
+                  id={item.id}
+                  title={item.title}
+                  discounted_price={item.discounted_price}
+                  pickup_start={item.pickup_start}
+                  pickup_end={item.pickup_end} 
+                  image_url={item.image_url}
+                />
+                </li>
+              })
+            }
+            
+          
+          </ul>
+        </div>
+        :
+        ''
+      }
+      
 
       <div className="p-4 mt-4 bg-white">
         <h2 className="mb-4">

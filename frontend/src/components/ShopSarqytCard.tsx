@@ -1,30 +1,25 @@
 import { ChevronRight } from "lucide-react"
 import { Link } from "react-router-dom"
+import type { IShopSarqytCard } from "../types"
 
-const sarqyt = {
-  "id":1,
-  "title":"Surprise Doner Combo",
-  "discounted_price":"500.00",
-  "quantity_available":10,
-  "pickup_start":"18:00",
-  "pickup_end":"20:00",
-  "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-}
 
-const ShopSarqytCard = () => {
+
+const ShopSarqytCard = ({id,
+  title,discounted_price, pickup_start,pickup_end, 
+  image_url}:IShopSarqytCard) => {
   return (
-    <Link to={`/sarqyts/${sarqyt.id}`} className="flex items-center gap-4 justify-between">
+    <Link to={`/sarqyts/${id}`} className="flex items-center gap-4 justify-between">
       <div className="flex items-center gap-4 ">
-        <img className="w-16 h-16 rounded-full shrink-0" src={sarqyt.image_url} alt={sarqyt.title} />
+        <img className="w-16 h-16 rounded-full shrink-0" src={image_url} alt={title} />
         <div>
           <h3>
-            {sarqyt.title}
+            {title}
           </h3>
           <span className="text-sm">
-            Today: {sarqyt.pickup_start}:{sarqyt.pickup_end}
+            Today: {pickup_start.toLocaleDateString()}:{pickup_end.toLocaleDateString()}
           </span>
           <span className="text-primaryColor font-bold text-lg block">
-            {sarqyt.discounted_price}
+            {discounted_price}
           </span>
         </div>
       </div>
