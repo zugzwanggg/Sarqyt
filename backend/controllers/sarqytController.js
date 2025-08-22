@@ -76,7 +76,7 @@ export const getSarqytById = async (req,res) => {
         s.pickup_start,
         s.pickup_end,
         s.image_url,
-        shops.image_url AS logo,
+        shops.image_url AS shop_img,
         s.created_at,
         json_agg(c.name) AS categories
       FROM sarqyts s
