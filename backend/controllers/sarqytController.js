@@ -79,6 +79,7 @@ export const getSarqytById = async (req,res) => {
       FROM sarqyts s
       LEFT JOIN sarqyt_category sc ON s.id = sc.sarqyt_id
       LEFT JOIN categories c ON c.id = sc.category_id
+      WHERE s.id = $1
       GROUP BY s.id;
     `, [id]);
 
