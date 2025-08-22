@@ -20,6 +20,14 @@ export interface IExtendedSarqytCard extends ISarqytCard {
   categories: string[];
 }
 
+export interface IShop {
+  id: number;
+  name: string;
+  image_url: string;
+  rate: number;
+  address: string;
+}
+
 export interface TelegramUser {
   id: number;
   is_bot: boolean;

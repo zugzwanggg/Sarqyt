@@ -1,17 +1,31 @@
 import { ChevronLeft, MapPin, Cake } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ShopSarqytCard from "../components/ShopSarqytCard";
-
-const shop = {
-  "id":1,
-  "name":"Khan Doner",
-  "image_url": "https://img.postershop.me/10397/Config/257652_1698210458.4511_original.png",
-  "rate": 3.5,
-  "address": "Satpaev 25B, 84. 2-room office",
-}
+import {useState, useEffect} from "react";
+import type { IShop } from "../types";
+import { getShopById } from "../api/shop";
 
 const Shop = () => {
+  const {id} = useParams();
   const nav = useNavigate();
+
+  const [shop, setShop] = useState<IShop|null>(null);
+
+  const getShop =async () => {
+    try {
+
+      const data = await getShopById(id!);
+      setShop(data)
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    getShop();
+  }, [])
+  
 
   return (
     <div className="bg-lightGrayColor">
@@ -23,16 +37,16 @@ const Shop = () => {
 
       <div className="px-4 border-b-2 pb-4 bg-white">
         <div className="flex items-center gap-5">
-          <img className="w-16 h-16 rounded-full object-contain bg-white border-2 border-zinc-300" src={shop.image_url} alt={shop.name} />
+          <img className="w-16 h-16 rounded-full object-contain bg-white border-2 border-zinc-300" src={shop?.image_url} alt={shop?.name} />
           <h1 className="text-xl">
-            {shop.name}
+            {shop?.name}
           </h1>
         </div>
       </div>
       <div className="p-4 flex items-center text-primaryColor gap-2 bg-white pb-7">
         <MapPin size={'1rem'}/>
         <p className="text-lg">
-          {shop.address}
+          {shop?.address}
         </p>
       </div>
 
