@@ -31,6 +31,8 @@ const Home = () => {
     try {
 
       const data = await getSarqyts(category);
+      console.log(data);
+      
       setSarqyts(data)
 
     } catch (error) {
