@@ -12,13 +12,13 @@ const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discou
     nav(`/sarqyts/${id}`)
   }
 
-  const handleHeartClick = async (e:React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+  const handleHeartClick = async (e:React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.stopPropagation();
     try {
       if (isFavorite) {
-        await addSarqytToFavorites(id)
-      } else {
         await removeSarqytFromFavorites(id);
+      } else {
+        await addSarqytToFavorites(id)
       }
       await getSarqyts(null);
     } catch (error) {
@@ -33,7 +33,9 @@ const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discou
         <h3>
           {title}
         </h3>
-        <Heart onClick={(e)=>handleHeartClick(e)} className={`text-primaryColor ${isFavorite ? 'fill-primaryColor' : ''}`}/>
+        <button onClick={(e)=>handleHeartClick(e)}>
+          <Heart className={`text-primaryColor ${isFavorite ? 'fill-primaryColor' : ''}`}/>
+        </button>
       </div>
       <p>
         Collect today: {pickup_start}-{pickup_end}

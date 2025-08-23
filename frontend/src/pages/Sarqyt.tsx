@@ -30,12 +30,11 @@ const Sarqyt = () => {
   const handleHeartClick = async () => {
     try {
       if (sarqyt?.isFavorite) {
-        await addSarqytToFavorites(id!)
-      } else {
         await removeSarqytFromFavorites(id!);
+      } else {
+        await addSarqytToFavorites(id!)
       }
       await getSarqyt();
-      await getUserFavorites();
     } catch (error) {
       console.log(error);
     }
