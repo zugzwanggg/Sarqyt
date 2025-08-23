@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {useEffect, useState} from "react";
 
 import {ChevronLeft, Heart, Clock, Star, MapPin, ChevronRight, ChevronDown} from "lucide-react";
-import { getSarqytById } from "../api/sarqyt";
+import { addSarqytToFavorites, getSarqytById, removeSarqytFromFavorites } from "../api/sarqyt";
 import type { IExtendedSarqytCard } from "../types";
 
 const Sarqyt = () => {
@@ -26,10 +26,19 @@ const Sarqyt = () => {
     getSarqyt()
   }, [id])
 
-  console.log(sarqyt);
+  const handleHeartClick = async () => {
+    try {
+      if (sarqyt?.isFavorite) {
+        await addSarqytToFavorites(id!)
+      } else {
+        await removeSarqytFromFavorites(id!);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   
-  
-  const [isFavorite, setIsFavorite] = useState(false);
+
   const [textCrop, setTextCrop] = useState(true);
 
   return (
@@ -43,8 +52,8 @@ const Sarqyt = () => {
           <button onClick={()=>nav(-1)} className="bg-white rounded-md w-10 h-10 grid place-content-center">
             <ChevronLeft/>
           </button>
-          <button onClick={()=>setIsFavorite(prev=>!prev)} className="bg-white rounded-md w-10 h-10 grid place-content-center">
-            <Heart className={`${isFavorite ? 'fill-black' : ""}`}/>
+          <button onClick={()=>handleHeartClick()} className="bg-white rounded-md w-10 h-10 grid place-content-center">
+            <Heart className={`${sarqyt?.isFavorite ? 'fill-black' : ""}`}/>
           </button>
         </div>
         <div className="absolute bottom-0 left-0 p-4 text-white flex items-center gap-5">
