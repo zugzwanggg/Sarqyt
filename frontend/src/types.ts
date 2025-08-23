@@ -8,6 +8,7 @@ export interface ISarqytCard {
   pickup_end: string; 
   image_url: string;
   isFavorite: boolean;
+  getSarqytsData: () => void;
 }
 
 export interface IExtendedSarqytCard extends ISarqytCard {
