@@ -1,40 +1,65 @@
 import { NavLink } from "react-router-dom";
-import {Compass} from "lucide-react";
-import {Search} from "lucide-react";
-import {Heart} from "lucide-react";
-import {CircleUser} from "lucide-react";
+import { Compass, Search, Heart, CircleUser } from "lucide-react";
 
 const MobileNavbar = () => {
   return (
-    <nav className="fixed pt-3 bg-white border border-2-grayColor bottom-0 left-0 w-full">
-      <ul className="grid grid-cols-4 text-sm">
-        <li className="place-self-center">
-          <NavLink to='/' className={({isActive}) => `${isActive ? 'text-primaryColor text-center' : 'text-zinc-400'}`}>
-            <Compass className="mx-auto"/>
-            Discover
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white shadow-lg rounded-2xl px-4 py-2">
+      <ul className="flex justify-between items-center text-sm">
+        <li>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition ${
+                isActive ? "text-primaryColor bg-primaryColor/10" : "text-zinc-400"
+              }`
+            }
+          >
+            <Compass className="h-6 w-6" />
+            <span className="text-xs">Discover</span>
           </NavLink>
         </li>
-        <li className="place-self-center">
-          <NavLink to='/search' className={({isActive}) => `${isActive ? 'text-primaryColor text-center' : 'text-zinc-400'}`}>
-            <Search className="mx-auto"/>
-            Search
+        <li>
+          <NavLink
+            to="/search"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition ${
+                isActive ? "text-primaryColor bg-primaryColor/10" : "text-zinc-400"
+              }`
+            }
+          >
+            <Search className="h-6 w-6" />
+            <span className="text-xs">Search</span>
           </NavLink>
         </li>
-        <li className="place-self-center">
-          <NavLink to='/favorites' className={({isActive}) => `${isActive ? 'text-primaryColor text-center' : 'text-zinc-400'}`}>
-            <Heart className="mx-auto"/>
-            Favorites
+        <li>
+          <NavLink
+            to="/favorites"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition ${
+                isActive ? "text-primaryColor bg-primaryColor/10" : "text-zinc-400"
+              }`
+            }
+          >
+            <Heart className="h-6 w-6" />
+            <span className="text-xs">Favorites</span>
           </NavLink>
         </li>
-        <li className="place-self-center">
-          <NavLink to='/profile' className={({isActive}) => `${isActive ? 'text-primaryColor text-center' : 'text-zinc-400'}`}>
-            <CircleUser className="mx-auto"/>
-            Profile
+        <li>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
+              `flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition ${
+                isActive ? "text-primaryColor bg-primaryColor/10" : "text-zinc-400"
+              }`
+            }
+          >
+            <CircleUser className="h-6 w-6" />
+            <span className="text-xs">Profile</span>
           </NavLink>
         </li>
       </ul>
-    </nav>  
-  )
-}
+    </nav>
+  );
+};
 
-export default MobileNavbar
+export default MobileNavbar;
