@@ -1,81 +1,33 @@
+import { useEffect, useState } from "react";
 import SarqytCard from "../components/SarqytCard";
 import SearchBar from "../components/SearchBar";
-
-const sarqyts = [
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331",
-    "isFavorite": false
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331",
-    "isFavorite": false
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331",
-    "isFavorite": false
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331",
-    "isFavorite": false
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331",
-    "isFavorite": false
-  }
-]
+import { getSarqyts } from "../api/sarqyt";
+import type { ISarqytCard } from "../types";
 
 
 const Search = () => {
+
+  const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([])
+
+
+  const getSarqytsData = async () => {
+    try {
+      
+      const data = await getSarqyts(null);
+      setSarqyts(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+
+  useEffect(()=> {
+    getSarqytsData()
+  }, [])
+
+
+
   return (
     <>
       <SearchBar/>
