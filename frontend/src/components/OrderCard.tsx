@@ -1,5 +1,6 @@
 import { Calendar, CreditCard, Store, Hash, CheckCircle, Clock } from "lucide-react";
 import type { IOrder } from "../types";
+import { useNavigate } from "react-router-dom";
 
 export default function OrderCard({ order }: { order: IOrder }) {
   const getStatusColor = (status: string) => {
@@ -19,8 +20,10 @@ export default function OrderCard({ order }: { order: IOrder }) {
     }
   };
 
+  const nav = useNavigate();
+
   return (
-    <div className="w-full max-w-md rounded-2xl shadow-md border border-gray-200 bg-white">
+    <div onClick={()=>nav(`/orders/${order.id}`)} className="w-full max-w-md rounded-2xl shadow-md border border-gray-200 bg-white">
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-semibold text-lg">

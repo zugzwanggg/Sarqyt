@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Clock, CreditCard, ChevronLeft } from "lucide-react";
 import { QRCodeCanvas } from "qrcode.react";
 import OrderCard from "../components/OrderCard";
-import { api } from "../App";
 import type { IOrder } from "../types";
+import { getOrderById } from "../api/order";
+import { cancelReservation } from "../api/sarqyt";
 
 const OrderPage = () => {
   const { id } = useParams<{ id: string }>();
@@ -15,8 +16,8 @@ const OrderPage = () => {
 
   const fetchOrder = async () => {
     try {
-      const res = await api.get(`/api/orders/${id}`);
-      setOrder(res.data);
+      const res = await getOrderById(id!);
+      setOrder(res);
     } catch (error) {
       console.error(error);
     } finally {
@@ -34,9 +35,9 @@ const OrderPage = () => {
 
     setIsCancelling(true);
     try {
-      await api.patch(`/api/orders/${order.id}/cancel`);
+      await cancelReservation(id!);
       alert("Order cancelled successfully");
-      fetchOrder(); // refresh order status
+      fetchOrder(); 
     } catch (error) {
       console.error(error);
       alert("Failed to cancel order");

@@ -15,6 +15,7 @@ import ChooseLocation from "./components/ChooseLocation";
 
 import { useUser } from "./context/UserContext";
 import SettingsPage from "./pages/Settings";
+import OrderPage from "./pages/OrderPage";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -53,6 +54,7 @@ function App() {
       <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
       <Route path="/shops/:id" element={<Shop/>}/>
       <Route path="/settings" element={<SettingsPage/>}/>
+      <Route path="/orders/:id" element={<OrderPage/>}/>
     </Routes>
   )
 }

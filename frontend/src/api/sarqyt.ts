@@ -40,7 +40,7 @@ export const reserveSarqyt = async (sarqyt_id:string|number,shop_id:number, quan
   return res.data;
 }
 
-export const cancelReservation =async (order_id:number) => {
+export const cancelReservation =async (order_id:number|string) => {
   const res = await api.patch('/api/reserve', {order_id});
   return res.data;
 }
