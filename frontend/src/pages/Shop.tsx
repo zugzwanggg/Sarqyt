@@ -1,132 +1,110 @@
-import { ChevronLeft, MapPin, Cake } from "lucide-react";
-import { data, useNavigate, useParams } from "react-router-dom";
+import { ChevronLeft, MapPin, Cake, Star } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import ShopSarqytCard from "../components/ShopSarqytCard";
-import {useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import type { IShop, IShopSarqytCard } from "../types";
 import { getShopById, getShopSarqytsByShopId } from "../api/shop";
 
 const Shop = () => {
-  const {id} = useParams();
+  const { id } = useParams();
   const nav = useNavigate();
 
-  const [shop, setShop] = useState<IShop|null>(null);
+  const [shop, setShop] = useState<IShop | null>(null);
   const [sarqyts, setSarqyts] = useState<IShopSarqytCard[]>([]);
 
-  const getShop =async () => {
+  const getShop = async () => {
     try {
-
       const data = await getShopById(id!);
-      setShop(data)
-
+      setShop(data);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  console.log(data);
-
-  const getShopSarqyts =async () => {
+  const getShopSarqyts = async () => {
     try {
       const data = await getShopSarqytsByShopId(id!);
-      
       setSarqyts(data);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     getShop();
     getShopSarqyts();
-  }, [id])
-  
+  }, [id]);
 
   return (
-    <div className="bg-lightGrayColor">
-      <div className="p-4 bg-white">
-        <button onClick={()=>nav(-1)}>
-          <ChevronLeft size={'2rem'} className="text-black"/>
+    <div className="bg-lightGrayColor min-h-screen">
+      {/* Hero Header */}
+      <div className="relative">
+        <img
+          src={shop?.image_url}
+          alt={shop?.name}
+          className="w-full h-48 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+        <button
+          onClick={() => nav(-1)}
+          className="absolute top-4 left-4 bg-white rounded-full p-2 shadow"
+        >
+          <ChevronLeft size={20} />
         </button>
-      </div>
-
-      <div className="px-4 border-b-2 pb-4 bg-white">
-        <div className="flex items-center gap-5">
-          <img className="w-16 h-16 rounded-full object-contain bg-white border-2 border-zinc-300" src={shop?.image_url} alt={shop?.name} />
-          <h1 className="text-xl">
-            {shop?.name}
-          </h1>
-        </div>
-      </div>
-      <div className="p-4 flex items-center text-primaryColor gap-2 bg-white pb-7">
-        <MapPin size={'1rem'}/>
-        <p className="text-lg">
-          {shop?.address}
-        </p>
-      </div>
-
-      {
-        sarqyts
-        ?
-        <div className="mt-4 p-4 bg-white">
-          <h2 className="mb-4">
-            Sarqyts from this store
-          </h2>
-          <ul className="flex gap-4 overflow-x-scroll pb-4">
-            {
-              sarqyts.map(item => {
-                return <li className="flex-shrink-0">
-                <ShopSarqytCard
-                  id={item.id}
-                  title={item.title}
-                  discounted_price={item.discounted_price}
-                  pickup_start={item.pickup_start}
-                  pickup_end={item.pickup_end} 
-                  image_url={item.image_url}
-                />
-                </li>
-              })
-            }
-            
-          
-          </ul>
-        </div>
-        :
-        ''
-      }
-      
-
-      <div className="p-4 mt-4 bg-white">
-        <h2 className="mb-4">
-          About
-        </h2>
-        <div className="flex items-center justify-evenly">
-          <div className="flex flex-col items-center font-bold gap-2 w-1/2">
-            <div className="bg-blue-400 p-4 rounded-full w-fit border-2 border-black">
-              <Cake/>
-            </div>
-            <span className="text-sm">
-              5 years
-            </span>
-            <p className="text-sm text-center">
-              Fighting food waste
-            </p>
+        <div className="absolute bottom-4 left-4 text-white">
+          <h1 className="text-2xl font-bold">{shop?.name}</h1>
+          <div className="flex items-center gap-2 text-sm opacity-90">
+            <MapPin size={14} />
+            <span>{shop?.address}</span>
           </div>
+        </div>
+      </div>
 
-          <div className="flex flex-col items-center font-bold gap-2 w-1/2">
-            <div className="bg-primaryColor p-4 rounded-full w-fit border-2 border-black">
-              <Cake/>
-            </div>
-            <span className="text-sm">
-              1000+
-            </span>
-            <p className="text-sm">
-              Meals Saved
-            </p>
+      {/* Sarqyts Section */}
+      <div className="p-4 bg-white mt-2">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-semibold text-lg">Sarqyts from this store</h2>
+          <span className="text-primaryColor text-sm cursor-pointer hover:underline">
+            See all
+          </span>
+        </div>
+
+        {sarqyts.length > 0 ? (
+          <ul className="flex gap-4 overflow-x-auto pb-2">
+            {sarqyts.map((item) => (
+              <li key={item.id} className="flex-shrink-0 w-48">
+                <ShopSarqytCard {...item} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-center text-gray-500">No sarqyts available yet.</p>
+        )}
+      </div>
+
+      {/* Stats / About */}
+      <div className="p-4 mt-3 bg-white rounded-t-2xl">
+        <h2 className="mb-4 font-semibold text-lg">About this shop</h2>
+        <div className="grid grid-cols-3 gap-4 text-center">
+          <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
+            <Cake className="text-primaryColor" />
+            <span className="font-bold">5 yrs</span>
+            <p className="text-xs text-gray-500">Active</p>
+          </div>
+          <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
+            <Star className="text-yellow-500" />
+            <span className="font-bold">{shop?.rating || "This shop has no rate yet"}</span>
+            <p className="text-xs text-gray-500">Rating</p>
+          </div>
+          <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
+            <Cake className="text-green-600" />
+            <span className="font-bold">1,000+</span>
+            <p className="text-xs text-gray-500">Meals Saved</p>
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Shop
+export default Shop;

@@ -26,7 +26,7 @@ export interface IShop {
   id: number;
   name: string;
   image_url: string;
-  rate: number;
+  rating: number;
   address: string;
 }
 
