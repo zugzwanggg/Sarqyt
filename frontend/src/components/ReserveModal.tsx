@@ -1,13 +1,24 @@
-import { X } from "lucide-react";
+import { X, Minus, Plus } from "lucide-react";
+import { useState } from "react";
 
 interface ReserveModalProps {
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (quantity: number) => void;
   title: string;
   price: string | number;
 }
 
 const ReserveModal = ({ onClose, onConfirm, title, price }: ReserveModalProps) => {
+  const [quantity, setQuantity] = useState(1);
+
+  const handleDecrease = () => {
+    if (quantity > 1) setQuantity((prev) => prev - 1);
+  };
+
+  const handleIncrease = () => {
+    setQuantity((prev) => prev + 1);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
       <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
@@ -25,6 +36,23 @@ const ReserveModal = ({ onClose, onConfirm, title, price }: ReserveModalProps) =
           <span className="text-primaryColor font-bold">{price}</span>?
         </p>
 
+        {/* Quantity Selector */}
+        <div className="flex items-center justify-between border rounded-xl px-4 py-3 mb-4">
+          <button
+            onClick={handleDecrease}
+            className="p-2 rounded-full hover:bg-gray-100 transition"
+          >
+            <Minus />
+          </button>
+          <span className="text-lg font-semibold">{quantity}</span>
+          <button
+            onClick={handleIncrease}
+            className="p-2 rounded-full hover:bg-gray-100 transition"
+          >
+            <Plus />
+          </button>
+        </div>
+
         <div className="flex gap-3 mt-6">
           <button
             onClick={onClose}
@@ -33,7 +61,7 @@ const ReserveModal = ({ onClose, onConfirm, title, price }: ReserveModalProps) =
             Cancel
           </button>
           <button
-            onClick={onConfirm}
+            onClick={() => onConfirm(quantity)}
             className="flex-1 bg-primaryColor text-white rounded-xl py-3 font-medium hover:opacity-90 transition"
           >
             Confirm

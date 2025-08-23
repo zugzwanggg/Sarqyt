@@ -12,6 +12,7 @@ import {
   addSarqytToFavorites,
   getSarqytById,
   removeSarqytFromFavorites,
+  reserveSarqyt,
 } from "../api/sarqyt";
 import type { IExtendedSarqytCard } from "../types";
 import ReserveModal from "../components/ReserveModal";
@@ -50,9 +51,17 @@ const Sarqyt = () => {
     }
   };
 
-  const handleConfirmReserve = () => {
-    setIsReserveOpen(false);
-    alert("Reservation confirmed ✅");
+  const handleConfirmReserve = async (quantity:number) => {
+
+    try {
+
+      await reserveSarqyt(id!, sarqyt?.shop_id!, quantity);
+      getSarqyt();
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsReserveOpen(false);
+    }
   };
 
   return (

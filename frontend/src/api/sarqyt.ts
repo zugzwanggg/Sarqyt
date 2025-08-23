@@ -33,3 +33,14 @@ export const removeSarqytFromFavorites = async (sarqytId:number|string) => {
   const res = await api.delete(`/api/favorites/${sarqytId}`);
   return res.data;
 }
+
+
+export const reserveSarqyt = async (sarqyt_id:string|number,shop_id:number, quantity:number) => {
+  const res = await api.post('/api/reserve', {sarqyt_id, shop_id, quantity});
+  return res.data;
+}
+
+export const cancelReservation =async (order_id:number) => {
+  const res = await api.patch('/api/reserve', {order_id});
+  return res.data;
+}
