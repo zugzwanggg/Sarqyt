@@ -126,7 +126,7 @@ const OrderPage = () => {
       </div>
 
       {/* Cancel Order button */}
-      {order.status !== "cancelled" && (
+      {order.status !== "cancelled" ? (
         <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg p-4">
           <button
             onClick={cancelOrder}
@@ -136,7 +136,10 @@ const OrderPage = () => {
             {isCancelling ? "Cancelling..." : "Cancel Order"}
           </button>
         </div>
-      )}
+      )
+      :
+      ''
+    }
     </div>
   );
 };
