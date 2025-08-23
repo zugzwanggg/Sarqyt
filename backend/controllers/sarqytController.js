@@ -97,7 +97,10 @@ export const getSarqytById = async (req,res) => {
     FROM sarqyts s
     LEFT JOIN shops ON s.shop_id = shops.id
     LEFT JOIN favorites ON favorites.sarqyt_id = s.id AND favorites.user_id = $2
-    LEFT JOIN orders ON orders.sarqyt_id = s.id AND orders.user_id = $2
+    LEFT JOIN orders 
+      ON orders.sarqyt_id = s.id 
+      AND orders.user_id = $2
+      AND orders.status NOT IN ('cancelled')
     WHERE s.id = $1;
     `, [id, userId]);
 
