@@ -7,7 +7,7 @@ import {CircleUser} from "lucide-react";
 const MobileNavbar = () => {
   return (
     <nav className="fixed pt-3 bg-white border border-2-grayColor bottom-0 left-0 w-full">
-      <ul className="grid grid-cols-4 ">
+      <ul className="grid grid-cols-4 text-sm">
         <li className="place-self-center">
           <NavLink to='/' className={({isActive}) => `${isActive ? 'text-primaryColor text-center' : 'text-zinc-400'}`}>
             <Compass className="mx-auto"/>
