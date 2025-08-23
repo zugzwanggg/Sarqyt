@@ -20,6 +20,7 @@ export interface IExtendedSarqytCard extends ISarqytCard {
   address: string;
   description: string;
   categories: string[];
+  isReserved: boolean;
 }
 
 export interface IShop {

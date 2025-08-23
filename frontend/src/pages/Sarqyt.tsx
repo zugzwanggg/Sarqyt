@@ -175,12 +175,21 @@ const Sarqyt = () => {
 
 
       <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg px-4 py-5">
-        <button
-          onClick={() => setIsReserveOpen(true)}
-          className="w-full bg-gradient-to-r from-primaryColor to-green-500 text-white font-semibold rounded-2xl py-4 text-lg shadow-md hover:opacity-90 transition"
-        >
-          Reserve
-        </button>
+        {sarqyt?.isReserved ? (
+          <button
+            disabled
+            className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+          >
+            Already Reserved
+          </button>
+        ) : (
+          <button
+            onClick={() => setIsReserveOpen(true)}
+            className="w-full bg-gradient-to-r from-primaryColor to-green-500 text-white font-semibold rounded-2xl py-4 text-lg shadow-md hover:opacity-90 transition"
+          >
+            Reserve
+          </button>
+        )}
       </div>
 
       {isReserveOpen && (
