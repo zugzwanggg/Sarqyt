@@ -14,6 +14,7 @@ import {
   removeSarqytFromFavorites,
 } from "../api/sarqyt";
 import type { IExtendedSarqytCard } from "../types";
+import ReserveModal from "../components/ReserveModal";
 
 const Sarqyt = () => {
   const { id } = useParams();
@@ -21,6 +22,7 @@ const Sarqyt = () => {
 
   const [sarqyt, setSarqyt] = useState<IExtendedSarqytCard>();
   const [textCrop, setTextCrop] = useState(true);
+  const [isReserveOpen, setIsReserveOpen] = useState(false);
 
   const getSarqyt = async () => {
     try {
@@ -46,6 +48,11 @@ const Sarqyt = () => {
     } catch (error) {
       console.log(error);
     }
+  };
+
+  const handleConfirmReserve = () => {
+    setIsReserveOpen(false);
+    alert("Reservation confirmed ✅");
   };
 
   return (
@@ -172,6 +179,15 @@ const Sarqyt = () => {
           Reserve
         </button>
       </div>
+
+      {isReserveOpen && (
+        <ReserveModal
+          onClose={() => setIsReserveOpen(false)}
+          onConfirm={handleConfirmReserve}
+          title={sarqyt?.title ?? "Unknown"}
+          price={sarqyt?.discounted_price ?? ""}
+        />
+      )}
     </div>
   );
 };
