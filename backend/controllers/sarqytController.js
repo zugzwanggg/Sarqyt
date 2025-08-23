@@ -24,13 +24,16 @@ export const getSarqytsByUsersCity = async (req,res) => {
           shops.id AS shop_id,
           shops.image_url as logo,
           shops.name AS shop
+          CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
         FROM sarqyts 
         JOIN shops ON shops.id = sarqyts.shop_id 
         LEFT JOIN sarqyt_category 
           ON sarqyt_category.sarqyt_id = sarqyts.id 
+        LEFT JOIN favorites 
+          ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $3
         WHERE shops.city = $1 
           AND sarqyt_category.category_id = $2
-      `, [city.rows[0].city, categoryId]);
+      `, [city.rows[0].city, categoryId, id]);
     } else {
       sarqyts = await db.query(`
         SELECT 
@@ -45,10 +48,13 @@ export const getSarqytsByUsersCity = async (req,res) => {
           shops.id AS shop_id,
           shops.image_url as logo,
           shops.name AS shop
+          CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
         FROM sarqyts 
-        JOIN shops ON shops.id = sarqyts.shop_id 
+        JOIN shops ON shops.id = sarqyts.shop_id
+        LEFT JOIN favorites 
+          ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $2 
         WHERE shops.city = $1
-      `, [city.rows[0].city]);
+      `, [city.rows[0].city, id]);
     }    
 
     res.status(200).json(sarqyts.rows);
