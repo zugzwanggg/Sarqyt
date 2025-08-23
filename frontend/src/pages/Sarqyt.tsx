@@ -53,7 +53,7 @@ const Sarqyt = () => {
       {/* Hero section */}
       <div className="relative">
         <img
-          className="aspect-video w-full object-cover rounded-b-3xl"
+          className="aspect-video w-full object-cover"
           src={sarqyt?.image_url}
           alt={sarqyt?.title}
         />
@@ -81,13 +81,12 @@ const Sarqyt = () => {
           </button>
         </div>
 
-        {/* Bottom overlay with title + shop */}
         <div className="absolute bottom-4 left-4 flex items-center gap-4 text-white">
           <Link to={`/shops/${sarqyt?.shop_id}`}>
             <img
-              className="w-16 h-16 rounded-full object-cover border-2 border-white shadow-md"
+              className="w-16 h-16 shrink-0 rounded-full object-cover border-2 border-white shadow-md"
               src={sarqyt?.shop_img}
-              alt=""
+              alt={sarqyt?.title}
             />
           </Link>
           <h1 className="text-2xl font-bold drop-shadow-md">{sarqyt?.title}</h1>
