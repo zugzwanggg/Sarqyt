@@ -47,7 +47,7 @@ export const getSarqytsByUsersCity = async (req,res) => {
           sarqyts.image_url,
           shops.id AS shop_id,
           shops.image_url as logo,
-          shops.name AS shop
+          shops.name AS shop,
           CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
         FROM sarqyts 
         JOIN shops ON shops.id = sarqyts.shop_id
