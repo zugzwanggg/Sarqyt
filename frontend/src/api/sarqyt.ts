@@ -21,3 +21,15 @@ export const getSarqytCategories = async () => {
   const res = await api.get(`/api/categories`);
   return res.data;
 }
+
+
+
+export const addSarqytToFavorites = async (sarqytId:number|string) => {
+  const res = await api.post('/api/favorites', {sarqytId});
+  return res.data;
+}
+
+export const removeSarqytFromFavorites = async (sarqytId:number|string) => {
+  const res = await api.delete(`/api/favorites/${sarqytId}`);
+  return res.data;
+}

@@ -2,6 +2,7 @@ import {Heart} from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ISarqytCard } from "../types";
+import { addSarqytToFavorites, removeSarqytFromFavorites } from "../api/sarqyt";
 
 const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discounted_price, image_url, quantity_available}:ISarqytCard) => {
   const [isFavorite, setIsFavorite] = useState(false);
@@ -13,8 +14,17 @@ const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discou
     nav(`/sarqyts/${id}`)
   }
 
-  const addToFavorites = (e:React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+  const handleHeartClick = async (e:React.MouseEvent<SVGSVGElement, MouseEvent>) => {
     e.stopPropagation();
+    try {
+      if (isFavorite) {
+        await addSarqytToFavorites(id)
+      } else {
+        await removeSarqytFromFavorites(id);
+      }
+    } catch (error) {
+      console.log(error);
+    }
     setIsFavorite(prev=>!prev)
   }
   
@@ -25,7 +35,7 @@ const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discou
         <h3>
           {title}
         </h3>
-        <Heart onClick={(e)=>addToFavorites(e)} className={`text-primaryColor ${isFavorite ? 'fill-primaryColor' : ''}`}/>
+        <Heart onClick={(e)=>handleHeartClick(e)} className={`text-primaryColor ${isFavorite ? 'fill-primaryColor' : ''}`}/>
       </div>
       <p>
         Collect today: {pickup_start}-{pickup_end}
