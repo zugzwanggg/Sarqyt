@@ -111,7 +111,24 @@ export const getUserFavorites = async (req,res) => {
   try {
     const {id} = req.user;
 
-    const favorites = await db.query("SELECT sarqyts.id AS sarqyt_id, shops.id AS shop_id, shops.image_url as logo, shops.name AS shop, sarqyts.image_url as cover, sarqyts.title AS title FROM favorites JOIN sarqyts ON sarqyts.id = favorites.sarqyt_id JOIN shops ON shops.id = sarqyts.shop_id WHERE favorites.user_id = $1 ", [id]);
+    const favorites = await db.query(`
+    SELECT DISTINCT
+      sarqyts.id AS id,
+      sarqyts.title,
+      sarqyts.original_price,
+      sarqyts.discounted_price,
+      sarqyts.quantity_available,
+      sarqyts.pickup_start,
+      sarqyts.pickup_end,
+      sarqyts.image_url,
+      shops.id AS shop_id,
+      shops.image_url as logo,
+      shops.name AS shop
+    FROM sarqyts 
+    JOIN shops ON shops.id = sarqyts.shop_id 
+    JOIN favorites ON favorites.sarqyt_id = sarqyts.id
+    WHERE favorites.user_id = $1
+  `, [id]);
 
     res.status(200).json(favorites.rows);
   } catch (error) {
