@@ -1,119 +1,131 @@
 import { useState, useEffect } from "react";
-import {LocateFixed} from "lucide-react";
+import { LocateFixed } from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
 import { getSarqytCategories, getSarqyts } from "../api/sarqyt";
 import type { ICategory, ISarqytCard } from "../types";
 
-
 const Home = () => {
-  const [category, setCategory] = useState<number|null>(null);
+  const [category, setCategory] = useState<number | null>(null);
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
-  const {user} = useUser();
-  const {setIsSelectLocation} = useUser();
+  const { user, setIsSelectLocation } = useUser();
   const [categories, setCategories] = useState<ICategory[]>([]);
-  
-  
+
   const getCategories = async () => {
     try {
-
       const res = await getSarqytCategories();
-
       setCategories(res);
-
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const getSarqytsData = async () => {
     try {
-
       const data = await getSarqyts(category);
-      console.log(data);
-      
-      setSarqyts(data)
-
+      setSarqyts(data);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
     getCategories();
-  }, [])
+  }, []);
 
-  useEffect(()=> {
+  useEffect(() => {
     getSarqytsData();
-  }, [category])
-  
+  }, [category]);
 
   return (
-    <div>
-      <div onClick={()=>setIsSelectLocation(true)} className="cursor-pointer flex items-center py-5 gap-4">
+    <div className="px-4 pb-10">
+      {/* Top bar */}
+      <div
+        onClick={() => setIsSelectLocation(true)}
+        className="sticky top-0 z-10 flex items-center gap-3 bg-white py-4 shadow-sm cursor-pointer"
+      >
         <span className="bg-lightGreen w-10 h-10 grid place-content-center rounded-full">
-          <LocateFixed className="text-primaryColor"/>
+          <LocateFixed className="text-primaryColor" />
         </span>
         <div className="flex items-center gap-2 overflow-hidden">
-          <p className="font-semibold text-nowrap">
-            Chosen Location
-          </p>
-          <p className="text-nowrap">
-            {user?.city||''}
-          </p> 
+          <p className="font-semibold text-nowrap">Chosen Location:</p>
+          <p className="truncate text-gray-600">{user?.city || "Select"}</p>
         </div>
       </div>
 
-      <ul className="flex items-center gap-2 overflow-x-auto mb-5">
-        <li onClick={()=> setCategory(null)} className={`${category === null ? 'bg-primaryColor text-white' : 'bg-gray-200 text-black'} py-2 px-4 w-fit rounded`}>
+      {/* Greeting */}
+      <div className="mt-6">
+        <h1 className="text-2xl font-bold">
+          Hey {user?.name || "Foodie"} 👋
+        </h1>
+        <p className="text-gray-500">Find surprises waiting near you</p>
+      </div>
+
+      {/* Categories */}
+      <ul className="flex items-center gap-2 overflow-x-auto mt-5 pb-2 no-scrollbar">
+        <li
+          onClick={() => setCategory(null)}
+          className={`whitespace-nowrap px-4 py-2 rounded-full border transition cursor-pointer ${
+            category === null
+              ? "bg-primaryColor text-white border-primaryColor"
+              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+          }`}
+        >
           All
         </li>
-        {
-          categories.map(item => (
-            <li onClick={()=> setCategory(item.id)} className={`${category === item.id ? 'bg-primaryColor text-white' : 'bg-gray-200 text-black'} py-2 px-4 w-fit rounded`}>
-              <p className="text-nowrap">
-                {item.name}
-              </p>
-            </li>
-          ))
-        }
+        {categories.map((item) => (
+          <li
+            key={item.id}
+            onClick={() => setCategory(item.id)}
+            className={`whitespace-nowrap px-4 py-2 rounded-full border transition cursor-pointer ${
+              category === item.id
+                ? "bg-primaryColor text-white border-primaryColor"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+            }`}
+          >
+            {item.name}
+          </li>
+        ))}
       </ul>
 
-
-      <div className="flex items-center justify-between mb-4">
-        <h2>
-          Sarqyts in your area
-        </h2>
-        <Link className="font-semibold text-primaryColor underline underline-offset-1 hover:opacity-50" to="/all?type=city">
-          See all
+      {/* Section header */}
+      <div className="flex items-center justify-between mt-8 mb-4">
+        <h2 className="text-xl font-semibold">Sarqyts in your area</h2>
+        <Link
+          className="font-medium text-primaryColor hover:opacity-70"
+          to="/all?type=city"
+        >
+          See all →
         </Link>
       </div>
-      <ul className="flex overflow-x-auto gap-4">
-        {
-          sarqyts.map(item => {
-            return <li className="flex-shrink-0">
-              <SarqytCard
-                key={item.id}
-                id={item.id}
-                title={item.title}
-                pickup_start={item.pickup_start}
-                pickup_end={item.pickup_end}
-                image_url={item.image_url}
-                quantity_available={item.quantity_available}
-                original_price={item.original_price}
-                discounted_price={item.discounted_price}
-                isFavorite={item.isFavorite}
-                getSarqytsData={getSarqytsData}
-              />
-            </li>
-          })
-        }
-        
-      </ul>
-      
-    </div>
-  )
-}
 
-export default Home
+      {/* Sarqyt list */}
+      {sarqyts.length === 0 ? (
+        <p className="text-center text-gray-500 mt-10">
+          No sarqyts found in this category 🥲
+        </p>
+      ) : (
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {sarqyts.map((item) => (
+            <SarqytCard
+              key={item.id}
+              id={item.id}
+              title={item.title}
+              pickup_start={item.pickup_start}
+              pickup_end={item.pickup_end}
+              image_url={item.image_url}
+              quantity_available={item.quantity_available}
+              original_price={item.original_price}
+              discounted_price={item.discounted_price}
+              isFavorite={item.isFavorite}
+              getSarqytsData={getSarqytsData}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
+
+export default Home;
