@@ -73,3 +73,19 @@ CREATE TABLE sarqyt_category (
   sarqyt_id INT REFERENCES sarqyts(id),
   PRIMARY KEY(category_id, item_id)
 );
+
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  user_id INT NOT NULL REFERENCES users(id), 
+  sarqyt_id INT NOT NULL REFERENCES sarqyts(id),
+  shop_id INT NOT NULL REFERENCES shops(id), 
+  quantity INT NOT NULL DEFAULT 1,
+  total_price DECIMAL NOT NULL, 
+  status VARCHAR(50) NOT NULL DEFAULT 'pending', 
+  payment_method VARCHAR(50)
+  payment_status VARCHAR(50) DEFAULT 'unpaid',
+  pickup_code VARCHAR(10),
+  pickup_time TIMESTAMP,
+  created_at TIMESTAMP DEFAULT now(),
+  updated_at TIMESTAMP DEFAULT now()
+);
