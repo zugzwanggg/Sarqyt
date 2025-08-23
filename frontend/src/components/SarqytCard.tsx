@@ -2,7 +2,6 @@ import {Heart} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { ISarqytCard } from "../types";
 import { addSarqytToFavorites, getSarqyts, removeSarqytFromFavorites } from "../api/sarqyt";
-import { getUserFavorites } from "../api/user";
 
 const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discounted_price, image_url, quantity_available, isFavorite}:ISarqytCard) => {
   const nav = useNavigate();
@@ -22,7 +21,6 @@ const SarqytCard = ({id, title, pickup_start, pickup_end, original_price, discou
         await removeSarqytFromFavorites(id);
       }
       await getSarqyts(null);
-      await getUserFavorites();
     } catch (error) {
       console.log(error);
     }

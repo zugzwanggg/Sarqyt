@@ -2,7 +2,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import {useEffect, useState} from "react";
 
 import {ChevronLeft, Heart, Clock, Star, MapPin, ChevronRight, ChevronDown} from "lucide-react";
-import { addSarqytToFavorites, getSarqytById, getSarqyts, removeSarqytFromFavorites } from "../api/sarqyt";
+import { addSarqytToFavorites, getSarqytById, removeSarqytFromFavorites } from "../api/sarqyt";
 import type { IExtendedSarqytCard } from "../types";
 import { getUserFavorites } from "../api/user";
 
@@ -34,7 +34,7 @@ const Sarqyt = () => {
       } else {
         await removeSarqytFromFavorites(id!);
       }
-      await getSarqyts(null);
+      await getSarqyt();
       await getUserFavorites();
     } catch (error) {
       console.log(error);
