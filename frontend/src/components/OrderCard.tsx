@@ -73,12 +73,6 @@ export default function OrderCard({ order }: { order: IOrder }) {
             </span>
           )}
         </div>
-
-        {order.status === "paid" && (
-          <button className="w-full mt-2 rounded-xl bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4">
-            Mark as Completed
-          </button>
-        )}
       </div>
     </div>
   );

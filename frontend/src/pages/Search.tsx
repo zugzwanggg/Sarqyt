@@ -29,7 +29,7 @@ const Search = () => {
 
 
   return (
-    <>
+    <div className="px-4 ">
       <SearchBar onSearch={()=>console.log('')}/>
 
       <ul className="flex flex-col mt-10 gap-4">
@@ -56,7 +56,7 @@ const Search = () => {
         }
         
       </ul>
-    </>
+    </div>
   )
 }
 

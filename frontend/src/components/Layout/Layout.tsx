@@ -25,7 +25,7 @@ const Layout = () => {
 
       {/* <Header/> */}
 
-      <div className="px-4 relative pb-16">
+      <div className="relative pb-16">
 
         {
           onboardingDone

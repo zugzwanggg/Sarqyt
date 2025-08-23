@@ -39,7 +39,7 @@ const Home = () => {
   }, [category]);
 
   return (
-    <div className="pb-10">
+    <div className="px-4 pb-10">
       {/* Top bar */}
       <div
         onClick={() => setIsSelectLocation(true)}

@@ -57,7 +57,7 @@ const Profile = () => {
   const { user } = useUser();
 
   return (
-    <div className="py-6">
+    <div className="px-4  py-6">
       {/* Profile Header */}
       <div className="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm">
         <div className="flex items-center gap-4">

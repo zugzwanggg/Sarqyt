@@ -26,7 +26,7 @@ const Favorites = () => {
   }, [])
 
   return (
-    <>
+    <div className="px-4 ">
       <h1 className="text-2xl mt-8 mb-4">
         Favorites
       </h1>
@@ -71,7 +71,7 @@ const Favorites = () => {
 
       
       
-    </>
+    </div>
   )
 }
 
