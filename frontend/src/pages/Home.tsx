@@ -3,7 +3,7 @@ import {LocateFixed} from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
-import { getSarqytCategories, getSarqyts } from "../api/user";
+import { getSarqytCategories, getSarqyts } from "../api/sarqyt";
 import type { ICategory, ISarqytCard } from "../types";
 
 

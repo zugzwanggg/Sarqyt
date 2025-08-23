@@ -1,77 +1,29 @@
 import { UtensilsCrossed } from "lucide-react"
 import SarqytCard from "../components/SarqytCard"
 import { Link } from "react-router-dom"
-
-const sarqyts = [
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  },
-  {
-    "id":1,
-    "shop_id":1,
-    "title":"Surprise Doner Combo",
-    "original_price":"1500.00",
-    "discounted_price":"500.00",
-    "quantity_available":10,
-    "pickup_start":"18:00:00",
-    "pickup_end":"20:00:00",
-    "available_until":"2025-07-24 15:16:34.339331",
-    "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
-  }
-]
+import { useEffect, useState } from "react"
+import { getUserFavorites } from "../api/user"
+import type { ISarqytCard } from "../types"
 
 
 const Favorites = () => {
+  const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([])
+
+
+  const getFavorites = async () => {
+    try {
+
+      const data = await getUserFavorites();
+      setSarqyts(data)
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=> {
+    getFavorites()
+  }, [])
 
   return (
     <>
