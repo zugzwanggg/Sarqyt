@@ -123,7 +123,8 @@ export const getUserFavorites = async (req,res) => {
       sarqyts.image_url,
       shops.id AS shop_id,
       shops.image_url as logo,
-      shops.name AS shop
+      shops.name AS shop,
+      true AS "isFavorite"
     FROM sarqyts 
     JOIN shops ON shops.id = sarqyts.shop_id 
     JOIN favorites ON favorites.sarqyt_id = sarqyts.id

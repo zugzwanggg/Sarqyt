@@ -68,6 +68,7 @@ export const getSarqytsByUsersCity = async (req,res) => {
 
 export const getSarqytById = async (req,res) => {
   try {
+    const {id:userId} = req.user;
     const {id} = req.params;
 
     const sarqyt = await db.query(`
@@ -85,6 +86,7 @@ export const getSarqytById = async (req,res) => {
         shops.image_url AS shop_img,
         shops.address,
         s.created_at,
+        CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
         (
           SELECT json_agg(c.name)
           FROM sarqyt_category sc
@@ -93,8 +95,9 @@ export const getSarqytById = async (req,res) => {
         ) AS categories
     FROM sarqyts s
     LEFT JOIN shops ON s.shop_id = shops.id
+    LEFT JOIN favorites ON favorites.sarqyt_id = s.id AND favorites.user_id = $2
     WHERE s.id = $1;
-    `, [id]);
+    `, [id, userId]);
 
     if (sarqyt.rows.length <= 0) {
       return res.status(404).json({
