@@ -35,7 +35,7 @@ const Favorites = () => {
       {
         sarqyts.length <= 0
         ?
-        <div className="h-screen text-center absolute  left-1/2 -translate-x-1/2 top-0 py-64">
+        <div className="h-screen text-center absolute  left-1/2 -translate-x-1/2 top-0 py-20">
           <UtensilsCrossed size={'4rem'} className="mx-auto mb-6 text-primaryColor"/>
           <h2 className="text-lg">
             You have no favorites

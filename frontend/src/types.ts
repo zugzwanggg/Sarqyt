@@ -60,3 +60,27 @@ export interface IShopSarqytCard {
   pickup_end: string;
   image_url: string;
 }
+
+export interface IOrder {
+  id: number;
+  quantity: number;
+  total_price: string;
+  status: string;
+  payment_method: string;
+  payment_status: string;
+  pickup_code?: string;
+  pickup_time?: string;
+  created_at: string;
+  updated_at?: string;
+
+  sarqyt_id: number;
+  sarqyt_title: string;
+  sarqyt_image: string;
+  discounted_price: string;
+  original_price: string;
+
+  shop_id: number;
+  shop_name: string;
+  shop_image: string;
+  shop_address: string;
+}
