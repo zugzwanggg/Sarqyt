@@ -87,6 +87,7 @@ export const getSarqytById = async (req,res) => {
         shops.address,
         s.created_at,
         CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
+        CASE WHEN orders.sarqyt_id IS NOT NULL THEN true ELSE false END As "isReserved",
         (
           SELECT json_agg(c.name)
           FROM sarqyt_category sc
@@ -96,6 +97,7 @@ export const getSarqytById = async (req,res) => {
     FROM sarqyts s
     LEFT JOIN shops ON s.shop_id = shops.id
     LEFT JOIN favorites ON favorites.sarqyt_id = s.id AND favorites.user_id = $2
+    LEFT JOIN orders ON orders.sarqyt_id = s.id AND orders.user_id = $2
     WHERE s.id = $1;
     `, [id, userId]);
 
