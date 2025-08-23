@@ -13,7 +13,8 @@ const sarqyts = [
     "pickup_end":"20:00:00",
     "available_until":"2025-07-24 15:16:34.339331",
     "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
+    "created_at":"2025-07-23 15:16:34.339331",
+    "isFavorite": false
   },
   {
     "id":1,
@@ -26,7 +27,8 @@ const sarqyts = [
     "pickup_end":"20:00:00",
     "available_until":"2025-07-24 15:16:34.339331",
     "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
+    "created_at":"2025-07-23 15:16:34.339331",
+    "isFavorite": false
   },
   {
     "id":1,
@@ -39,7 +41,8 @@ const sarqyts = [
     "pickup_end":"20:00:00",
     "available_until":"2025-07-24 15:16:34.339331",
     "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
+    "created_at":"2025-07-23 15:16:34.339331",
+    "isFavorite": false
   },
   {
     "id":1,
@@ -52,7 +55,8 @@ const sarqyts = [
     "pickup_end":"20:00:00",
     "available_until":"2025-07-24 15:16:34.339331",
     "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
+    "created_at":"2025-07-23 15:16:34.339331",
+    "isFavorite": false
   },
   {
     "id":1,
@@ -65,7 +69,8 @@ const sarqyts = [
     "pickup_end":"20:00:00",
     "available_until":"2025-07-24 15:16:34.339331",
     "image_url":"https://wallpaperaccess.com/full/9986536.jpg",
-    "created_at":"2025-07-23 15:16:34.339331"
+    "created_at":"2025-07-23 15:16:34.339331",
+    "isFavorite": false
   }
 ]
 
@@ -90,6 +95,7 @@ const Search = () => {
                 quantity_available={item.quantity_available}
                 original_price={item.original_price}
                 discounted_price={item.discounted_price}
+                isFavorite={item.isFavorite}
               />
               
             </li>
