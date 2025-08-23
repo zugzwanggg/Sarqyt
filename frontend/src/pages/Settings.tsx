@@ -1,9 +1,22 @@
+import { ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
+
 const SettingsPage = () => {
   const { user, setIsSelectLocation } = useUser();
+  const navigate = useNavigate();
 
   return (
     <div className="p-4 space-y-6">
+      {/* Go Back */}
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-gray-600 mb-4"
+      >
+        <ChevronLeft className="w-5 h-5" />
+        <span className="text-sm font-medium">Back</span>
+      </button>
+
       {/* Profile Section */}
       <section className="bg-white shadow rounded-2xl p-4">
         <div className="flex items-center gap-4">
