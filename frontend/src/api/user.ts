@@ -6,7 +6,7 @@ export const getUserFavorites =async () => {
   return res.data;
 }
 
-export const getUserOrder =async () => {
+export const getUserOrders =async () => {
   const res = await api.get('/api/orders');
   return res.data;
 }
