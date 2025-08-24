@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { LocateFixed } from "lucide-react";
+import { ChevronDown, LocateFixed } from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
@@ -76,6 +76,7 @@ const Home = () => {
           <p className="font-semibold text-nowrap">Chosen Location:</p>
           <p className="truncate text-gray-600">{user?.city || "Select"}</p>
         </div>
+        <ChevronDown/>
       </div>
 
       {/* Greeting */}
