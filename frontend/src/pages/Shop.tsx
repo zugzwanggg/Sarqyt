@@ -70,9 +70,9 @@ const Shop = () => {
         </div>
 
         {sarqyts.length > 0 ? (
-          <ul className="flex gap-4 overflow-x-auto pb-2">
+          <ul className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
             {sarqyts.map((item) => (
-              <li key={item.id} className="flex-shrink-0 w-48">
+              <li key={item.id} className="flex-shrink-0 w-64">
                 <ShopSarqytCard {...item} />
               </li>
             ))}
