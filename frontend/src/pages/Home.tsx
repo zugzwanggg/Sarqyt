@@ -82,7 +82,7 @@ const Home = () => {
       {/* Greeting */}
       <div className="mt-6">
         <h1 className="text-2xl font-bold">
-          Hey {user?.name || "Foodie"} 👋
+          Hey {user?.username || "User"} 👋
         </h1>
         <p className="text-gray-500">Find surprises waiting near you</p>
       </div>
