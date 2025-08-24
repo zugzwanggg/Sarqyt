@@ -2,6 +2,7 @@ import { Heart } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import type { ISarqytCard } from "../types";
 import { addSarqytToFavorites, removeSarqytFromFavorites } from "../api/sarqyt";
+import {format} from "date-fns";
 
 const SarqytCard = ({
   id,
@@ -65,7 +66,10 @@ const SarqytCard = ({
       <div className="p-3 space-y-2">
         <h3 className="text-lg font-semibold line-clamp-1">{title}</h3>
         <p className="text-sm text-gray-500">
-          Collect today: <span className="font-medium">{pickup_start}–{pickup_end}</span>
+          Collect today: 
+          <span className="font-medium">
+            {format(new Date(pickup_start), "HH:mm")}–{format(new Date(pickup_end), "HH:mm")}
+          </span>
         </p>
 
         <div className="flex justify-between items-center mt-2">

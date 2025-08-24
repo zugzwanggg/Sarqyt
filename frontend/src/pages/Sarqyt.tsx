@@ -16,6 +16,7 @@ import {
 } from "../api/sarqyt";
 import type { IExtendedSarqytCard } from "../types";
 import ReserveModal from "../components/ReserveModal";
+import {format} from "date-fns";
 
 const Sarqyt = () => {
   const { id } = useParams();
@@ -124,7 +125,7 @@ const Sarqyt = () => {
             <p className="text-sm">
               Collect:{" "}
               <span className="font-medium">
-                {sarqyt?.pickup_start} – {sarqyt?.pickup_end}
+              {format(new Date(sarqyt?.pickup_start!), "HH:mm")}–{format(new Date(sarqyt?.pickup_end!), "HH:mm")}
               </span>
             </p>
           </div>
