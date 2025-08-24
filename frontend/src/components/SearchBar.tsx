@@ -1,18 +1,26 @@
-import { Search, SlidersHorizontal, X, Clock, Leaf } from "lucide-react";
+import { Search, SlidersHorizontal, X, Clock } from "lucide-react";
 import { useState } from "react";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
-  onFilter: (filters: any) => void;
+  onFilter: (query: string, period:string) => void;
 }
 
 const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState<string>("");
+
+  const periods = ["morning", "afternoon", "evening"];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchValue);
+  };
+
+  const handleApplyFilters = () => {
+    onFilter(searchValue, selectedPeriod);
+    setIsFilterOpen(false);
   };
 
   return (
@@ -63,55 +71,38 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
                 <h4 className="font-medium">Pickup Time</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <button
-                  onClick={() => onFilter({ pickupTime: 'morning' })}
-                  className="px-3 py-2 rounded-md text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Morning
-                </button>
-                <button
-                  onClick={() => onFilter({ pickupTime: 'afternoon' })}
-                  className="px-3 py-2 rounded-md text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Afternoon
-                </button>
-                <button
-                  onClick={() => onFilter({ pickupTime: 'evening' })}
-                  className="px-3 py-2 rounded-md text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Evening
-                </button>
+                {periods.map((period) => (
+                  <button
+                    key={period}
+                    onClick={() => setSelectedPeriod(period)}
+                    className={`px-3 py-2 rounded-md text-sm border transition
+                      ${
+                        selectedPeriod === period
+                          ? "bg-primaryColor text-white border-primaryColor"
+                          : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
+                      }`}
+                  >
+                    {period}
+                  </button>
+                ))}
               </div>
             </div>
 
-            {/* Dietary Preferences */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Leaf size={18} className="text-green-600" />
-                <h4 className="font-medium">Dietary Preferences</h4>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => onFilter({ dietary: 'vegetarian' })}
-                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Vegetarian
-                </button>
-                <button
-                  onClick={() => onFilter({ dietary: 'vegan' })}
-                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Vegan
-                </button>
-                <button
-                  onClick={() => onFilter({ dietary: 'glutenFree' })}
-                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Gluten-Free
-                </button>
-              </div>
+            {/* Apply Button */}
+            <div className="flex justify-end">
+              <button
+                onClick={handleApplyFilters}
+                disabled={!selectedPeriod}
+                className={`px-4 py-2 rounded-lg font-medium transition
+                  ${
+                    selectedPeriod
+                      ? "bg-primaryColor text-white hover:bg-primaryColor/90"
+                      : "bg-gray-200 text-gray-500 cursor-not-allowed"
+                  }`}
+              >
+                Apply Filters
+              </button>
             </div>
-
           </div>
         </div>
       )}

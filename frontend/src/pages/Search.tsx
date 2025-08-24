@@ -24,7 +24,7 @@ const Search = () => {
   const handleSearch = async (query: string) => {
     try {
       setLoading(true);
-      const data = await search(query);
+      const data = await search(query, '');
       setSarqyts(data);
     } catch (error) {
       console.log(error);
@@ -32,6 +32,18 @@ const Search = () => {
       setLoading(false);
     }
   };
+
+  const handleFilter =async (query: string, period:string) => {
+    try {
+      setLoading(true);
+      const data = await search(query, period);
+      setSarqyts(data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
     getSarqytsData();
@@ -41,7 +53,7 @@ const Search = () => {
     <div className="px-4 pb-10">
       {/* Search Bar */}
       <div className="sticky top-0 bg-white z-10 py-3">
-        <SearchBar onSearch={handleSearch} onFilter={()=>console.log('')}
+        <SearchBar onSearch={handleSearch} onFilter={handleFilter}
          />
       </div>
 
