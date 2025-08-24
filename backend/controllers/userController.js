@@ -205,41 +205,58 @@ export const getCities = async (req, res) => {
 
 export const search = async (req,res) => {
   try {
+    const { q = "", time } = req.query;
+    const { id } = req.user;
 
-    const {q, min, max} =req.query;
+    const city = (await db.query(
+      "SELECT city FROM users WHERE id = $1", 
+      [id]
+    )).rows[0].city;
 
-    const {id} = req.user;
-    const city = (await db.query("SELECT city FROM users WHERE id = $1", [id])).rows[0].city;
+    const timeConditions = {
+      morning:  ["06:00", "12:00"],
+      afternoon:["12:00", "18:00"],
+      evening:  ["18:00", "23:59"]
+    };
+
+    let timeFilter = "";
+    let params = [`%${q}%`, id, city];
+
+    if (time && timeConditions[time]) {
+      const [start, end] = timeConditions[time];
+      params.push(start, end);
+      timeFilter = `AND s.pickup_start >= $4 AND s.pickup_start < $5`;
+    }
 
     const searchData = await db.query(`
-    SELECT 
-      s.id,
-      s.shop_id,
-      s.title,
-      s.description,
-      s.original_price,
-      s.discounted_price,
-      s.quantity_available,
-      s.pickup_start,
-      s.pickup_end,
-      s.image_url,
-      shops.image_url AS logo,
-      shops.name AS shop,
-      shops.address,
-      s.created_at,
-      CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
-      CASE WHEN orders.sarqyt_id IS NOT NULL THEN true ELSE false END As "isReserved",
-      CASE
-        WHEN s.available_until < NOW() THEN 'expired'
-        WHEN s.quantity_available = 0 THEN 'sold_out'
-        ELSE 'active'
-      END AS status,
-      (
-        SELECT json_agg(c.name)
-        FROM sarqyt_category sc
-        JOIN categories c ON c.id = sc.category_id
-        WHERE sc.sarqyt_id = s.id
-      ) AS categories
+      SELECT 
+        s.id,
+        s.shop_id,
+        s.title,
+        s.description,
+        s.original_price,
+        s.discounted_price,
+        s.quantity_available,
+        s.pickup_start,
+        s.pickup_end,
+        s.image_url,
+        shops.image_url AS logo,
+        shops.name AS shop,
+        shops.address,
+        s.created_at,
+        CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
+        CASE WHEN orders.sarqyt_id IS NOT NULL THEN true ELSE false END As "isReserved",
+        CASE
+          WHEN s.available_until < NOW() THEN 'expired'
+          WHEN s.quantity_available = 0 THEN 'sold_out'
+          ELSE 'active'
+        END AS status,
+        (
+          SELECT json_agg(c.name)
+          FROM sarqyt_category sc
+          JOIN categories c ON c.id = sc.category_id
+          WHERE sc.sarqyt_id = s.id
+        ) AS categories
       FROM sarqyts s
       LEFT JOIN shops ON s.shop_id = shops.id
       LEFT JOIN favorites ON favorites.sarqyt_id = s.id AND favorites.user_id = $2
@@ -247,13 +264,15 @@ export const search = async (req,res) => {
         ON orders.sarqyt_id = s.id 
         AND orders.user_id = $2
         AND orders.status NOT IN ('canceled')
-      WHERE s.title ILIKE $1 OR shops.name ILIKE $1
-    `, [`%${q}%`, id]);
+      WHERE (s.title ILIKE $1 OR shops.name ILIKE $1) 
+      AND shops.city = $3
+      ${timeFilter}
+    `, params);
 
-    res.status(200).json(searchData.rows)
+    res.status(200).json(searchData.rows);
     
   } catch (error) {
     console.error("Error at search:", error);
     res.status(500).json({ message: error.message });
   }
-}
+};
