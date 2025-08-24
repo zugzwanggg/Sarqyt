@@ -103,7 +103,7 @@ const Sarqyt = () => {
         <div className="absolute bottom-4 left-4 flex items-center gap-4 text-white">
           <Link to={`/shops/${sarqyt?.shop_id}`}>
             <img
-              className="w-16 h-16 shrink-0 rounded-full object-cover border-2 border-white shadow-md"
+              className="min-w-14 min-h-14 w-16 h-16 shrink-0 rounded-full object-cover border-2 border-white shadow-md"
               src={sarqyt?.shop_img}
               alt={sarqyt?.title}
             />
