@@ -108,7 +108,7 @@ const Sarqyt = () => {
               alt={sarqyt?.title}
             />
           </Link>
-          <h1 className="text-2xl font-bold drop-shadow-md">{sarqyt?.title}</h1>
+          <h1 className="text-xl font-bold drop-shadow-md">{sarqyt?.title}</h1>
         </div>
       </div>
 
