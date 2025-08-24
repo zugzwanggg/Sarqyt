@@ -35,7 +35,7 @@ export const getSarqytsByUsersCity = async (req, res) => {
       JOIN shops sh ON sh.id = s.shop_id
       LEFT JOIN favorites f ON f.sarqyt_id = s.id AND f.user_id = $2
       LEFT JOIN sarqyt_category sc ON sc.sarqyt_id = s.id
-      WHERE sh.city = $1
+      WHERE sh.city = $1 AND s.pickup_end > NOW()
     `;
 
     const params = [city, id];
