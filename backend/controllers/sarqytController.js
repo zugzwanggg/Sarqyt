@@ -6,83 +6,18 @@ const getUserCity = async (userId) => {
   return res.rows[0]?.city;
 };
 
-
-export const getSarqytsByUsersCity = async (req,res) => {
-  try {
-    
-    const {id} = req.user;
-    const {categories = ''} = req.query;
-
-    const city = await getUserCity(id);
-
-    let sarqyts;
-    if (categories) {
-
-      const categoriesArr = Array.isArray(categories) ? categories : categories.split(',').map(Number);
-
-      sarqyts = await db.query(`
-        SELECT 
-          sarqyts.id AS id,
-          sarqyts.title,
-          sarqyts.original_price,
-          sarqyts.discounted_price,
-          sarqyts.quantity_available,
-          sarqyts.pickup_start,
-          sarqyts.pickup_end,
-          sarqyts.image_url,
-          shops.id AS shop_id,
-          shops.image_url as logo,
-          shops.name AS shop,
-          CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
-        FROM sarqyts 
-        JOIN shops ON shops.id = sarqyts.shop_id 
-        LEFT JOIN sarqyt_category 
-          ON sarqyt_category.sarqyt_id = sarqyts.id 
-        LEFT JOIN favorites 
-          ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $3
-        WHERE shops.city = $1 
-          AND sarqyt_category.category_id = ANY($2::int[])
-      `, [city, categoriesArr, id]);
-    } else {
-      sarqyts = await db.query(`
-        SELECT 
-          sarqyts.id AS id,
-          sarqyts.title,
-          sarqyts.original_price,
-          sarqyts.discounted_price,
-          sarqyts.quantity_available,
-          sarqyts.pickup_start,
-          sarqyts.pickup_end,
-          sarqyts.image_url,
-          shops.id AS shop_id,
-          shops.image_url as logo,
-          shops.name AS shop,
-          CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
-        FROM sarqyts 
-        JOIN shops ON shops.id = sarqyts.shop_id
-        LEFT JOIN favorites 
-          ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $2 
-        WHERE shops.city = $1
-      `, [city, id]);
-    }    
-
-    res.status(200).json(sarqyts.rows);
-  } catch (error) {
-    console.log('Error at getSarqytByUsersCity:', error.message + '\n' + error.stack);
-    res.status(500).json({
-      message: error.message
-    })
-  }
-}
-
-export const getNewestSarqyts = async (req, res) => {
+export const getSarqytsByUsersCity = async (req, res) => {
   try {
     const { id } = req.user;
-    const { limit = 5 } = req.query; 
+    const { categories = "" } = req.query;
 
     const city = await getUserCity(id);
 
-    const sarqyts = await db.query(`
+    const categoriesArr = categories
+      ? (Array.isArray(categories) ? categories : categories.split(",").map(Number))
+      : [];
+
+    let query = `
       SELECT 
         s.id,
         s.title,
@@ -99,14 +34,74 @@ export const getNewestSarqyts = async (req, res) => {
       FROM sarqyts s
       JOIN shops sh ON sh.id = s.shop_id
       LEFT JOIN favorites f ON f.sarqyt_id = s.id AND f.user_id = $2
-      WHERE sh.city = $1 AND s.pickup_end > NOW()
-      ORDER BY s.created_at DESC
-      LIMIT $3
-    `, [city, id, limit]);
+      LEFT JOIN sarqyt_category sc ON sc.sarqyt_id = s.id
+      WHERE sh.city = $1
+    `;
 
-    res.status(200).json(sarqyts.rows);
+    const params = [city, id];
+
+    if (categoriesArr.length > 0) {
+      query += ` AND sc.category_id = ANY($3::int[]) `;
+      params.push(categoriesArr);
+    }
+
+    const result = await db.query(query, params);
+
+    res.status(200).json(result.rows);
   } catch (error) {
-    console.error('Error at getNewestSarqyts:', error.message, error.stack);
+    console.error("Error at getSarqytsByUsersCity:", error.message, error.stack);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getNewestSarqyts = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { limit = 5, categories = "" } = req.query;
+
+    const city = await getUserCity(id);
+
+    const categoriesArr = categories
+      ? (Array.isArray(categories) ? categories : categories.split(",").map(Number))
+      : [];
+
+    let query = `
+      SELECT 
+        s.id,
+        s.title,
+        s.original_price,
+        s.discounted_price,
+        s.quantity_available,
+        s.pickup_start,
+        s.pickup_end,
+        s.image_url,
+        sh.id AS shop_id,
+        sh.image_url AS logo,
+        sh.name AS shop,
+        CASE WHEN f.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
+      FROM sarqyts s
+      JOIN shops sh ON sh.id = s.shop_id
+      LEFT JOIN favorites f ON f.sarqyt_id = s.id AND f.user_id = $2
+      LEFT JOIN sarqyt_category sc ON sc.sarqyt_id = s.id
+      WHERE sh.city = $1 
+        AND s.pickup_end > NOW()
+    `;
+
+    const params = [city, id];
+
+    if (categoriesArr.length > 0) {
+      query += ` AND sc.category_id = ANY($3::int[]) `;
+      params.push(categoriesArr);
+    }
+
+    query += ` ORDER BY s.created_at DESC LIMIT $${params.length + 1}`;
+    params.push(limit);
+
+    const result = await db.query(query, params);
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error("Error at getNewestSarqyts:", error.message, error.stack);
     res.status(500).json({ message: error.message });
   }
 };
