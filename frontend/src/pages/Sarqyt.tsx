@@ -65,6 +65,8 @@ const Sarqyt = () => {
     }
   };
 
+  
+
   return (
     <div className="pb-28">
       {/* Hero section */}
@@ -125,7 +127,10 @@ const Sarqyt = () => {
             <p className="text-sm">
               Collect:{" "}
               <span className="font-medium">
-              {format(new Date(sarqyt?.pickup_start!), "HH:mm")}–{format(new Date(sarqyt?.pickup_end!), "HH:mm")}
+                {sarqyt?.pickup_start && sarqyt?.pickup_end 
+                  ? `${format(new Date(sarqyt.pickup_start), "HH:mm")}–${format(new Date(sarqyt.pickup_end), "HH:mm")}`
+                  : "Time not available"
+                }
               </span>
             </p>
           </div>
