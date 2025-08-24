@@ -1,7 +1,7 @@
 import { ChevronRight } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { IShopSarqytCard } from "../types"
-
+import {format} from "date-fns";
 
 
 const ShopSarqytCard = ({id,
@@ -16,7 +16,7 @@ const ShopSarqytCard = ({id,
             {title}
           </h3>
           <span className="text-sm">
-            Today: {pickup_start.slice(0,5)} – {pickup_end.slice(0,5)}
+            Today: {format(new Date(pickup_start), "HH:mm")} – {format(new Date(pickup_end), "HH:mm")}
           </span>
           <span className="text-primaryColor font-bold text-lg block">
             {Number(discounted_price).toLocaleString()}
