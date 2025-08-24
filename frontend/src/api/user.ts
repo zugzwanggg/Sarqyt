@@ -10,3 +10,8 @@ export const getUserOrders =async () => {
   const res = await api.get('/api/orders');
   return res.data;
 }
+
+export const search =async (query:string) => {
+  const res = await api.get(`/search?q=${query}`);
+  return res.data;
+}

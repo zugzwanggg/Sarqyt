@@ -201,3 +201,58 @@ export const getCities = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+export const search = async (req,res) => {
+  try {
+
+    const {q} =req.query;
+
+    const {id} = req.user;
+    const city = (await db.query("SELECT city FROM users WHERE id = $1", [id])).rows[0].city;
+
+    const searchData = await db.query(`
+    SELECT 
+      s.id,
+      s.shop_id,
+      s.title,
+      s.description,
+      s.original_price,
+      s.discounted_price,
+      s.quantity_available,
+      s.pickup_start,
+      s.pickup_end,
+      s.image_url,
+      shops.image_url AS shop_img,
+      shops.address,
+      s.created_at,
+      CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
+      CASE WHEN orders.sarqyt_id IS NOT NULL THEN true ELSE false END As "isReserved",
+      CASE
+        WHEN s.available_until < NOW() THEN 'expired'
+        WHEN s.quantity_available = 0 THEN 'sold_out'
+        ELSE 'active'
+      END AS status,
+      (
+        SELECT json_agg(c.name)
+        FROM sarqyt_category sc
+        JOIN categories c ON c.id = sc.category_id
+        WHERE sc.sarqyt_id = s.id
+      ) AS categories
+      FROM sarqyts s
+      LEFT JOIN shops ON s.shop_id = shops.id
+      LEFT JOIN favorites ON favorites.sarqyt_id = s.id AND favorites.user_id = $2
+      LEFT JOIN orders 
+        ON orders.sarqyt_id = s.id 
+        AND orders.user_id = $2
+        AND orders.status NOT IN ('canceled')
+      WHERE s.title ILIKE $1 OR shops.name ILIKE $1
+    `, [`%${q}%`, id]);
+
+    res.status(200).json(searchData.rows)
+    
+  } catch (error) {
+    console.error("Error at search:", error);
+    res.status(500).json({ message: error.message });
+  }
+}

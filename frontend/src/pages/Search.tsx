@@ -3,6 +3,7 @@ import SarqytCard from "../components/SarqytCard";
 import SearchBar from "../components/SearchBar";
 import { getSarqyts } from "../api/sarqyt";
 import type { ISarqytCard } from "../types";
+import { search } from "../api/user";
 
 
 const Search = () => {
@@ -21,6 +22,17 @@ const Search = () => {
     }
   }
 
+  const handleSearch = async (query:string) => {
+    try {
+      
+      const data = await search(query)
+      setSarqyts(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
 
   useEffect(()=> {
     getSarqytsData()
@@ -30,7 +42,7 @@ const Search = () => {
 
   return (
     <div className="px-4 ">
-      <SearchBar onSearch={()=>console.log('')}/>
+      <SearchBar onSearch={handleSearch}/>
 
       <ul className="flex flex-col mt-10 gap-4">
         {
