@@ -4,6 +4,7 @@ import SearchBar from "../components/SearchBar";
 import { getSarqyts } from "../api/sarqyt";
 import type { ISarqytCard } from "../types";
 import { search } from "../api/user";
+import {SearchX} from "lucide-react";
 
 const Search = () => {
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
@@ -67,9 +68,7 @@ const Search = () => {
       {/* Empty State */}
       {!loading && sarqyts.length === 0 && (
         <div className="flex flex-col items-center justify-center mt-16 text-center text-gray-500">
-          <img
-            src="/empty-search.svg"
-            alt="No results"
+          <SearchX
             className="w-40 h-40 mb-4"
           />
           <p>No sarqyts found. Try a different search.</p>
