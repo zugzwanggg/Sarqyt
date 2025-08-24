@@ -4,8 +4,8 @@ export interface ISarqytCard {
   original_price: string;
   discounted_price: string;
   quantity_available: number;
-  pickup_start: Date;
-  pickup_end: Date; 
+  pickup_start: string;
+  pickup_end: string; 
   image_url: string;
   isFavorite: boolean;
   getSarqytsData: () => void;
