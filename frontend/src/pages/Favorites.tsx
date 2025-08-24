@@ -63,6 +63,7 @@ const Favorites = () => {
                 discounted_price={item.discounted_price}
                 isFavorite={item.isFavorite}
                 getSarqytsData={getFavorites}
+                status={item.status}
               />
             </li>
           ))}
