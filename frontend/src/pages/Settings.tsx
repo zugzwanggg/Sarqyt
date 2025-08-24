@@ -34,17 +34,17 @@ const SettingsPage = () => {
       <section className="bg-white shadow rounded-2xl p-4 space-y-3">
         <h3 className="text-md font-semibold">Information</h3>
         <div className="space-y-2">
-          <div className="flex justify-between items-center">
+          {/* <div className="flex justify-between items-center">
             <span className="text-gray-600">Phone Number</span>
             <span className="text-gray-800">{user?.phone || "Not added"}</span>
-          </div>
+          </div> */}
           <div className="flex justify-between items-center">
             <span className="text-gray-600">Location</span>
             <button
               onClick={() => setIsSelectLocation(true)}
               className="text-primaryColor text-sm underline"
             >
-              {user?.location || "Set Location"}
+              {user?.city || "Set Location"}
             </button>
           </div>
         </div>
