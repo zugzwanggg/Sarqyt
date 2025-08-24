@@ -1,13 +1,19 @@
 import { db } from "../db.js";
 
 
+const getUserCity = async (userId) => {
+  const res = await db.query("SELECT city FROM users WHERE id = $1", [userId]);
+  return res.rows[0]?.city;
+};
+
+
 export const getSarqytsByUsersCity = async (req,res) => {
   try {
     
     const {id} = req.user;
     const {categories = ''} = req.query;
 
-    const city = await db.query("SELECT city FROM users WHERE id = $1", [id]);
+    const city = getUserCity(id);
 
     let sarqyts;
     if (categories) {
@@ -36,7 +42,7 @@ export const getSarqytsByUsersCity = async (req,res) => {
           ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $3
         WHERE shops.city = $1 
           AND sarqyt_category.category_id = ANY($2::int[])
-      `, [city.rows[0].city, categoriesArr, id]);
+      `, [city, categoriesArr, id]);
     } else {
       sarqyts = await db.query(`
         SELECT 
@@ -57,7 +63,7 @@ export const getSarqytsByUsersCity = async (req,res) => {
         LEFT JOIN favorites 
           ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $2 
         WHERE shops.city = $1
-      `, [city.rows[0].city, id]);
+      `, [city, id]);
     }    
 
     res.status(200).json(sarqyts.rows);
@@ -68,6 +74,42 @@ export const getSarqytsByUsersCity = async (req,res) => {
     })
   }
 }
+
+export const getNewestSarqyts = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { limit = 5 } = req.query; 
+
+    const city = await getUserCity(id);
+
+    const sarqyts = await db.query(`
+      SELECT 
+        s.id,
+        s.title,
+        s.original_price,
+        s.discounted_price,
+        s.quantity_available,
+        s.pickup_start,
+        s.pickup_end,
+        s.image_url,
+        sh.id AS shop_id,
+        sh.image_url AS logo,
+        sh.name AS shop,
+        CASE WHEN f.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
+      FROM sarqyts s
+      JOIN shops sh ON sh.id = s.shop_id
+      LEFT JOIN favorites f ON f.sarqyt_id = s.id AND f.user_id = $2
+      WHERE sh.city = $1 AND s.pickup_end > NOW()
+      ORDER BY s.created_at DESC
+      LIMIT $3
+    `, [city, id, limit]);
+
+    res.status(200).json(sarqyts.rows);
+  } catch (error) {
+    console.error('Error at getNewestSarqyts:', error.message, error.stack);
+    res.status(500).json({ message: error.message });
+  }
+};
 
 export const getSarqytById = async (req,res) => {
   try {
