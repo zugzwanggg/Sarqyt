@@ -64,19 +64,14 @@ const Shop = () => {
       <div className="p-4 bg-white mt-2">
         <div className="flex justify-between items-center mb-4">
           <h2 className="font-semibold text-lg">Sarqyts from this store</h2>
-          <span className="text-primaryColor text-sm cursor-pointer hover:underline">
-            See all
-          </span>
         </div>
 
         {sarqyts.length > 0 ? (
-          <ul className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+          <div className="pb-2">
             {sarqyts.map((item) => (
-              <li key={item.id} className="flex-shrink-0 w-64">
-                <ShopSarqytCard {...item} />
-              </li>
+              <ShopSarqytCard {...item} />
             ))}
-          </ul>
+          </div>
         ) : (
           <p className="text-center text-gray-500">No sarqyts available yet.</p>
         )}
