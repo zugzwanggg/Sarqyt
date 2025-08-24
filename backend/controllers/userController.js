@@ -225,7 +225,7 @@ export const search = async (req,res) => {
     if (time && timeConditions[time]) {
       const [start, end] = timeConditions[time];
       params.push(start, end);
-      timeFilter = `AND s.pickup_start >= $4 AND s.pickup_start < $5`;
+      timeFilter = `AND s.pickup_start::time >= $4::time AND s.pickup_start::time < $5::time`;
     }
 
     const searchData = await db.query(`
