@@ -5,12 +5,15 @@ export const getSarqytsByUsersCity = async (req,res) => {
   try {
     
     const {id} = req.user;
-    const {categoryId = ''} = req.query;
+    const {categories = ''} = req.query;
 
     const city = await db.query("SELECT city FROM users WHERE id = $1", [id]);
 
     let sarqyts;
-    if (categoryId) {
+    if (categories) {
+
+      const categoriesArr = Array.isArray(categories) ? categories : categories.split(',').map(Number);
+
       sarqyts = await db.query(`
         SELECT 
           sarqyts.id AS id,
@@ -32,8 +35,8 @@ export const getSarqytsByUsersCity = async (req,res) => {
         LEFT JOIN favorites 
           ON favorites.sarqyt_id = sarqyts.id AND favorites.user_id = $3
         WHERE shops.city = $1 
-          AND sarqyt_category.category_id = $2
-      `, [city.rows[0].city, categoryId, id]);
+          AND sarqyt_category.category_id = ANY($2::int[])
+      `, [city.rows[0].city, categoriesArr, id]);
     } else {
       sarqyts = await db.query(`
         SELECT 
