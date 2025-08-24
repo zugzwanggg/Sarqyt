@@ -190,22 +190,42 @@ const Sarqyt = () => {
 
 
       <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg px-4 py-5">
-        {sarqyt?.isReserved ? (
-          <button
-            disabled
-            className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
-          >
-            Already Reserved
-          </button>
-        ) : (
-          <button
-            onClick={() => setIsReserveOpen(true)}
-            className="w-full bg-gradient-to-r from-primaryColor to-green-500 text-white font-semibold rounded-2xl py-4 text-lg shadow-md hover:opacity-90 transition"
-          >
-            Reserve
-          </button>
-        )}
-      </div>
+  {sarqyt?.status === "expired" && (
+    <button
+      disabled
+      className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+    >
+      Expired
+    </button>
+  )}
+
+  {sarqyt?.status === "sold_out" && (
+      <button
+        disabled
+        className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+      >
+        Sold Out
+      </button>
+    )}
+
+    {sarqyt?.status === "active" && sarqyt?.isReserved && (
+      <button
+        disabled
+        className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+      >
+        Already Reserved
+      </button>
+    )}
+
+    {sarqyt?.status === "active" && !sarqyt?.isReserved && (
+      <button
+        onClick={() => setIsReserveOpen(true)}
+        className="w-full bg-gradient-to-r from-primaryColor to-green-500 text-white font-semibold rounded-2xl py-4 text-lg shadow-md hover:opacity-90 transition"
+      >
+        Reserve
+      </button>
+    )}
+  </div>
 
       {isReserveOpen && (
         <ReserveModal

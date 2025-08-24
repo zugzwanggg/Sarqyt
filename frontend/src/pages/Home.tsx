@@ -145,6 +145,7 @@ const Home = () => {
                 discounted_price={item.discounted_price}
                 isFavorite={item.isFavorite}
                 getSarqytsData={getSarqytsData}
+                status={item.status}
               />
             </li>
           ))}
@@ -179,6 +180,7 @@ const Home = () => {
                     discounted_price={item.discounted_price}
                     isFavorite={item.isFavorite}
                     getSarqytsData={fetchNewSarqyts}
+                    status={item.status}
                   />
                 </li>
               ))}

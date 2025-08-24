@@ -48,6 +48,7 @@ const Search = () => {
                 discounted_price={item.discounted_price}
                 isFavorite={item.isFavorite}
                 getSarqytsData={getSarqytsData}
+                status={item.status}
                 
               />
               
