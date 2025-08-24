@@ -24,8 +24,8 @@ export const getSarqytsByUsersCity = async (req, res) => {
         s.original_price,
         s.discounted_price,
         s.quantity_available,
-        TO_CHAR(s.pickup_start, 'YYYY-MM-DD"T"HH24:MI:SS') AS pickup_start,
-        TO_CHAR(s.pickup_end, 'YYYY-MM-DD"T"HH24:MI:SS') AS pickup_end,
+        s.pickup_start,
+        s.pickup_end,
         s.image_url,
         sh.id AS shop_id,
         sh.image_url AS logo,
@@ -39,6 +39,7 @@ export const getSarqytsByUsersCity = async (req, res) => {
     `;
 
     const params = [city, id];
+
 
     if (categoriesArr.length > 0) {
       query += ` AND sc.category_id = ANY($3::int[]) `;
@@ -72,8 +73,8 @@ export const getNewestSarqyts = async (req, res) => {
         s.original_price,
         s.discounted_price,
         s.quantity_available,
-        TO_CHAR(s.pickup_start, 'YYYY-MM-DD"T"HH24:MI:SS') AS pickup_start,
-        TO_CHAR(s.pickup_end, 'YYYY-MM-DD"T"HH24:MI:SS') AS pickup_end,
+        s.pickup_start,
+        s.pickup_end,
         s.image_url,
         sh.id AS shop_id,
         sh.image_url AS logo,
@@ -120,8 +121,8 @@ export const getSarqytById = async (req,res) => {
         s.original_price,
         s.discounted_price,
         s.quantity_available,
-        TO_CHAR(s.pickup_start, 'YYYY-MM-DD"T"HH24:MI:SS') AS pickup_start,
-        TO_CHAR(s.pickup_end, 'YYYY-MM-DD"T"HH24:MI:SS') AS pickup_end,
+        s.pickup_start,
+        s.pickup_end,
         s.image_url,
         shops.image_url AS shop_img,
         shops.address,
