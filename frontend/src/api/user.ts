@@ -12,6 +12,6 @@ export const getUserOrders =async () => {
 }
 
 export const search =async (query:string) => {
-  const res = await api.get(`/search?q=${query}`);
+  const res = await api.get(`/api/search?q=${query}`);
   return res.data;
 }
