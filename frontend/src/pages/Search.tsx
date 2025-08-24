@@ -47,8 +47,8 @@ const Search = () => {
                 original_price={item.original_price}
                 discounted_price={item.discounted_price}
                 isFavorite={item.isFavorite}
-                getSarqytsData={()=>console.log('')
-                }
+                getSarqytsData={getSarqytsData}
+                
               />
               
             </li>
