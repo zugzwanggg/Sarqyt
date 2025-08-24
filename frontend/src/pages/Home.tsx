@@ -154,7 +154,7 @@ const Home = () => {
         </ul>
       )}
 
-{sections.map((section) => (
+    {sections.map((section) => (
         <div key={section.title} className="mt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">{section.title}</h2>
@@ -170,19 +170,21 @@ const Home = () => {
           ) : (
             <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
               {section.items.map((item) => (
-                <SarqytCard
-                  key={item.id}
-                  id={item.id}
-                  title={item.title}
-                  pickup_start={item.pickup_start}
-                  pickup_end={item.pickup_end}
-                  image_url={item.image_url}
-                  quantity_available={item.quantity_available}
-                  original_price={item.original_price}
-                  discounted_price={item.discounted_price}
-                  isFavorite={item.isFavorite}
-                  getSarqytsData={getSarqytsData}
-                />
+                <li key={item.id} className="flex-shrink-0 w-64">
+                  <SarqytCard
+                    key={item.id}
+                    id={item.id}
+                    title={item.title}
+                    pickup_start={item.pickup_start}
+                    pickup_end={item.pickup_end}
+                    image_url={item.image_url}
+                    quantity_available={item.quantity_available}
+                    original_price={item.original_price}
+                    discounted_price={item.discounted_price}
+                    isFavorite={item.isFavorite}
+                    getSarqytsData={getSarqytsData}
+                  />
+                </li>
               ))}
             </ul>
           )}
