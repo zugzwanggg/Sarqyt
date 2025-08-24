@@ -46,9 +46,7 @@ const SarqytCard = ({
   return (
     <div
       onClick={handleCardClick}
-      className={`group relative overflow-hidden rounded-2xl border bg-white shadow-md transition hover:shadow-lg cursor-pointer ${
-        isDisabled ? "pointer-events-none opacity-60" : ""
-      }`}
+      className={`group relative overflow-hidden rounded-2xl border bg-white shadow-md transition hover:shadow-lg cursor-pointer`}
     >
       {/* Image + heart */}
       <div className="relative">
