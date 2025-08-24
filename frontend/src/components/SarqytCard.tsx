@@ -20,9 +20,9 @@ const SarqytCard = ({
   const nav = useNavigate();
 
   const handleCardClick = () => {
-    if (status === "active") {
-      nav(`/sarqyts/${id}`);
-    }
+
+    nav(`/sarqyts/${id}`);
+  
   };
 
   const handleHeartClick = async (
