@@ -3,7 +3,7 @@ import { LocateFixed } from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
-import { getSarqytCategories, getSarqyts } from "../api/sarqyt";
+import { getNewestSarqyts, getSarqytCategories, getSarqyts } from "../api/sarqyt";
 import type { ICategory, ISarqytCard } from "../types";
 
 const Home = () => {
@@ -11,9 +11,8 @@ const Home = () => {
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const { user, setIsSelectLocation } = useUser();
   const [categories, setCategories] = useState<ICategory[]>([]);
-  const [sections, setSections] = useState<
-    { title: string; type: string; items: ISarqytCard[] }[]
-  >([]);
+  
+  const [newestSarqyts, setNewestSarqyts] = useState<ISarqytCard[]>([])
 
   const getCategories = async () => {
     try {
@@ -29,24 +28,19 @@ const Home = () => {
       const data = await getSarqyts(category);
       setSarqyts(data);
 
-      const newSections = [
-        { title: "New Surprise Bags", type: "new", items: data.slice(0, 5) }
-      ];
-
-      categories.forEach((cat) => {
-        newSections.push({
-          title: cat.name,
-          type: cat.name.toLowerCase(),
-          items: data.slice(0, 5) // just pick first few, you can filter later
-        });
-      });
-      
-      setSections(newSections)
-
     } catch (error) {
       console.log(error);
     }
   };
+
+  const fetchNewSarqyts = async () => {
+    try {
+      const data = await getNewestSarqyts(5, category);
+      setNewestSarqyts(data)
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     getCategories();
@@ -54,6 +48,7 @@ const Home = () => {
 
   useEffect(() => {
     getSarqytsData();
+    fetchNewSarqyts();
   }, [category]);
 
   const handleSelectCategory = (categoryId:number) => {
@@ -155,23 +150,22 @@ const Home = () => {
           ))}
         </ul>
       )}
-
-    {sections.map((section) => (
-        <div key={section.title} className="mt-8">
+    {
+      newestSarqyts.length > 0
+      ?
+      <div className="mt-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">{section.title}</h2>
+            <h2 className="text-xl font-semibold">Newest sarqyts</h2>
             <Link
               className="font-medium text-primaryColor hover:opacity-70"
-              to={`/all?type=${section.type}`}
+              to={`/all?type=new`}
             >
               See all →
             </Link>
           </div>
-          {section.items.length === 0 ? (
-            <p className="text-gray-500">No items yet 🥲</p>
-          ) : (
+          
             <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-              {section.items.map((item) => (
+              {newestSarqyts.map((item) => (
                 <li key={item.id} className="flex-shrink-0 w-64">
                   <SarqytCard
                     key={item.id}
@@ -189,9 +183,11 @@ const Home = () => {
                 </li>
               ))}
             </ul>
-          )}
         </div>
-      ))}
+        :
+        ''
+    }
+
       
     </div>
   )

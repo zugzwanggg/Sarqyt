@@ -12,6 +12,16 @@ export const getSarqyts = async (categories:number[]|null) => {
   return res.data;
 }
 
+export const getNewestSarqyts = async (limit:number, categories:number[]|null) => {
+  let res;
+  if (categories === null) {
+    res = await api.get(`/api/sarqyts/new?limit=${limit}`);
+  } else {
+    res = await api.get(`/api/sarqyts/new?limit=${limit}&categories=${categories}`);
+  }
+  return res.data;
+}
+
 export const getSarqytById = async (id:number|string) => {
   const res = await api.get(`/api/sarqyts/${id}`);
   return res.data;
