@@ -1,54 +1,40 @@
-import { Search, SlidersHorizontal, X } from "lucide-react";
+import { Search, SlidersHorizontal, X, Clock, MapPin, Leaf } from "lucide-react";
 import { useState } from "react";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
-  onFilter?: (filters: any) => void;
+  onFilter: (filters: any) => void;
 }
 
 const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
   const [searchValue, setSearchValue] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [filters, setFilters] = useState({
-    minPrice: "",
-    maxPrice: "",
-    onlyAvailable: false,
-  });
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSearch(searchValue);
   };
 
-  const handleApplyFilters = () => {
-    onFilter?.(filters);
-    setIsFilterOpen(false);
-  };
-
   return (
     <div className="w-full">
       {/* Search bar */}
-      <div className="flex items-center gap-3 mt-4">
+      <div className="flex items-center justify-between gap-4 mt-4">
         <form
           onSubmit={handleSearchSubmit}
-          className="relative flex-1"
+          className="relative flex-1 px-2 py-3 border-2 rounded-md"
         >
-          <Search
-            size={"1.3rem"}
-            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
-          />
+          <Search size={"1.5rem"} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400" />
           <input
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="w-full pl-11 pr-4 py-3 rounded-full border border-zinc-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryColor/50"
+            className="pl-10 pr-4 outline-none placeholder:text-zinc-400 w-full"
             type="text"
-            placeholder="Search sarqyts..."
+            placeholder="Search for restaurants or food..."
           />
         </form>
-
         <button
           onClick={() => setIsFilterOpen((prev) => !prev)}
-          className="flex items-center justify-center h-12 w-12 rounded-full bg-primaryColor/10 text-primaryColor hover:bg-primaryColor/20 transition"
+          className="border-2 p-3 rounded-md text-primaryColor"
           type="button"
         >
           <SlidersHorizontal />
@@ -57,66 +43,101 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
 
       {/* Filter Panel */}
       {isFilterOpen && (
-        <div className="mt-4 p-5 border border-zinc-200 rounded-2xl bg-white shadow-lg animate-fadeIn">
+        <div className="mt-4 p-4 border-2 rounded-md bg-white shadow-lg z-10">
           <div className="flex items-center justify-between mb-4">
             <h3 className="font-semibold text-lg">Filters</h3>
             <button
               onClick={() => setIsFilterOpen(false)}
-              className="text-zinc-400 hover:text-zinc-700 transition"
+              className="text-zinc-500 hover:text-zinc-800"
             >
-              <X />
+              <X size={20} />
             </button>
           </div>
 
-          <div className="flex flex-col gap-4">
-            {/* Min Price */}
+          <div className="space-y-6">
+            {/* Dietary Preferences */}
             <div>
-              <label className="block text-sm text-zinc-600">Min Price</label>
-              <input
-                type="number"
-                value={filters.minPrice}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, minPrice: e.target.value }))
-                }
-                className="w-full border rounded-lg p-2 mt-1 focus:ring-1 focus:ring-primaryColor/50"
-              />
+              <div className="flex items-center gap-2 mb-3">
+                <Leaf size={18} className="text-green-600" />
+                <h4 className="font-medium">Dietary Preferences</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => onFilter({ dietary: 'vegetarian' })}
+                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Vegetarian
+                </button>
+                <button
+                  onClick={() => onFilter({ dietary: 'vegan' })}
+                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Vegan
+                </button>
+                <button
+                  onClick={() => onFilter({ dietary: 'glutenFree' })}
+                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Gluten-Free
+                </button>
+              </div>
             </div>
 
-            {/* Max Price */}
+            {/* Pickup Times */}
             <div>
-              <label className="block text-sm text-zinc-600">Max Price</label>
-              <input
-                type="number"
-                value={filters.maxPrice}
-                onChange={(e) =>
-                  setFilters((prev) => ({ ...prev, maxPrice: e.target.value }))
-                }
-                className="w-full border rounded-lg p-2 mt-1 focus:ring-1 focus:ring-primaryColor/50"
-              />
+              <div className="flex items-center gap-2 mb-3">
+                <Clock size={18} className="text-blue-600" />
+                <h4 className="font-medium">Pickup Time</h4>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <button
+                  onClick={() => onFilter({ pickupTime: 'morning' })}
+                  className="px-3 py-2 rounded-md text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Morning
+                </button>
+                <button
+                  onClick={() => onFilter({ pickupTime: 'afternoon' })}
+                  className="px-3 py-2 rounded-md text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Afternoon
+                </button>
+                <button
+                  onClick={() => onFilter({ pickupTime: 'evening' })}
+                  className="px-3 py-2 rounded-md text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Evening
+                </button>
+              </div>
             </div>
 
-            {/* Only Available */}
-            <div className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={filters.onlyAvailable}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    onlyAvailable: e.target.checked,
-                  }))
-                }
-              />
-              <label className="text-sm text-zinc-600">Only available</label>
+            {/* Distance */}
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <MapPin size={18} className="text-red-600" />
+                <h4 className="font-medium">Distance</h4>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => onFilter({ maxDistance: 1 })}
+                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Under 1 km
+                </button>
+                <button
+                  onClick={() => onFilter({ maxDistance: 3 })}
+                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Under 3 km
+                </button>
+                <button
+                  onClick={() => onFilter({ maxDistance: 5 })}
+                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
+                >
+                  Under 5 km
+                </button>
+              </div>
             </div>
-
-            <button
-              onClick={handleApplyFilters}
-              type="button"
-              className="mt-2 w-full bg-primaryColor text-white py-2.5 rounded-full font-medium hover:opacity-90 transition"
-            >
-              Apply Filters
-            </button>
           </div>
         </div>
       )}

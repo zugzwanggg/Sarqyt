@@ -206,7 +206,7 @@ export const getCities = async (req, res) => {
 export const search = async (req,res) => {
   try {
 
-    const {q} =req.query;
+    const {q, min, max} =req.query;
 
     const {id} = req.user;
     const city = (await db.query("SELECT city FROM users WHERE id = $1", [id])).rows[0].city;

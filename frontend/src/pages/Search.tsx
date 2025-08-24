@@ -41,7 +41,8 @@ const Search = () => {
     <div className="px-4 pb-10">
       {/* Search Bar */}
       <div className="sticky top-0 bg-white z-10 py-3">
-        <SearchBar onSearch={handleSearch} />
+        <SearchBar onSearch={handleSearch} onFilter={()=>console.log('')}
+         />
       </div>
 
       {/* Loading State */}
