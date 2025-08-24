@@ -7,7 +7,7 @@ import { getSarqytCategories, getSarqyts } from "../api/sarqyt";
 import type { ICategory, ISarqytCard } from "../types";
 
 const Home = () => {
-  const [category, setCategory] = useState<number | null>(null);
+  const [category, setCategory] = useState<number[] | null>(null);
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const { user, setIsSelectLocation } = useUser();
   const [categories, setCategories] = useState<ICategory[]>([]);
@@ -23,7 +23,7 @@ const Home = () => {
 
   const getSarqytsData = async () => {
     try {
-      const data = await getSarqyts(category);
+      const data = await getSarqyts(null);
       setSarqyts(data);
     } catch (error) {
       console.log(error);
@@ -37,6 +37,31 @@ const Home = () => {
   useEffect(() => {
     getSarqytsData();
   }, [category]);
+
+  const sections = [
+    {
+      title: "New Suprise Bags",
+      type: "new"
+    }
+  ]
+
+  categories.map(item => {
+    sections.push({
+      title: item.name,
+      type: item.name.toLowerCase()
+    })
+  })
+
+  const handleSelectCategory = (categoryId:number) => {
+    setCategory(prev => {
+      if (!prev) return [categoryId];
+      if (prev?.includes(categoryId)) {
+        return prev.filter(id => id !== categoryId)
+      } else {
+        return [...prev, categoryId]
+      }
+    })
+  }
 
   return (
     <div className="px-4 pb-10">
@@ -77,9 +102,9 @@ const Home = () => {
         {categories.map((item) => (
           <li
             key={item.id}
-            onClick={() => setCategory(item.id)}
+            onClick={() => handleSelectCategory(item.id)}
             className={`whitespace-nowrap px-4 py-2 rounded-full border transition cursor-pointer ${
-              category === item.id
+              category?.some(id => id === item.id)
                 ? "bg-primaryColor text-white border-primaryColor"
                 : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
@@ -124,6 +149,7 @@ const Home = () => {
           ))}
         </ul>
       )}
+      
     </div>
   );
 };

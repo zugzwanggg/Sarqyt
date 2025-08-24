@@ -16,6 +16,7 @@ import ChooseLocation from "./components/ChooseLocation";
 import { useUser } from "./context/UserContext";
 import SettingsPage from "./pages/Settings";
 import OrderPage from "./pages/OrderPage";
+import SeeAll from "./pages/SeeAll";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -55,6 +56,7 @@ function App() {
       <Route path="/shops/:id" element={<Shop/>}/>
       <Route path="/settings" element={<SettingsPage/>}/>
       <Route path="/orders/:id" element={<OrderPage/>}/>
+      <Route path="/all" element={<SeeAll/>}/>
     </Routes>
   )
 }

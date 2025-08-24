@@ -1,12 +1,12 @@
 import { api } from "../App";
 
-export const getSarqyts = async (categoryId:number|string|null) => {
+export const getSarqyts = async (categories:number[]|null) => {
   
   let res;
-  if (categoryId === null) {
+  if (categories === null) {
     res = await api.get(`/api/sarqyts`);
   } else {
-    res = await api.get(`/api/sarqyts?categoryId=${categoryId}`);
+    res = await api.get(`/api/sarqyts?categories=${categories}`);
   }
 
   return res.data;
