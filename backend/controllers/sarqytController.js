@@ -13,7 +13,7 @@ export const getSarqytsByUsersCity = async (req,res) => {
     const {id} = req.user;
     const {categories = ''} = req.query;
 
-    const city = getUserCity(id);
+    const city = await getUserCity(id);
 
     let sarqyts;
     if (categories) {
