@@ -1,25 +1,25 @@
-// import { useEffect } from 'react';
-// import { useParams, useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react';
+// import { useSearchParams } from 'react-router-dom'
 
 // type Props = {}
 
-// const SeeAll = () => {
-//   const [searchParams] = useSearchParams();
+const SeeAll = () => {
+  // const [searchParams] = useSearchParams();
 
-//   const category = searchParams.get('category');
-
-
-//   useEffect(() => {
-
-//   }, [])
+  // const category = searchParams.get('category');
 
 
+  useEffect(() => {
 
-//   return (
-//     <div>
+  }, [])
 
-//     </div>
-//   )
-// }
 
-// export default SeeAll
+
+  return (
+    <div>
+
+    </div>
+  )
+}
+
+export default SeeAll
