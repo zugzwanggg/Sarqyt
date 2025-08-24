@@ -64,6 +64,8 @@ const Favorites = () => {
                 isFavorite={item.isFavorite}
                 getSarqytsData={getFavorites}
                 status={item.status}
+                logo={item.logo}
+                shop={item.shop}
               />
             </li>
           ))}

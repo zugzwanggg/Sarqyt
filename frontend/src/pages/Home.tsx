@@ -147,6 +147,8 @@ const Home = () => {
                 isFavorite={item.isFavorite}
                 getSarqytsData={getSarqytsData}
                 status={item.status}
+                logo={item.logo}
+                shop={item.shop}
               />
             </li>
           ))}
@@ -182,6 +184,8 @@ const Home = () => {
                     isFavorite={item.isFavorite}
                     getSarqytsData={fetchNewSarqyts}
                     status={item.status}
+                    logo={item.logo}
+                    shop={item.shop}
                   />
                 </li>
               ))}

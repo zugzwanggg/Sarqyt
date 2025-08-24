@@ -10,6 +10,8 @@ export interface ISarqytCard {
   isFavorite: boolean;
   getSarqytsData: () => void;
   status: string;
+  logo: string;
+  shop: string
 }
 
 export interface IExtendedSarqytCard extends ISarqytCard {

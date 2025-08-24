@@ -49,7 +49,9 @@ const Search = () => {
                 isFavorite={item.isFavorite}
                 getSarqytsData={getSarqytsData}
                 status={item.status}
-                
+                logo={item.logo}
+                shop={item.shop}
+                showShopInfo={true}
               />
               
             </li>

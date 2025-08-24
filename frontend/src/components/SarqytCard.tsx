@@ -4,6 +4,10 @@ import type { ISarqytCard } from "../types";
 import { addSarqytToFavorites, removeSarqytFromFavorites } from "../api/sarqyt";
 import { format } from "date-fns";
 
+interface SarqytCardProps extends ISarqytCard {
+  showShopInfo?: boolean;
+}
+
 const SarqytCard = ({
   id,
   title,
@@ -16,13 +20,14 @@ const SarqytCard = ({
   isFavorite,
   getSarqytsData,
   status,
-}: ISarqytCard) => {
+  logo,
+  shop,
+  showShopInfo = false
+}: SarqytCardProps) => {
   const nav = useNavigate();
 
   const handleCardClick = () => {
-
     nav(`/sarqyts/${id}`);
-  
   };
 
   const handleHeartClick = async (
@@ -48,7 +53,7 @@ const SarqytCard = ({
       onClick={handleCardClick}
       className={`group relative overflow-hidden rounded-2xl border bg-white shadow-md transition hover:shadow-lg cursor-pointer`}
     >
-      {/* Image + heart */}
+      {/* Image + heart + shop logo */}
       <div className="relative">
         <img
           src={image_url}
@@ -57,6 +62,24 @@ const SarqytCard = ({
             isDisabled ? "grayscale" : ""
           }`}
         />
+
+        {/* Shop Logo + Name (conditional for search) */}
+        {logo && (
+          <div className="absolute bottom-2 left-2 flex items-center gap-2 bg-white/80 backdrop-blur rounded-full px-2 py-1 shadow">
+            <img
+              src={logo}
+              alt={shop}
+              className="h-6 w-6 rounded-full object-cover"
+            />
+            {showShopInfo && (
+              <span className="text-xs font-medium text-gray-700 line-clamp-1">
+                {shop}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Heart button */}
         {!isDisabled && (
           <button
             onClick={handleHeartClick}
