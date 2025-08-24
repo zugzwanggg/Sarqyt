@@ -135,21 +135,23 @@ const Home = () => {
           No sarqyts found in this category 🥲
         </p>
       ) : (
-        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
           {sarqyts.map((item) => (
-            <SarqytCard
-              key={item.id}
-              id={item.id}
-              title={item.title}
-              pickup_start={item.pickup_start}
-              pickup_end={item.pickup_end}
-              image_url={item.image_url}
-              quantity_available={item.quantity_available}
-              original_price={item.original_price}
-              discounted_price={item.discounted_price}
-              isFavorite={item.isFavorite}
-              getSarqytsData={getSarqytsData}
-            />
+            <li key={item.id} className="flex-shrink-0 w-64">
+              <SarqytCard
+                key={item.id}
+                id={item.id}
+                title={item.title}
+                pickup_start={item.pickup_start}
+                pickup_end={item.pickup_end}
+                image_url={item.image_url}
+                quantity_available={item.quantity_available}
+                original_price={item.original_price}
+                discounted_price={item.discounted_price}
+                isFavorite={item.isFavorite}
+                getSarqytsData={getSarqytsData}
+              />
+            </li>
           ))}
         </ul>
       )}
