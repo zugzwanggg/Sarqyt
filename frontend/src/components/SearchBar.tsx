@@ -1,4 +1,4 @@
-import { Search, SlidersHorizontal, X, Clock, MapPin, Leaf } from "lucide-react";
+import { Search, SlidersHorizontal, X, Clock, Leaf } from "lucide-react";
 import { useState } from "react";
 
 interface SearchBarProps {
@@ -18,23 +18,24 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
   return (
     <div className="w-full">
       {/* Search bar */}
-      <div className="flex items-center justify-between gap-4 mt-4">
-        <form
-          onSubmit={handleSearchSubmit}
-          className="relative flex-1 px-2 py-3 border-2 rounded-md"
-        >
-          <Search size={"1.5rem"} className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400" />
+      <div className="flex items-center gap-3 mt-4">
+        <form onSubmit={handleSearchSubmit} className="relative flex-1">
+          <Search
+            size={"1.3rem"}
+            className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"
+          />
           <input
             value={searchValue}
             onChange={(e) => setSearchValue(e.target.value)}
-            className="pl-10 pr-4 outline-none placeholder:text-zinc-400 w-full"
+            className="w-full pl-11 pr-4 py-3 rounded-full border border-zinc-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryColor/50"
             type="text"
-            placeholder="Search for restaurants or food..."
+            placeholder="Search sarqyts..."
           />
         </form>
+
         <button
           onClick={() => setIsFilterOpen((prev) => !prev)}
-          className="border-2 p-3 rounded-md text-primaryColor"
+          className="flex items-center justify-center h-12 w-12 rounded-full bg-primaryColor/10 text-primaryColor hover:bg-primaryColor/20 transition"
           type="button"
         >
           <SlidersHorizontal />
@@ -55,34 +56,6 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
           </div>
 
           <div className="space-y-6">
-            {/* Dietary Preferences */}
-            <div>
-              <div className="flex items-center gap-2 mb-3">
-                <Leaf size={18} className="text-green-600" />
-                <h4 className="font-medium">Dietary Preferences</h4>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => onFilter({ dietary: 'vegetarian' })}
-                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Vegetarian
-                </button>
-                <button
-                  onClick={() => onFilter({ dietary: 'vegan' })}
-                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Vegan
-                </button>
-                <button
-                  onClick={() => onFilter({ dietary: 'glutenFree' })}
-                  className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
-                >
-                  Gluten-Free
-                </button>
-              </div>
-            </div>
-
             {/* Pickup Times */}
             <div>
               <div className="flex items-center gap-2 mb-3">
@@ -111,33 +84,34 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
               </div>
             </div>
 
-            {/* Distance */}
+            {/* Dietary Preferences */}
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <MapPin size={18} className="text-red-600" />
-                <h4 className="font-medium">Distance</h4>
+                <Leaf size={18} className="text-green-600" />
+                <h4 className="font-medium">Dietary Preferences</h4>
               </div>
               <div className="flex flex-wrap gap-2">
                 <button
-                  onClick={() => onFilter({ maxDistance: 1 })}
+                  onClick={() => onFilter({ dietary: 'vegetarian' })}
                   className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
                 >
-                  Under 1 km
+                  Vegetarian
                 </button>
                 <button
-                  onClick={() => onFilter({ maxDistance: 3 })}
+                  onClick={() => onFilter({ dietary: 'vegan' })}
                   className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
                 >
-                  Under 3 km
+                  Vegan
                 </button>
                 <button
-                  onClick={() => onFilter({ maxDistance: 5 })}
+                  onClick={() => onFilter({ dietary: 'glutenFree' })}
                   className="px-3 py-1.5 rounded-full text-sm bg-gray-100 text-gray-700 border border-gray-200"
                 >
-                  Under 5 km
+                  Gluten-Free
                 </button>
               </div>
             </div>
+
           </div>
         </div>
       )}
