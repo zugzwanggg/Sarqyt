@@ -125,24 +125,20 @@ export const getUserFavorites = async (req, res) => {
         shops.image_url as logo,
         shops.name AS shop,
         true AS "isFavorite",
+        sarqyts.created_at,
         CASE
           WHEN sarqyts.available_until < NOW() THEN 'expired'
           WHEN sarqyts.quantity_available = 0 THEN 'sold_out'
           ELSE 'active'
         END AS status,
-        CASE 
-          WHEN orders.sarqyt_id IS NOT NULL THEN true 
-          ELSE false 
-        END As "isReserved"
-      FROM favorites
-      JOIN sarqyts ON sarqyts.id = favorites.sarqyt_id
-      JOIN shops ON shops.id = sarqyts.shop_id
+        CASE WHEN orders.sarqyt_id IS NOT NULL THEN true ELSE false END As "isReserved"
+      FROM sarqyts 
+      JOIN shops ON shops.id = sarqyts.shop_id 
+      JOIN favorites ON favorites.sarqyt_id = sarqyts.id
       LEFT JOIN orders 
-        ON orders.sarqyt_id = sarqyts.id 
-       AND orders.user_id = $1 
-       AND orders.status NOT IN ('canceled')
+        ON orders.sarqyt_id = sarqyts.id AND orders.user_id = $1 AND orders.status NOT IN ('canceled')
       WHERE favorites.user_id = $1
-      ORDER BY sarqyts.created_at DESC
+      ORDER BY sarqyts.created_at DESC;
     `, [id]);
 
     res.status(200).json(favorites.rows);
