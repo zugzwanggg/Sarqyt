@@ -23,7 +23,7 @@ const Home = () => {
 
   const getSarqytsData = async () => {
     try {
-      const data = await getSarqyts(null);
+      const data = await getSarqyts(category);
       setSarqyts(data);
     } catch (error) {
       console.log(error);
