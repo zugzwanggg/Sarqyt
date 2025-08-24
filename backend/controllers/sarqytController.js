@@ -30,12 +30,17 @@ export const getSarqytsByUsersCity = async (req, res) => {
         sh.id AS shop_id,
         sh.image_url AS logo,
         sh.name AS shop,
-        CASE WHEN f.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
+        CASE WHEN f.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
+        CASE
+          WHEN s.available_until < NOW() THEN 'expired'
+          WHEN s.quantity_available = 0 THEN 'sold_out'
+          ELSE 'active'
+        END AS status
       FROM sarqyts s
       JOIN shops sh ON sh.id = s.shop_id
       LEFT JOIN favorites f ON f.sarqyt_id = s.id AND f.user_id = $2
       LEFT JOIN sarqyt_category sc ON sc.sarqyt_id = s.id
-      WHERE sh.city = $1 AND s.pickup_end > NOW()
+      WHERE sh.city = $1 AND s.available_until > NOW() - INTERVAL '1 day'
     `;
 
     const params = [city, id];
@@ -79,13 +84,18 @@ export const getNewestSarqyts = async (req, res) => {
         sh.id AS shop_id,
         sh.image_url AS logo,
         sh.name AS shop,
-        CASE WHEN f.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite"
+        CASE WHEN f.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
+        CASE
+          WHEN s.available_until < NOW() THEN 'expired'
+          WHEN s.quantity_available = 0 THEN 'sold_out'
+          ELSE 'active'
+        END AS status
       FROM sarqyts s
       JOIN shops sh ON sh.id = s.shop_id
       LEFT JOIN favorites f ON f.sarqyt_id = s.id AND f.user_id = $2
       LEFT JOIN sarqyt_category sc ON sc.sarqyt_id = s.id
       WHERE sh.city = $1 
-        AND s.pickup_end > NOW()
+        AND s.available_until > NOW() - INTERVAL '1 day'
     `;
 
     const params = [city, id];
@@ -129,6 +139,11 @@ export const getSarqytById = async (req,res) => {
         s.created_at,
         CASE WHEN favorites.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
         CASE WHEN orders.sarqyt_id IS NOT NULL THEN true ELSE false END As "isReserved",
+        CASE
+          WHEN s.available_until < NOW() THEN 'expired'
+          WHEN s.quantity_available = 0 THEN 'sold_out'
+          ELSE 'active'
+        END AS status,
         (
           SELECT json_agg(c.name)
           FROM sarqyt_category sc
