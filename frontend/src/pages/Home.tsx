@@ -62,6 +62,9 @@ const Home = () => {
     })
   }
 
+  console.log(sarqyts);
+  
+
   return (
     <div className="px-4 pb-10">
       {/* Top bar */}

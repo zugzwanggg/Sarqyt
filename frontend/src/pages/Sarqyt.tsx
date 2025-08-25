@@ -73,8 +73,8 @@ const Sarqyt = () => {
       <div className="relative">
         <img
           className="aspect-video w-full object-cover"
-          src={sarqyt?.image_url}
-          alt={sarqyt?.title}
+          src={sarqyt?.product_image}
+          alt={sarqyt?.product_title}
         />
         <span className="absolute inset-0 bg-gradient-to-b from-transparent to-black/50 rounded-b-3xl" />
 
@@ -104,11 +104,11 @@ const Sarqyt = () => {
           <Link to={`/shops/${sarqyt?.shop_id}`}>
             <img
               className="min-w-14 min-h-14 w-16 h-16 flex-shrink-0 rounded-full object-cover border-2 border-white shadow-md"
-              src={sarqyt?.shop_img}
-              alt={sarqyt?.title}
+              src={sarqyt?.logo}
+              alt={sarqyt?.product_title}
             />
           </Link>
-          <h1 className="text-xl font-bold drop-shadow-md">{sarqyt?.title}</h1>
+          <h1 className="text-xl font-bold drop-shadow-md">{sarqyt?.product_title}</h1>
         </div>
       </div>
 
@@ -164,9 +164,9 @@ const Sarqyt = () => {
       <div className="p-4">
         <h2 className="text-lg font-semibold mb-2">What you could get</h2>
         <p className={`${textCrop ? "line-clamp-4" : ""} text-gray-700`}>
-          {sarqyt?.description}
+          {sarqyt?.sarqyt_description}
         </p>
-        {sarqyt?.description && sarqyt?.description.length > 150 && (
+        {sarqyt?.sarqyt_description && sarqyt?.sarqyt_description.length > 150 && (
           <button
             onClick={() => setTextCrop((prev) => !prev)}
             className="mt-2 text-primaryColor font-medium"
@@ -231,7 +231,7 @@ const Sarqyt = () => {
         <ReserveModal
           onClose={() => setIsReserveOpen(false)}
           onConfirm={handleConfirmReserve}
-          title={sarqyt?.title ?? "Unknown"}
+          title={sarqyt?.product_title ?? "Unknown"}
           price={sarqyt?.discounted_price ?? ""}
         />
       )}

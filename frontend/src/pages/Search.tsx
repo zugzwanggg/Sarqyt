@@ -50,6 +50,9 @@ const Search = () => {
     getSarqytsData();
   }, []);
 
+  console.log(sarqyts);
+  
+
   return (
     <div className="px-4 pb-10">
       {/* Search Bar */}
