@@ -41,26 +41,32 @@ CREATE TABLE shops (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE product_types (
+    id SERIAL PRIMARY KEY,
+    shop_id INT NOT NULL REFERENCES shops(id),
+    title VARCHAR NOT NULL,
+    description TEXT,
+    image_url TEXT,
+    created_at TIMESTAMP DEFAULT now()
+);
+
 CREATE TABLE sarqyts (
   id SERIAL PRIMARY KEY,
-  shop_id INTEGER REFERENCES shops(id),
-  title VARCHAR,
-  description TEXT,
+  product_type_id INT NOT NULL REFERENCES product_types(id),
   original_price DECIMAL,
   discounted_price DECIMAL,
-  quantity_available INTEGER,
+  quantity_available INT,
   pickup_start TIME,
   pickup_end TIME,
-  rate NUMERIC(2,1) DEFAULT 0,
   available_until TIMESTAMP,
-  image_url TEXT,
+  rate NUMERIC(2,1) DEFAULT 0,
   created_at TIMESTAMP DEFAULT now()
 );
 
 CREATE TABLE favorites (
-  user_id INTEGER REFERENCES users(id),
-  sarqyt_id INTEGER REFERENCES sarqyts(id),
-  PRIMARY KEY (user_id, sarqyt_id)
+  user_id INT REFERENCES users(id),
+  product_type_id INT REFERENCES product_types(id),
+  PRIMARY KEY(user_id, product_type_id)
 );
 
 CREATE TABLE categories (
@@ -88,4 +94,17 @@ CREATE TABLE orders (
   pickup_time TIMESTAMP,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now()
+);
+
+CREATE TABLE reviews (
+  id SERIAL PRIMARY KEY,
+  sarqyt_id INT NOT NULL REFERENCES sarqyts(id) ON DELETE CASCADE,
+  user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  collection_experience SMALLINT CHECK (collection_experience BETWEEN 1 AND 5),
+  food_quality SMALLINT CHECK (food_quality BETWEEN 1 AND 5),
+  variety SMALLINT CHECK (variety BETWEEN 1 AND 5),
+  quantity SMALLINT CHECK (quantity BETWEEN 1 AND 5),
+  overall_rating SMALLINT CHECK (overall_rating BETWEEN 1 AND 5),
+  comment TEXT,
+  created_at TIMESTAMP DEFAULT now()
 );
