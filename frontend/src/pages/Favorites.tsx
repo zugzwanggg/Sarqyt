@@ -53,11 +53,12 @@ const Favorites = () => {
           {sarqyts.map(item => (
             <li key={item.id}>
               <SarqytCard
+                key={item.id}
                 id={item.id}
-                title={item.title} 
-                pickup_start={item.pickup_start} 
+                product_title={item.product_title}
+                pickup_start={item.pickup_start}
                 pickup_end={item.pickup_end}
-                image_url={item.image_url}
+                product_image={item.product_image}
                 quantity_available={item.quantity_available}
                 original_price={item.original_price}
                 discounted_price={item.discounted_price}

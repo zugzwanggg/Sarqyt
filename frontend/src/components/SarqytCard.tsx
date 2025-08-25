@@ -10,19 +10,20 @@ interface SarqytCardProps extends ISarqytCard {
 
 const SarqytCard = ({
   id,
-  title,
+  product_title,
+  sarqyt_description,
   pickup_start,
   pickup_end,
   original_price,
   discounted_price,
-  image_url,
+  product_image,
   quantity_available,
   isFavorite,
   getSarqytsData,
   status,
   logo,
   shop,
-  showShopInfo = false
+  showShopInfo = false,
 }: SarqytCardProps) => {
   const nav = useNavigate();
 
@@ -48,16 +49,17 @@ const SarqytCard = ({
 
   const isDisabled = status === "expired" || status === "sold_out";
 
+
   return (
     <div
       onClick={handleCardClick}
-      className={`group relative overflow-hidden rounded-2xl border bg-white shadow-md transition hover:shadow-lg cursor-pointer`}
+      className="group relative overflow-hidden rounded-2xl border bg-white shadow-md transition hover:shadow-lg cursor-pointer"
     >
       {/* Image + heart + shop logo */}
       <div className="relative">
         <img
-          src={image_url}
-          alt={title}
+          src={product_image}
+          alt={product_title}
           className={`h-40 w-full object-cover transition-transform group-hover:scale-105 ${
             isDisabled ? "grayscale" : ""
           }`}
@@ -105,7 +107,10 @@ const SarqytCard = ({
 
       {/* Content */}
       <div className="p-3 space-y-2">
-        <h3 className="text-lg font-semibold line-clamp-1">{title}</h3>
+        <h3 className="text-lg font-semibold line-clamp-1">{product_title}</h3>
+        {sarqyt_description && (
+          <p className="text-sm text-gray-500 line-clamp-2">{sarqyt_description}</p>
+        )}
         <p className="text-sm text-gray-500">
           Collect today:{" "}
           <span className="font-medium">

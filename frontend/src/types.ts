@@ -1,17 +1,18 @@
 export interface ISarqytCard {
   id: number;
-  title: string;
+  product_title: string;
+  sarqyt_description?: string;
   original_price: string;
   discounted_price: string;
   quantity_available: number;
   pickup_start: Date|string;
-  pickup_end: Date|string; 
-  image_url: string;
+  pickup_end: Date|string;
+  product_image?: string;
   isFavorite: boolean;
   getSarqytsData: () => void;
   status: string;
   logo: string;
-  shop: string
+  shop: string;
 }
 
 export interface IExtendedSarqytCard extends ISarqytCard {
@@ -21,7 +22,7 @@ export interface IExtendedSarqytCard extends ISarqytCard {
   shop_img: string;
   rate: number;
   address: string;
-  description: string;
+  sarqyt_description?: string;
   categories: string[];
   isReserved: boolean;
 }
@@ -57,7 +58,7 @@ export interface ICategory {
 
 export interface IShopSarqytCard {
   id: number;
-  title: string;
+  product_title: string;
   discounted_price: string;
   quantity_available?: number;
   pickup_start: string;
