@@ -74,9 +74,9 @@ CREATE TABLE categories (
   name VARCHAR
 );
 
-CREATE TABLE sarqyt_category (
+CREATE TABLE product_type_category (
   category_id INT REFERENCES categories(id),
-  sarqyt_id INT REFERENCES sarqyts(id),
+  product_type_id INT REFERENCES product_types(id),
   PRIMARY KEY(category_id, item_id)
 );
 
