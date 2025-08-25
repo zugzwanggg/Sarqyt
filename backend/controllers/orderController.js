@@ -28,16 +28,22 @@ export const getUserOrders = async (req, res) => {
         s.image_url AS sarqyt_image,
 
         pt.id AS product_type_id,
-        pt.title AS product_title,
+        pt.title AS sarqyt_title,  -- Changed to match IOrder interface
 
         sh.id AS shop_id,
         sh.name AS shop_name,
         sh.image_url AS shop_image,
-        sh.address AS shop_address
+        sh.address AS shop_address,
+
+        -- Calculate if order can be canceled (only reserved orders can be canceled)
+        CASE 
+          WHEN o.status = 'reserved' AND s.available_until > NOW() THEN true
+          ELSE false
+        END AS can_cancel
       FROM orders o
       JOIN sarqyts s ON o.sarqyt_id = s.id
       JOIN product_types pt ON s.product_type_id = pt.id
-      JOIN shops sh ON pt.shop_id = sh.id
+      JOIN shops sh ON o.shop_id = sh.id  -- Changed to use order's shop_id directly
       WHERE o.user_id = $1
       ORDER BY o.created_at DESC
       `,
@@ -46,7 +52,7 @@ export const getUserOrders = async (req, res) => {
 
     res.status(200).json(orders.rows);
   } catch (error) {
-    console.log("Error at getUserOrders:", error.message + "\n" + error.stack);
+    console.error("Error at getUserOrders:", error);
     res.status(500).json({ message: error.message });
   }
 };
@@ -80,16 +86,22 @@ export const getOrderById = async (req, res) => {
         s.image_url AS sarqyt_image,
 
         pt.id AS product_type_id,
-        pt.title AS product_title,
+        pt.title AS sarqyt_title,  -- Changed to match IOrder interface
 
         sh.id AS shop_id,
         sh.name AS shop_name,
         sh.image_url AS shop_image,
-        sh.address AS shop_address
+        sh.address AS shop_address,
+
+        -- Calculate if order can be canceled
+        CASE 
+          WHEN o.status = 'reserved' AND s.available_until > NOW() THEN true
+          ELSE false
+        END AS can_cancel
       FROM orders o
       JOIN sarqyts s ON o.sarqyt_id = s.id
       JOIN product_types pt ON s.product_type_id = pt.id
-      JOIN shops sh ON pt.shop_id = sh.id
+      JOIN shops sh ON o.shop_id = sh.id  -- Changed to use order's shop_id directly
       WHERE o.id = $1 AND o.user_id = $2
       `,
       [id, userId]
