@@ -170,13 +170,13 @@ export const getUserFavorites = async (req, res) => {
         s.rate,
         s.available_until,
         s.created_at,
-        true AS isFavorite,
+        true AS "isFavorite",
         CASE
           WHEN s.available_until < NOW() THEN 'expired'
           WHEN s.quantity_available = 0 THEN 'sold_out'
           ELSE 'active'
         END AS status,
-        CASE WHEN o.sarqyt_id IS NOT NULL THEN true ELSE false END AS isReserved,
+        CASE WHEN o.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isReserved",
         (
           SELECT json_agg(c.name)
           FROM product_type_category ptc
