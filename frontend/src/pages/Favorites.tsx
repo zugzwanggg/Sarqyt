@@ -25,6 +25,9 @@ const Favorites = () => {
     getFavorites()
   }, [])
 
+  console.log(sarqyts);
+  
+
   return (
     <div className="px-4 ">
       <h1 className="text-2xl mt-8 mb-4">
