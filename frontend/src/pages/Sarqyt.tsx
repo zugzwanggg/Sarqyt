@@ -65,6 +65,9 @@ const Sarqyt = () => {
     }
   };
 
+  console.log(sarqyt);
+  
+
   
 
   return (
