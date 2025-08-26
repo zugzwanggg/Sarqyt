@@ -336,8 +336,8 @@ export const search = async (req, res) => {
         s.rate,
         s.available_until,
         s.created_at,
-        CASE WHEN f.product_type_id IS NOT NULL THEN true ELSE false END AS isFavorite,
-        CASE WHEN o.sarqyt_id IS NOT NULL THEN true ELSE false END AS isReserved,
+        CASE WHEN f.product_type_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
+        CASE WHEN o.sarqyt_id IS NOT NULL THEN true ELSE false END AS "isReserved",
         CASE
           WHEN s.available_until < NOW() THEN 'expired'
           WHEN s.quantity_available = 0 THEN 'sold_out'

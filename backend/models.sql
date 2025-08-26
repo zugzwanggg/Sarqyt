@@ -65,7 +65,7 @@ CREATE TABLE sarqyts (
 
 CREATE TABLE favorites (
   user_id INT REFERENCES users(id),
-  product_type_id INT REFERENCES product_types(id),
+  product_type_id INT REFERENCES product_types(id) UNIQUE,
   PRIMARY KEY(user_id, product_type_id)
 );
 
