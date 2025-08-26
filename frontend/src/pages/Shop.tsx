@@ -35,6 +35,9 @@ const Shop = () => {
     getShopSarqyts();
   }, [id]);
 
+  console.log(shop);
+  
+
   return (
     <div className="bg-lightGrayColor min-h-screen">
       {/* Hero Header */}
