@@ -63,7 +63,7 @@ export interface IShopSarqytCard {
   quantity_available?: number;
   pickup_start: string;
   pickup_end: string;
-  image_url: string;
+  product_image: string;
 }
 
 export interface IOrder {

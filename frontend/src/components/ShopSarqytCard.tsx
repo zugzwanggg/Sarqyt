@@ -9,7 +9,7 @@ const ShopSarqytCard = ({
   discounted_price,
   pickup_start,
   pickup_end,
-  image_url,
+  product_image,
 }: IShopSarqytCard) => {
   return (
     <Link
@@ -19,7 +19,7 @@ const ShopSarqytCard = ({
       <div className="flex items-center gap-4">
         <img
           className="w-16 h-16 rounded-full object-cover shrink-0"
-          src={image_url || "/placeholder.png"}
+          src={product_image || "/placeholder.png"}
           alt={product_title}
         />
         <div className="flex flex-col">
