@@ -36,6 +36,7 @@ const Shop = () => {
   }, [id]);
 
   console.log(shop);
+  console.log(sarqyts);
   
 
   return (
