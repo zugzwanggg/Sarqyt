@@ -77,7 +77,7 @@ const Home = () => {
         </span>
         <div className="flex items-center gap-2 overflow-hidden">
           <p className="font-semibold text-nowrap">Chosen Location:</p>
-          <p className="truncate text-gray-600">{user?.city || "Select"}</p>
+          <p className="truncate text-gray-600">{user?.city_name || "Select"}</p>
         </div>
         <ChevronDown/>
       </div>

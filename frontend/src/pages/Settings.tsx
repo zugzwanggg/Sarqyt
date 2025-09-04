@@ -44,7 +44,7 @@ const SettingsPage = () => {
               onClick={() => setIsSelectLocation(true)}
               className="text-primaryColor text-sm underline"
             >
-              {user?.city || "Set Location"}
+              {user?.city_name || "Set Location"}
             </button>
           </div>
         </div>
