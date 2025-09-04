@@ -1,4 +1,4 @@
-import { ChevronLeft, MapPin, Cake, Star } from "lucide-react";
+import { ChevronLeft, MapPin, Cake } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import ShopSarqytCard from "../components/ShopSarqytCard";
 import { useState, useEffect } from "react";
@@ -90,11 +90,11 @@ const Shop = () => {
             <span className="font-bold">5 yrs</span>
             <p className="text-xs text-gray-500">Active</p>
           </div>
-          <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
+          {/* <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
             <Star className="text-yellow-500" />
             <span className="font-bold">{shop?.rating || "This shop has no rate yet"}</span>
             <p className="text-xs text-gray-500">Rating</p>
-          </div>
+          </div> */}
           <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
             <Cake className="text-green-600" />
             <span className="font-bold">1,000+</span>
