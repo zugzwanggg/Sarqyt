@@ -8,7 +8,7 @@ export const acceptOrder = async (req,res) => {
     if (!id) return res.status(404).json({
       message: "Provide id value"
     })
-    const order = await db.query("SELECT id, pickup_code FROM orders WHERE id = $1", []);
+    const order = await db.query("SELECT id, pickup_code FROM orders WHERE id = $1", [id]);
 
     if (order.rows[0].length <= 0) {
       return res.status(404).json({
