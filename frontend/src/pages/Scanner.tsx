@@ -3,24 +3,15 @@ import { BrowserQRCodeReader } from "@zxing/browser";
 import type { IScannerControls } from "@zxing/browser";
 import { CheckCircle, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { acceptOrder } from "../api/seller";
+import { acceptOrder,getScanData } from "../api/seller";
 
 type TypeScanData = {
   id: number;
   pickup_code: string;
   username: string;
   email: string;
-  product_title: string;
+  product_name: string;
   shop_name: string;
-};
-
-const mockScanData: TypeScanData = {
-  id: 1,
-  pickup_code: "ABC123",
-  username: "john_doe",
-  email: "john@example.com",
-  product_title: "Surprise Doner Combo",
-  shop_name: "Best Kebab Shop"
 };
 
 export default function QRScanner() {
@@ -32,9 +23,14 @@ export default function QRScanner() {
   const [showPreview, setShowPreview] = useState(false);
   const [cameraAllowed, setCameraAllowed] = useState<boolean | null>(null);
 
-  const onResult = async () => {
-    setScannedData(mockScanData);
-    setShowPreview(true);
+  const onResult = async (res:TypeScanData) => {
+    try {
+      const data = await getScanData(res.id)
+      setScannedData(data);
+      setShowPreview(true);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleAccept =async () => {
@@ -77,7 +73,7 @@ export default function QRScanner() {
           videoRef.current,
           (result, error, controls) => {
             if (result && !scannedData) {
-              onResult();
+              onResult(JSON.parse(result.getText()));
             }
             if (!controlsRef.current) {
               controlsRef.current = controls;
@@ -144,7 +140,7 @@ export default function QRScanner() {
             </p>
             <p>
               <span className="font-semibold">Product:</span>{" "}
-              {scannedData.product_title}
+              {scannedData.product_name}
             </p>
             <p>
               <span className="font-semibold">Shop:</span>{" "}
