@@ -50,7 +50,7 @@ export default function QRScanner() {
           playsInline
         />
 
-        <span className="absolute flex items-center justify-center border-4 border-primaryColor w-60 h-60">
+        <span className="left-1/2 top-1/2 -translate-y-1/2 -translate-x-1/2 absolute flex items-center justify-center border-4 border-primaryColor w-60 h-60">
           {/* Square */}
         </span>
       </div>
