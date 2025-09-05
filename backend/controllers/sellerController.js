@@ -10,7 +10,7 @@ export const acceptOrder = async (req,res) => {
     if (!orderId) return res.status(404).json({
       message: "Provide id value"
     })
-    const shop = await db.query("SELECT id FROM shops WHERE owner_id = $1", [userId]);
+    const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
     if (shop.rowCount === 0) {
       return res.status(403).json({ message: "You do not own a shop" });
     }
@@ -43,7 +43,7 @@ export const getScanData = async (req,res) => {
     if (!orderId) return res.status(404).json({
       message: "Provide id value"
     })
-    const shop = await db.query("SELECT id FROM shops WHERE owner_id = $1", [userId]);
+    const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
     if (shop.rowCount === 0) {
       return res.status(403).json({ message: "You do not own a shop" });
     }
