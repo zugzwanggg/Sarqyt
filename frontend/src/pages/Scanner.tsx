@@ -122,41 +122,38 @@ export default function QRScanner() {
       )}
 
       {/* Camera View */}
-      {cameraAllowed ? (
-        <div className="relative flex-1 flex items-center justify-center">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            playsInline
-          />
+      {/* Camera View */}
+{cameraAllowed ? (
+  <div className="relative flex-1 flex items-center justify-center">
+    <video
+      ref={videoRef}
+      className="w-full h-full object-cover"
+      autoPlay
+      muted
+      playsInline
+    />
 
-          {!showPreview && !success && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Dark overlay with transparent square */}
-              <div className="absolute inset-0 bg-black/70 [mask-image:radial-gradient(circle_at_center,transparent_128px,black_129px)] [mask-composite:exclude]" />
-
-              {/* Corner borders */}
-              <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-                {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
-                  (pos, i) => (
-                    <span
-                      key={i}
-                      className={`absolute ${pos} w-12 h-12 border-4 border-primaryColor`}
-                      style={{
-                        borderTop: i < 2 ? "4px solid var(--primaryColor)" : "none",
-                        borderBottom: i >= 2 ? "4px solid var(--primaryColor)" : "none",
-                        borderLeft: i % 2 === 0 ? "4px solid var(--primaryColor)" : "none",
-                        borderRight: i % 2 === 1 ? "4px solid var(--primaryColor)" : "none",
-                      }}
-                    />
-                  )
-                )}
-              </div>
-            </div>
-          )}
+    {!showPreview && (
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Dark overlay with transparent square */}
+        <div className="absolute inset-0 bg-black/70 pointer-events-none">
+          <div className="absolute left-1/2 top-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2 bg-transparent outline outline-[9999px] outline-black/70" />
         </div>
+
+        {/* Corner borders */}
+        <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 pointer-events-none">
+          {/* Top Left */}
+          <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-[var(--primaryColor)] rounded-tl-xl" />
+          {/* Top Right */}
+          <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-[var(--primaryColor)] rounded-tr-xl" />
+          {/* Bottom Left */}
+          <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-[var(--primaryColor)] rounded-bl-xl" />
+          {/* Bottom Right */}
+          <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-[var(--primaryColor)] rounded-br-xl" />
+        </div>
+      </div>
+    )}
+    </div>
       ) : cameraAllowed === false ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
           Camera access denied. Please enable it in settings.
