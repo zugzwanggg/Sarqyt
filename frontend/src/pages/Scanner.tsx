@@ -11,7 +11,6 @@ export default function QRScanner() {
   const [showPreview, setShowPreview] = useState(false);
 
   const onResult = async (res: string | number) => {
-    // For now, just set the result and show preview
     setScannedData(res.toString());
     setShowPreview(true);
   };
@@ -46,7 +45,6 @@ export default function QRScanner() {
 
   return (
     <div className="w-full h-screen flex flex-col bg-black text-white relative">
-      {/* Camera Feed */}
       <div className="relative flex-1 flex items-center justify-center">
         <video
           ref={videoRef}
@@ -56,13 +54,11 @@ export default function QRScanner() {
           playsInline
         />
 
-        {/* Scanning Frame */}
         {!showPreview && (
           <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 border-4 border-primaryColor w-60 h-60 rounded-lg shadow-[0_0_20px_rgba(0,0,0,0.5)]" />
         )}
       </div>
 
-      {/* Result Preview */}
       {showPreview && scannedData && (
         <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center">
           <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
@@ -73,7 +69,6 @@ export default function QRScanner() {
 
           <button
             onClick={() => {
-              // Placeholder for now — API logic later
               setShowPreview(false);
               setScannedData(null);
             }}
