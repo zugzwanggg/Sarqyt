@@ -23,6 +23,8 @@ export default function QRScanner({ onResult }: QRScannerProps) {
           if (!controlsRef.current) {
             controlsRef.current = controls;
           }
+
+          console.log(error);
         })
         .catch(err => console.error("QR Scanner init error:", err));
     }
