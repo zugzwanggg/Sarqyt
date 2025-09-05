@@ -4,7 +4,7 @@ import bcryptjs from "bcryptjs";
 export const acceptOrder = async (req,res) => {
   try {
     
-    const {id:orderId} = req.params;
+    const {id:orderId} = req.body;
     const {id:userId} = req.user;
 
     if (!orderId) return res.status(404).json({
@@ -63,11 +63,13 @@ export const getScanData = async (req,res) => {
         u.username,
         pt.title AS product_name,
         o.pickup_time,
-        o.status
+        o.status,
+        sh.name AS shop_name,
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN sarqyts s ON s.id = o.sarqyt_id
       JOIN product_types pt ON pt.id = s.product_type_id
+      JOIN shops sh ON sh.id = o.shop_id
       WHERE o.id = $1;
     `, [orderId])
 
