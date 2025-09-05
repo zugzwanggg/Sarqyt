@@ -41,13 +41,19 @@ export default function QRScanner() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <video
-        ref={videoRef}
-        style={{ width: "100%", borderRadius: "12px" }}
-        autoPlay
-        muted
-        playsInline
-      />
+      <div>
+        <video
+          ref={videoRef}
+          style={{ width: "100%", height: "100%"}}
+          autoPlay
+          muted
+          playsInline
+        />
+
+        <span className="absolute flex items-center justify-center border-4 border-primaryColor w-60 h-60">
+          {/* Square */}
+        </span>
+      </div>
     </div>
   );
 }
