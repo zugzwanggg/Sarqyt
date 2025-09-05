@@ -64,7 +64,7 @@ export const getScanData = async (req,res) => {
         pt.title AS product_name,
         o.pickup_time,
         o.status,
-        sh.name AS shop_name,
+        sh.name AS shop_name
       FROM orders o
       JOIN users u ON u.id = o.user_id
       JOIN sarqyts s ON s.id = o.sarqyt_id
