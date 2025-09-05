@@ -1,10 +1,9 @@
 import { db } from "../db.js";
-import bcryptjs from "bcryptjs";
 
 export const acceptOrder = async (req,res) => {
   try {
     
-    const {id:orderId} = req.body;
+    const {orderId} = req.body;
     const {id:userId} = req.user;
 
     if (!orderId) return res.status(404).json({
