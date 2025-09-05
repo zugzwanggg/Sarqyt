@@ -1,9 +1,13 @@
 import { db } from "../db.js";
+import bcryptjs from "bcryptjs";
 
 export const acceptOrder = async (req,res) => {
   try {
     
-    const {id, pickup_code} = req.body;
+    const {id} = req.body;
+    if (!id) return res.status(404).json({
+      message: "Provide id value"
+    })
     const order = await db.query("SELECT id, pickup_code FROM orders WHERE id = $1", []);
 
     if (order.rows[0].length <= 0) {
@@ -11,8 +15,6 @@ export const acceptOrder = async (req,res) => {
         message: "Order doesn't exist"
       })
     }
-
-   
     
     await db.query("UPDATE orders SET status = 'confirmed' WHERE id = $1", [id]);
     res.status(200).json({
