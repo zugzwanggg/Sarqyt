@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { BrowserQRCodeReader } from "@zxing/browser";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ChevronLeft } from "lucide-react";
 import type {IScannerControls} from "@zxing/browser";
+import { useNavigate } from "react-router-dom";
 
 type TypeScanData = {
   id: number | string,
@@ -11,6 +12,8 @@ type TypeScanData = {
 export default function QRScanner() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
+
+  const navigate = useNavigate();
 
   const [scannedData, setScannedData] = useState<TypeScanData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -50,6 +53,13 @@ export default function QRScanner() {
 
   return (
     <div className="w-full h-screen flex flex-col bg-black text-white relative">
+      <button
+        onClick={() => navigate(-1)}
+        className="flex items-center gap-2 text-white mb-4"
+      >
+        <ChevronLeft className="w-5 h-5" />
+        <span className="text-sm font-medium">Back</span>
+      </button>
       <div className="relative flex-1 flex items-center justify-center">
         <video
           ref={videoRef}
