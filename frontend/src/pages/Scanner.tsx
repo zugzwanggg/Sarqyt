@@ -122,38 +122,37 @@ export default function QRScanner() {
       )}
 
       {/* Camera View */}
-      {/* Camera View */}
-{cameraAllowed ? (
-  <div className="relative flex-1 flex items-center justify-center">
-    <video
-      ref={videoRef}
-      className="w-full h-full object-cover"
-      autoPlay
-      muted
-      playsInline
-    />
+      {cameraAllowed ? (
+        <div className="relative flex-1 flex items-center justify-center">
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            autoPlay
+            muted
+            playsInline
+          />
 
-    {!showPreview && (
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* Dark overlay with transparent square */}
-        <div className="absolute inset-0 bg-black/70 pointer-events-none">
-          <div className="absolute left-1/2 top-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2 bg-transparent outline outline-[9999px] outline-black/70" />
-        </div>
+          {!showPreview && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Dark overlay with transparent square */}
+              <div
+                className="absolute inset-0 bg-black/50"
+                style={{
+                  WebkitMask: "radial-gradient(circle, transparent 130px, black 131px)",
+                  mask: "radial-gradient(circle, transparent 130px, black 131px)",
+                }}
+              />
 
-        {/* Corner borders */}
-        <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 pointer-events-none">
-          {/* Top Left */}
-          <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-[var(--primaryColor)] rounded-tl-xl" />
-          {/* Top Right */}
-          <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-[var(--primaryColor)] rounded-tr-xl" />
-          {/* Bottom Left */}
-          <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-[var(--primaryColor)] rounded-bl-xl" />
-          {/* Bottom Right */}
-          <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-[var(--primaryColor)] rounded-br-xl" />
+              {/* Corner borders */}
+              <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 pointer-events-none">
+                <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-[var(--primaryColor)] rounded-tl-xl" />
+                <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-[var(--primaryColor)] rounded-tr-xl" />
+                <div className="absolute bottom-0 left-0 w-12 h-12 border-b-4 border-l-4 border-[var(--primaryColor)] rounded-bl-xl" />
+                <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-[var(--primaryColor)] rounded-br-xl" />
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-    )}
-    </div>
       ) : cameraAllowed === false ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
           Camera access denied. Please enable it in settings.
