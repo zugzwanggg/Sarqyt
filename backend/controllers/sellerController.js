@@ -3,7 +3,7 @@ import { db } from "../db.js";
 export const acceptOrder = async (req,res) => {
   try {
     
-    const {orderId} = req.body;
+    const {orderId} = req.params;
     const {id:userId} = req.user;
 
     if (!orderId) return res.status(404).json({
