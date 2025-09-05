@@ -1,15 +1,20 @@
 import { useEffect, useRef } from "react";
 import { BrowserQRCodeReader } from "@zxing/browser";
 import type {IScannerControls} from "@zxing/browser";
+import { useNavigate } from "react-router-dom";
 
 
-type QRScannerProps = {
-  onResult: (text: string) => void;
-};
 
-export default function QRScanner({ onResult }: QRScannerProps) {
+
+export default function QRScanner() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
+  const nav = useNavigate();
+
+  const onResult = async (res:string|number) => {
+    nav('/')
+    console.log(res);
+  }
 
   useEffect(() => {
     const codeReader = new BrowserQRCodeReader();

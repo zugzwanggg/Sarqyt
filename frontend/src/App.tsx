@@ -60,7 +60,7 @@ function App() {
       <Route path="/all" element={<SeeAll/>}/>
 
       {/* seller */}
-      <Route path="/scanner" element={<QRScanner onResult={()=>''}/>}/>
+      <Route path="/scanner" element={<QRScanner/>}/>
     </Routes>
   )
 }
