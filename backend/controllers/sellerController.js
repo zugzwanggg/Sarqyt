@@ -34,7 +34,7 @@ export const getScanData = async (req,res) => {
     if (!id) return res.status(404).json({
       message: "Provide id value"
     })
-    const checkOrder = await db.query("SELECT 1 FROM orders WHERE id = $1", []);
+    const checkOrder = await db.query("SELECT 1 FROM orders WHERE id = $1", [id]);
 
     if (checkOrder.rows[0].length <= 0) {
       return res.status(404).json({
@@ -54,7 +54,7 @@ export const getScanData = async (req,res) => {
       JOIN sarqyts s ON s.id = o.sarqyt_id
       JOIN product_types pt ON pt.id = s.product_type_id
       WHERE o.id = $1;
-    `)
+    `, [id])
 
     res.status(200).json(order.rows[0]);
     
