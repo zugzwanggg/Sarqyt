@@ -10,6 +10,7 @@ import { shopRouter } from "./routes/shopRoute.js";
 import { sarqytRoute } from "./routes/sarqytRoute.js";
 import { initBot } from "./bot/telegramBot.js";
 import { orderRoute } from "./routes/orderRoute.js";
+import { sellerRouter } from "./routes/sellerRoute.js";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use('/api', userRouter);
 app.use('/api', shopRouter);
 app.use('/api', sarqytRoute);
 app.use('/api', orderRoute);
+app.use('/api', sellerRouter)
 
 
 initBot();
