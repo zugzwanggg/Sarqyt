@@ -58,7 +58,7 @@ export const getScanData = async (req,res) => {
 
     const order = await db.query(`
       SELECT 
-        o.id AS order_id,
+        o.id,
         u.username,
         pt.title AS product_name,
         o.pickup_time,
