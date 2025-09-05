@@ -55,7 +55,7 @@ export default function QRScanner() {
     <div className="w-full h-screen flex flex-col bg-black text-white relative">
       <button
         onClick={() => navigate(-1)}
-        className="bg-white flex items-center gap-2 p-4 mb-4"
+        className="flex items-center gap-2 p-4 mb-4"
       >
         <ChevronLeft className="w-5 h-5" />
         <span className="text-sm font-medium">Back</span>
