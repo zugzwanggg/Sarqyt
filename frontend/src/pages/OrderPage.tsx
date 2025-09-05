@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Clock, CreditCard, ChevronLeft } from "lucide-react";
-import { QRCodeCanvas } from "qrcode.react";
+// import { QRCodeCanvas } from "qrcode.react";
 import OrderCard from "../components/OrderCard";
 import type { IOrder } from "../types";
 import { getOrderById } from "../api/order";
@@ -49,12 +49,12 @@ const OrderPage = () => {
   if (isLoading) return <p className="p-4 text-center">Loading...</p>;
   if (!order) return <p className="p-4 text-center">Order not found</p>;
 
-  const qrValue = {
+  // const qrValue = {
     
-    id: order.id,
-    pickup_code: order.pickup_code
+  //   id: order.id,
+  //   pickup_code: order.pickup_code
     
-  }
+  // }
 
   return (
     <div className="p-4 pb-28 space-y-6">
@@ -70,7 +70,7 @@ const OrderPage = () => {
       <OrderCard order={order} />
 
       {/* QR code for pickup */}
-      {order.pickup_code && (
+      {/* {order.pickup_code && (
         <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
           <h2 className="text-lg font-semibold">Your Pickup QR Code</h2>
           <QRCodeCanvas value={JSON.stringify(qrValue)} 
@@ -80,7 +80,7 @@ const OrderPage = () => {
             Show this QR code at the shop to collect your order.
           </p>
         </div>
-      )}
+      )} */}
 
       {/* Shop information */}
       <div className="bg-white shadow rounded-2xl p-4 space-y-2">

@@ -63,12 +63,12 @@ export default function OrderCard({ order }: { order: IOrder }) {
             <CreditCard className="w-4 h-4" /> {order.payment_method} (
             {order.payment_status})
           </span>
-          {order.pickup_code && (
+          {/* {order.pickup_code && (
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4" /> Pickup code:{" "}
               <span className="font-mono font-semibold">{order.pickup_code}</span>
             </span>
-          )}
+          )} */}
           {order.pickup_time && (
             <span className="flex items-center gap-2">
               <Clock className="w-4 h-4" /> Picked at{" "}

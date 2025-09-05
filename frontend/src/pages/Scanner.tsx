@@ -3,6 +3,7 @@ import { BrowserQRCodeReader } from "@zxing/browser";
 import type { IScannerControls } from "@zxing/browser";
 import { CheckCircle, ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { acceptOrder } from "../api/seller";
 
 type TypeScanData = {
   id: number;
@@ -19,7 +20,7 @@ const mockScanData: TypeScanData = {
   username: "john_doe",
   email: "john@example.com",
   product_title: "Surprise Doner Combo",
-  shop_name: "Best Kebab Shop",
+  shop_name: "Best Kebab Shop"
 };
 
 export default function QRScanner() {
@@ -35,6 +36,16 @@ export default function QRScanner() {
     setScannedData(mockScanData);
     setShowPreview(true);
   };
+
+  const handleAccept =async () => {
+    try {
+      await acceptOrder(scannedData?.id!);
+      setScannedData(null);
+      setShowPreview(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     const checkPermission = async () => {
@@ -123,13 +134,13 @@ export default function QRScanner() {
           <h2 className="text-xl font-bold mb-4">Order Found</h2>
 
           <div className="bg-white text-black rounded-2xl p-4 w-full max-w-md text-left space-y-2">
-            <p>
+            {/* <p>
               <span className="font-semibold">Pickup Code:</span>{" "}
               {scannedData.pickup_code}
-            </p>
+            </p> */}
             <p>
               <span className="font-semibold">Customer:</span>{" "}
-              {scannedData.username} ({scannedData.email})
+              {scannedData.username}
             </p>
             <p>
               <span className="font-semibold">Product:</span>{" "}
@@ -141,15 +152,23 @@ export default function QRScanner() {
             </p>
           </div>
 
-          <button
-            onClick={() => {
-              setShowPreview(false);
-              setScannedData(null);
-            }}
-            className="mt-6 px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
-          >
-            Accept
-          </button>
+          <div className="flex items-center justify-center">
+            <button
+              onClick={() =>handleAccept()}
+              className="mt-6 px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
+            >
+              Accept
+            </button>
+            <button
+              onClick={() => {
+                setShowPreview(false);
+                setScannedData(null);
+              }}
+              className="mt-6 px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
+            >
+              Cancel
+            </button>
+          </div>
         </div>
       )}
     </div>
