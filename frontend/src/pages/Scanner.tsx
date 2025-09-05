@@ -23,6 +23,7 @@ export default function QRScanner() {
   const [showPreview, setShowPreview] = useState(false);
   const [cameraAllowed, setCameraAllowed] = useState<boolean | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const onResult = async (res: TypeScanData) => {
     try {
@@ -38,8 +39,12 @@ export default function QRScanner() {
   const handleAccept = async () => {
     try {
       await acceptOrder(scannedData?.id!);
-      setScannedData(null);
-      setShowPreview(false);
+      setSuccess(true);
+      setTimeout(() => {
+        setSuccess(false);
+        setScannedData(null);
+        setShowPreview(false);
+      }, 2000);
     } catch (err) {
       console.error(err);
       setError("Failed to accept the order. Please try again.");
@@ -106,39 +111,52 @@ export default function QRScanner() {
         <span className="text-sm font-medium">Back</span>
       </button>
 
+
+      {success && (
+        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center">
+          <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
+          <h2 className="text-lg font-bold">Order Confirmed!</h2>
+        </div>
+      )}
+
       {/* Camera View */}
       {cameraAllowed ? (
-        <div className="relative flex-1 flex items-center justify-center">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            playsInline
-          />
+  <div className="relative flex-1 flex items-center justify-center">
+    <video
+      ref={videoRef}
+      className="w-full h-full object-cover"
+      autoPlay
+      muted
+      playsInline
+    />
 
-          {!showPreview && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Scanner Frame */}
-              <div className="w-64 h-64 relative">
-                {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
-                  (pos, i) => (
-                    <span
-                      key={i}
-                      className={`absolute ${pos} w-10 h-10 border-4 border-primaryColor`}
-                      style={{
-                        borderTop: i < 2 ? "4px solid" : undefined,
-                        borderBottom: i >= 2 ? "4px solid" : undefined,
-                        borderLeft: i % 2 === 0 ? "4px solid" : undefined,
-                        borderRight: i % 2 === 1 ? "4px solid" : undefined,
-                      }}
-                    />
-                  )
-                )}
-              </div>
-            </div>
+    {!showPreview && (
+      <div className="absolute inset-0 flex items-center justify-center">
+        {/* Dark overlay with hole */}
+        <div className="absolute inset-0 bg-black/70">
+          <div className="absolute left-1/2 top-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2 bg-transparent outline outline-[9999px] outline-black/70" />
+        </div>
+
+        {/* Corner borders */}
+        <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
+          {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
+            (pos, i) => (
+              <span
+                key={i}
+                className={`absolute ${pos} w-10 h-10 border-4 border-primaryColor`}
+                style={{
+                  borderTop: i < 2 ? "4px solid var(--primaryColor)" : "none",
+                  borderBottom: i >= 2 ? "4px solid var(--primaryColor)" : "none",
+                  borderLeft: i % 2 === 0 ? "4px solid var(--primaryColor)" : "none",
+                  borderRight: i % 2 === 1 ? "4px solid var(--primaryColor)" : "none",
+                }}
+              />
+            )
           )}
         </div>
+      </div>
+        )}
+      </div>
       ) : cameraAllowed === false ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
           Camera access denied. Please enable it in settings.
@@ -190,7 +208,7 @@ export default function QRScanner() {
               onClick={handleAccept}
               className="px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
             >
-              Accept
+              Confirm
             </button>
             <button
               onClick={() => {
