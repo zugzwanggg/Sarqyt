@@ -41,7 +41,7 @@ export default function QRScanner() {
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div>
+      <div className="relative">
         <video
           ref={videoRef}
           style={{ width: "100%", height: "100%"}}
