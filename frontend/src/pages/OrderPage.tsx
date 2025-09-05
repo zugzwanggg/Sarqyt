@@ -49,6 +49,13 @@ const OrderPage = () => {
   if (isLoading) return <p className="p-4 text-center">Loading...</p>;
   if (!order) return <p className="p-4 text-center">Order not found</p>;
 
+  const qrValue = {
+    
+    id: order.id,
+    pickup_code: order.pickup_code
+    
+  }
+
   return (
     <div className="p-4 pb-28 space-y-6">
       {/* Back button */}
@@ -66,7 +73,8 @@ const OrderPage = () => {
       {order.pickup_code && (
         <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
           <h2 className="text-lg font-semibold">Your Pickup QR Code</h2>
-          <QRCodeCanvas value={order.pickup_code} size={180} />
+          <QRCodeCanvas value={JSON.stringify(qrValue)} 
+          size={180} />
           <p className="font-mono text-xl">{order.pickup_code}</p>
           <p className="text-gray-500 text-sm text-center">
             Show this QR code at the shop to collect your order.
