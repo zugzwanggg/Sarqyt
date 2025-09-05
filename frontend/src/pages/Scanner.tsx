@@ -3,15 +3,20 @@ import { BrowserQRCodeReader } from "@zxing/browser";
 import { CheckCircle } from "lucide-react";
 import type {IScannerControls} from "@zxing/browser";
 
+type TypeScanData = {
+  id: number | string,
+  pickup_code: string
+}
+
 export default function QRScanner() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
 
-  const [scannedData, setScannedData] = useState<string | null>(null);
+  const [scannedData, setScannedData] = useState<TypeScanData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
 
-  const onResult = async (res: string | number) => {
-    setScannedData(res.toString());
+  const onResult = async (res: TypeScanData) => {
+    setScannedData(res);
     setShowPreview(true);
   };
 
@@ -25,7 +30,7 @@ export default function QRScanner() {
           videoRef.current,
           (result, error, controls) => {
             if (result && !scannedData) {
-              onResult(result.getText());
+              onResult(JSON.parse(result.getText()));
             }
             if (!controlsRef.current) {
               controlsRef.current = controls;
@@ -64,7 +69,7 @@ export default function QRScanner() {
           <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
           <h2 className="text-xl font-bold mb-2">QR Code Scanned</h2>
           <p className="mb-6 text-gray-300 break-words max-w-md">
-            {scannedData || "Sample QR code data goes here..."}
+            {scannedData.pickup_code || "Sample QR code data goes here..."}
           </p>
 
           <button
