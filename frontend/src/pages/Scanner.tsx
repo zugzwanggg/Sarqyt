@@ -36,18 +36,20 @@ export default function QRScanner() {
     }
   };
 
-  const handleAccept = async () => {
+  const handleConfirm = async () => {
     try {
       await acceptOrder(scannedData?.id!);
+      setShowPreview(false);
+      setScannedData(null);
       setSuccess(true);
+
+      // Hide success after 2 sec and resume scanning
       setTimeout(() => {
         setSuccess(false);
-        setScannedData(null);
-        setShowPreview(false);
       }, 2000);
     } catch (err) {
       console.error(err);
-      setError("Failed to accept the order. Please try again.");
+      setError("Failed to confirm the order. Please try again.");
     }
   };
 
@@ -70,7 +72,7 @@ export default function QRScanner() {
   }, []);
 
   useEffect(() => {
-    if (!cameraAllowed || scannedData) return;
+    if (!cameraAllowed || scannedData || success) return;
 
     const codeReader = new BrowserQRCodeReader();
 
@@ -98,7 +100,7 @@ export default function QRScanner() {
     return () => {
       controlsRef.current?.stop();
     };
-  }, [cameraAllowed, scannedData]);
+  }, [cameraAllowed, scannedData, success]);
 
   return (
     <div className="w-full h-screen flex flex-col bg-black text-white relative overflow-hidden">
@@ -111,52 +113,50 @@ export default function QRScanner() {
         <span className="text-sm font-medium">Back</span>
       </button>
 
-
+      {/* Success Overlay */}
       {success && (
-        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center">
-          <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
-          <h2 className="text-lg font-bold">Order Confirmed!</h2>
+        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center z-30">
+          <CheckCircle className="w-20 h-20 text-green-400 mb-4" />
+          <h2 className="text-2xl font-bold">Order Confirmed!</h2>
         </div>
       )}
 
       {/* Camera View */}
       {cameraAllowed ? (
-  <div className="relative flex-1 flex items-center justify-center">
-    <video
-      ref={videoRef}
-      className="w-full h-full object-cover"
-      autoPlay
-      muted
-      playsInline
-    />
+        <div className="relative flex-1 flex items-center justify-center">
+          <video
+            ref={videoRef}
+            className="w-full h-full object-cover"
+            autoPlay
+            muted
+            playsInline
+          />
 
-    {!showPreview && (
-      <div className="absolute inset-0 flex items-center justify-center">
-        {/* Dark overlay with hole */}
-        <div className="absolute inset-0 bg-black/70">
-          <div className="absolute left-1/2 top-1/2 w-64 h-64 -translate-x-1/2 -translate-y-1/2 bg-transparent outline outline-[9999px] outline-black/70" />
-        </div>
+          {!showPreview && !success && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              {/* Dark overlay with transparent square */}
+              <div className="absolute inset-0 bg-black/70 [mask-image:radial-gradient(circle_at_center,transparent_128px,black_129px)] [mask-composite:exclude]" />
 
-        {/* Corner borders */}
-        <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-          {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
-            (pos, i) => (
-              <span
-                key={i}
-                className={`absolute ${pos} w-10 h-10 border-4 border-primaryColor`}
-                style={{
-                  borderTop: i < 2 ? "4px solid var(--primaryColor)" : "none",
-                  borderBottom: i >= 2 ? "4px solid var(--primaryColor)" : "none",
-                  borderLeft: i % 2 === 0 ? "4px solid var(--primaryColor)" : "none",
-                  borderRight: i % 2 === 1 ? "4px solid var(--primaryColor)" : "none",
-                }}
-              />
-            )
+              {/* Corner borders */}
+              <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
+                {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
+                  (pos, i) => (
+                    <span
+                      key={i}
+                      className={`absolute ${pos} w-12 h-12 border-4 border-primaryColor`}
+                      style={{
+                        borderTop: i < 2 ? "4px solid var(--primaryColor)" : "none",
+                        borderBottom: i >= 2 ? "4px solid var(--primaryColor)" : "none",
+                        borderLeft: i % 2 === 0 ? "4px solid var(--primaryColor)" : "none",
+                        borderRight: i % 2 === 1 ? "4px solid var(--primaryColor)" : "none",
+                      }}
+                    />
+                  )
+                )}
+              </div>
+            </div>
           )}
         </div>
-      </div>
-        )}
-      </div>
       ) : cameraAllowed === false ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
           Camera access denied. Please enable it in settings.
@@ -169,7 +169,7 @@ export default function QRScanner() {
 
       {/* Error Overlay */}
       {error && (
-        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center">
+        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center z-30">
           <XCircle className="w-16 h-16 text-red-500 mb-4" />
           <h2 className="text-lg font-bold mb-2">Something went wrong</h2>
           <p className="text-sm text-gray-300 mb-4">{error}</p>
@@ -184,28 +184,25 @@ export default function QRScanner() {
 
       {/* Result Preview */}
       {showPreview && scannedData && (
-        <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center">
+        <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-20">
           <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
           <h2 className="text-xl font-bold mb-4">Order Found</h2>
 
           <div className="bg-white text-black rounded-2xl p-4 w-full max-w-md text-left space-y-3 shadow-lg">
             <div>
-              <span className="font-semibold">Customer:</span>{" "}
-              {scannedData.username}
+              <span className="font-semibold">Customer:</span> {scannedData.username}
             </div>
             <div>
-              <span className="font-semibold">Product:</span>{" "}
-              {scannedData.product_name}
+              <span className="font-semibold">Product:</span> {scannedData.product_name}
             </div>
             <div>
-              <span className="font-semibold">Shop:</span>{" "}
-              {scannedData.shop_name}
+              <span className="font-semibold">Shop:</span> {scannedData.shop_name}
             </div>
           </div>
 
           <div className="flex gap-4 mt-6">
             <button
-              onClick={handleAccept}
+              onClick={handleConfirm}
               className="px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
             >
               Confirm

@@ -1,224 +1,82 @@
-import { useEffect, useRef, useState } from "react";
-import { BrowserQRCodeReader } from "@zxing/browser";
-import type { IScannerControls } from "@zxing/browser";
-import { CheckCircle, ChevronLeft, XCircle } from "lucide-react";
+import { Calendar, CreditCard, Store, Hash, CheckCircle, Clock } from "lucide-react";
+import type { IOrder } from "../types";
 import { useNavigate } from "react-router-dom";
-import { acceptOrder, getScanData } from "../api/seller";
 
-type TypeScanData = {
-  id: number;
-  pickup_code: string;
-  username: string;
-  email: string;
-  product_name: string;
-  shop_name: string;
-};
-
-export default function QRScanner() {
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-  const controlsRef = useRef<IScannerControls | null>(null);
-  const navigate = useNavigate();
-
-  const [scannedData, setScannedData] = useState<TypeScanData | null>(null);
-  const [showPreview, setShowPreview] = useState(false);
-  const [cameraAllowed, setCameraAllowed] = useState<boolean | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
-
-  const onResult = async (res: TypeScanData) => {
-    try {
-      const data = await getScanData(res.id);
-      setScannedData(data);
-      setShowPreview(true);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to fetch order details. Please try again.");
+export default function OrderCard({ order }: { order: IOrder }) {
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "pending":
+        return "bg-yellow-100 text-yellow-700";
+      case "paid":
+        return "bg-blue-100 text-blue-700";
+      case "confirmed":
+        return "bg-indigo-100 text-indigo-700";
+      case "completed":
+        return "bg-green-100 text-green-700";
+      case "canceled":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-gray-100 text-gray-700";
     }
   };
 
-  const handleConfirm = async () => {
-    try {
-      await acceptOrder(scannedData?.id!);
-      setShowPreview(false);
-      setScannedData(null);
-      setSuccess(true);
-
-      // Hide success after 2 sec and resume scanning
-      setTimeout(() => {
-        setSuccess(false);
-      }, 2000);
-    } catch (err) {
-      console.error(err);
-      setError("Failed to confirm the order. Please try again.");
-    }
-  };
-
-  useEffect(() => {
-    const checkPermission = async () => {
-      try {
-        const status = await (navigator as any).permissions.query({
-          name: "camera",
-        });
-        if (status.state === "granted" || status.state === "prompt") {
-          setCameraAllowed(true);
-        } else {
-          setCameraAllowed(false);
-        }
-      } catch {
-        setCameraAllowed(true);
-      }
-    };
-    checkPermission();
-  }, []);
-
-  useEffect(() => {
-    if (!cameraAllowed || scannedData || success) return;
-
-    const codeReader = new BrowserQRCodeReader();
-
-    if (videoRef.current) {
-      codeReader
-        .decodeFromVideoDevice("", videoRef.current, (result, error, controls) => {
-          if (result && !scannedData) {
-            try {
-              onResult(JSON.parse(result.getText()));
-            } catch {
-              setError("Invalid QR Code format.");
-              console.log(error);
-            }
-          }
-          if (!controlsRef.current) {
-            controlsRef.current = controls;
-          }
-        })
-        .catch((err) => {
-          console.error("QR Scanner init error:", err);
-          setError("Failed to initialize camera.");
-        });
-    }
-
-    return () => {
-      controlsRef.current?.stop();
-    };
-  }, [cameraAllowed, scannedData, success]);
+  const nav = useNavigate();
 
   return (
-    <div className="w-full h-screen flex flex-col bg-black text-white relative overflow-hidden">
-      {/* Back Button */}
-      <button
-        onClick={() => navigate(-1)}
-        className="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 bg-black/60 rounded-full text-white z-20"
-      >
-        <ChevronLeft className="w-5 h-5" />
-        <span className="text-sm font-medium">Back</span>
-      </button>
-
-      {/* Success Overlay */}
-      {success && (
-        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center z-30">
-          <CheckCircle className="w-20 h-20 text-green-400 mb-4" />
-          <h2 className="text-2xl font-bold">Order Confirmed!</h2>
+    <div onClick={()=>nav(`/orders/${order.id}`)} className="w-full max-w-md rounded-2xl shadow-md border border-gray-200 bg-white">
+      <div className="p-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 font-semibold text-lg">
+            <Hash className="w-4 h-4" /> Order #{order.id}
+          </h2>
+          <span className="text-sm text-gray-500 flex items-center gap-1">
+            <Calendar className="w-3 h-3" />{" "}
+            {new Date(order.created_at).toLocaleString()}
+          </span>
         </div>
-      )}
+      </div>
 
-      {/* Camera View */}
-      {cameraAllowed ? (
-        <div className="relative flex-1 flex items-center justify-center">
-          <video
-            ref={videoRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            muted
-            playsInline
-          />
+      <div className="p-4 space-y-3">
+        <div className="flex flex-col gap-1">
+          <span className="flex items-center gap-2 text-sm">
+            <Store className="w-4 h-4" /> {order.shop_name}
+          </span>
+          <span className="flex items-center gap-2 text-sm">
+            <CheckCircle className="w-4 h-4" /> {order.sarqyt_title} ×{" "}
+            {order.quantity}
+          </span>
+        </div>
 
-          {!showPreview && !success && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              {/* Dark overlay with transparent square */}
-              <div className="absolute inset-0 bg-black/70 [mask-image:radial-gradient(circle_at_center,transparent_128px,black_129px)] [mask-composite:exclude]" />
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-semibold">{order.total_price} ₸</span>
+          <span
+            className={`px-2 py-1 rounded-lg text-xs font-medium ${getStatusColor(
+              order.status
+            )}`}
+          >
+            {order.status}
+          </span>
+        </div>
 
-              {/* Corner borders */}
-              <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2">
-                {["top-0 left-0", "top-0 right-0", "bottom-0 left-0", "bottom-0 right-0"].map(
-                  (pos, i) => (
-                    <span
-                      key={i}
-                      className={`absolute ${pos} w-12 h-12 border-4 border-primaryColor`}
-                      style={{
-                        borderTop: i < 2 ? "4px solid var(--primaryColor)" : "none",
-                        borderBottom: i >= 2 ? "4px solid var(--primaryColor)" : "none",
-                        borderLeft: i % 2 === 0 ? "4px solid var(--primaryColor)" : "none",
-                        borderRight: i % 2 === 1 ? "4px solid var(--primaryColor)" : "none",
-                      }}
-                    />
-                  )
-                )}
-              </div>
-            </div>
+        <div className="flex flex-col gap-1 text-sm">
+          <span className="flex items-center gap-2">
+            <CreditCard className="w-4 h-4" /> {order.payment_method} (
+            {order.payment_status})
+          </span>
+          {/* {order.pickup_code && (
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4" /> Pickup code:{" "}
+              <span className="font-mono font-semibold">{order.pickup_code}</span>
+            </span>
+          )} */}
+          {order.pickup_time && (
+            <span className="flex items-center gap-2">
+              <Clock className="w-4 h-4" /> Picked at{" "}
+              {new Date(order.pickup_time).toLocaleString()}
+            </span>
           )}
         </div>
-      ) : cameraAllowed === false ? (
-        <div className="flex-1 flex items-center justify-center text-gray-400">
-          Camera access denied. Please enable it in settings.
-        </div>
-      ) : (
-        <div className="flex-1 flex items-center justify-center text-gray-400">
-          Checking permissions...
-        </div>
-      )}
-
-      {/* Error Overlay */}
-      {error && (
-        <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center z-30">
-          <XCircle className="w-16 h-16 text-red-500 mb-4" />
-          <h2 className="text-lg font-bold mb-2">Something went wrong</h2>
-          <p className="text-sm text-gray-300 mb-4">{error}</p>
-          <button
-            onClick={() => setError(null)}
-            className="px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
-          >
-            Close
-          </button>
-        </div>
-      )}
-
-      {/* Result Preview */}
-      {showPreview && scannedData && (
-        <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-20">
-          <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
-          <h2 className="text-xl font-bold mb-4">Order Found</h2>
-
-          <div className="bg-white text-black rounded-2xl p-4 w-full max-w-md text-left space-y-3 shadow-lg">
-            <div>
-              <span className="font-semibold">Customer:</span> {scannedData.username}
-            </div>
-            <div>
-              <span className="font-semibold">Product:</span> {scannedData.product_name}
-            </div>
-            <div>
-              <span className="font-semibold">Shop:</span> {scannedData.shop_name}
-            </div>
-          </div>
-
-          <div className="flex gap-4 mt-6">
-            <button
-              onClick={handleConfirm}
-              className="px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
-            >
-              Confirm
-            </button>
-            <button
-              onClick={() => {
-                setShowPreview(false);
-                setScannedData(null);
-              }}
-              className="px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
