@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { db } from "../db.js";
-import bcryptjs, { hash } from "bcryptjs";
+import bcryptjs from "bcryptjs";
 import validator from "validator";
 import { verifyTelegramAuth } from "../telegramAuth.js";
 

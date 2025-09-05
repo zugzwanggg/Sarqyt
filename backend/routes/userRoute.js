@@ -10,7 +10,7 @@ userRouter.patch('/user/name', checkAuth, changeUsername);
 userRouter.patch('/user/country', checkAuth, changeUserCountry);
 userRouter.patch('/user/city', checkAuth, changeUserCity);
 userRouter.get('/favorites', checkAuth, getUserFavorites);
-userRouter.get('/cities', getCities);
+userRouter.get('/cities', checkAuth, getCities);
 userRouter.get('/search', checkAuth, search);
 
 userRouter.patch('/user/:id/seller', checkAuth, checkIsAdmin, becomeSeller);

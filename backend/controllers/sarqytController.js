@@ -1,4 +1,5 @@
 import { db } from "../db.js";
+import bcryptjs, { hash } from "bcryptjs";
 
 const getUserCity = async (userId) => {
   const res = await db.query("SELECT city FROM users WHERE id = $1", [userId]);
@@ -278,12 +279,15 @@ export const reserveSarqyt = async (req, res) => {
     const totalPrice = sarqyt.discounted_price * quantity;
     const pickupCode = Math.random().toString(36).substring(2, 8).toUpperCase();
 
+    const salt = await bcryptjs.genSalt();
+    const hashPickupCode = await bcryptjs.hash(pickupCode, salt);
+
     const orderRes = await db.query(
       `INSERT INTO orders 
         (user_id, sarqyt_id, shop_id, quantity, total_price, pickup_code, status) 
        VALUES ($1, $2, $3, $4, $5, $6, 'reserved') 
        RETURNING *`,
-      [user_id, sarqyt_id, shop_id, quantity, totalPrice, pickupCode]
+      [user_id, sarqyt_id, shop_id, quantity, totalPrice, hashPickupCode]
     );
 
     await db.query(

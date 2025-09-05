@@ -14,7 +14,6 @@ export const getUserOrders = async (req, res) => {
         o.status,
         o.payment_method,
         o.payment_status,
-        o.pickup_code,
         o.pickup_time,
         o.created_at,
         o.updated_at,
@@ -93,7 +92,6 @@ export const getOrderById = async (req, res) => {
         sh.image_url AS shop_image,
         sh.address AS shop_address,
 
-        -- Calculate if order can be canceled
         CASE 
           WHEN o.status = 'reserved' AND s.available_until > NOW() THEN true
           ELSE false

@@ -90,7 +90,7 @@ CREATE TABLE orders (
   status VARCHAR(50) NOT NULL DEFAULT 'pending', 
   payment_method VARCHAR(50)
   payment_status VARCHAR(50) DEFAULT 'unpaid',
-  pickup_code VARCHAR(10),
+  pickup_code TEXT,
   pickup_time TIMESTAMP,
   created_at TIMESTAMP DEFAULT now(),
   updated_at TIMESTAMP DEFAULT now()
