@@ -139,7 +139,8 @@ export const getSarqytById = async (req, res) => {
     const { id: userId } = req.user;
     const { id } = req.params;
 
-    const sarqyt = await db.query(`
+    const sarqyt = await db.query(
+      `
       SELECT 
         s.id,
         pt.title AS product_title,
@@ -173,19 +174,28 @@ export const getSarqytById = async (req, res) => {
       FROM sarqyts s
       JOIN product_types pt ON pt.id = s.product_type_id
       JOIN shops sh ON sh.id = pt.shop_id
-      LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
-      LEFT JOIN orders o ON o.sarqyt_id = s.id AND o.user_id = $2 AND o.status NOT IN ('canceled')
+      LEFT JOIN favorites f 
+        ON f.product_type_id = pt.id AND f.user_id = $2
+      LEFT JOIN orders o 
+        ON o.sarqyt_id = s.id 
+        AND o.user_id = $2 
+        AND o.status IN ('reserved') 
       WHERE s.id = $1
-    `, [id, userId]);
+      `,
+      [id, userId]
+    );
 
-    if (!sarqyt.rows.length) return res.status(404).json({ message: "Pickup doesn't exist" });
+    if (!sarqyt.rows.length) {
+      return res.status(404).json({ message: "Pickup doesn't exist" });
+    }
 
     res.status(200).json(sarqyt.rows[0]);
   } catch (error) {
-    console.error('Error at getSarqytById:', error);
+    console.error("Error at getSarqytById:", error);
     res.status(500).json({ message: error.message });
   }
 };
+
 
 export const addSarqytToFavorites = async (req, res) => {
   try {
