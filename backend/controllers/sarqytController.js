@@ -6,7 +6,6 @@ const getUserCity = async (userId) => {
   return res.rows[0]?.city;
 };
 
-// ------------------ GET PICKUPS BY USER'S CITY ------------------
 export const getSarqytsByUsersCity = async (req, res) => {
   try {
     const { id } = req.user;
@@ -22,56 +21,53 @@ export const getSarqytsByUsersCity = async (req, res) => {
       : [];
 
     let query = `
-      WITH ranked_sarqyts AS (
-        SELECT 
-          s.*,
-          pt.title AS product_title,
-          sh.id AS shop_id,
-          sh.image_url AS logo,
-          sh.name AS shop,
-          sh.address,
-          CASE WHEN f.product_type_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
-          ROW_NUMBER() OVER (
-            PARTITION BY s.product_type_id
-            ORDER BY 
-              CASE 
-                WHEN s.available_until >= NOW() AND s.quantity_available > 0 THEN 1  -- active first
-                WHEN s.available_until >= NOW() AND s.quantity_available = 0 THEN 2  -- sold out next
-                ELSE 3 -- expired last
-              END,
-              s.created_at DESC
-          ) AS rn
-        FROM sarqyts s
-        JOIN product_types pt ON pt.id = s.product_type_id
-        JOIN shops sh ON sh.id = pt.shop_id
-        LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
-        LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
-        WHERE sh.city = $1
-          ${categoriesArr.length > 0 ? "AND ptc.category_id = ANY($3::int[])" : ""}
-      )
-      SELECT 
-        id, product_type_id, product_title, description AS sarqyt_description,
-        original_price, discounted_price, quantity_available, pickup_start, pickup_end,
-        image_url AS product_image, shop_id, logo, shop, address, rate, available_until, created_at,
-        "isFavorite",
+      SELECT DISTINCT ON (pt.id)
+        s.id,
+        pt.title AS product_title,
+        s.description AS sarqyt_description,
+        s.original_price,
+        s.discounted_price,
+        s.quantity_available,
+        s.pickup_start,
+        s.pickup_end,
+        s.image_url AS product_image,
+        sh.id AS shop_id,
+        sh.image_url AS logo,
+        sh.name AS shop,
+        sh.address,
+        s.rate,
+        s.available_until,
+        s.created_at,
+        CASE WHEN f.product_type_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
         CASE
-          WHEN available_until < NOW() THEN 'expired'
-          WHEN quantity_available = 0 THEN 'sold_out'
+          WHEN s.available_until < NOW() THEN 'expired'
+          WHEN s.quantity_available = 0 THEN 'sold_out'
           ELSE 'active'
         END AS status
-      FROM ranked_sarqyts
-      WHERE rn = 1
-      ORDER BY 
-        CASE status
-          WHEN 'active' THEN 1
-          WHEN 'sold_out' THEN 2
-          ELSE 3
-        END,
-        created_at DESC
+      FROM sarqyts s
+      JOIN product_types pt ON pt.id = s.product_type_id
+      JOIN shops sh ON sh.id = pt.shop_id
+      LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
+      LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
+      WHERE sh.city = $1
     `;
 
     const params = [city, id];
-    if (categoriesArr.length > 0) params.push(categoriesArr);
+
+    if (categoriesArr.length > 0) {
+      query += ` AND ptc.category_id = ANY($3::int[]) `;
+      params.push(categoriesArr);
+    }
+
+    query += `
+      ORDER BY pt.id, 
+      CASE 
+        WHEN s.available_until >= NOW() AND s.quantity_available > 0 THEN 1
+        WHEN s.available_until >= NOW() AND s.quantity_available = 0 THEN 2
+        ELSE 3
+      END,
+      s.created_at DESC
+    `;
 
     const result = await db.query(query, params);
     res.status(200).json(result.rows);
@@ -80,7 +76,6 @@ export const getSarqytsByUsersCity = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-
 
 export const getNewestSarqyts = async (req, res) => {
   try {
@@ -97,51 +92,48 @@ export const getNewestSarqyts = async (req, res) => {
       : [];
 
     let query = `
-      WITH ranked_sarqyts AS (
-        SELECT 
-          s.*,
-          pt.title AS product_title,
-          sh.id AS shop_id,
-          sh.image_url AS logo,
-          sh.name AS shop,
-          sh.address,
-          CASE WHEN f.product_type_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
-          ROW_NUMBER() OVER (
-            PARTITION BY s.product_type_id
-            ORDER BY 
-              CASE 
-                WHEN s.available_until >= NOW() AND s.quantity_available > 0 THEN 1
-                WHEN s.available_until >= NOW() AND s.quantity_available = 0 THEN 2
-                ELSE 3
-              END,
-              s.created_at DESC
-          ) AS rn
-        FROM sarqyts s
-        JOIN product_types pt ON pt.id = s.product_type_id
-        JOIN shops sh ON sh.id = pt.shop_id
-        LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
-        LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
-        WHERE sh.city = $1
-          ${categoriesArr.length > 0 ? "AND ptc.category_id = ANY($3::int[])" : ""}
-      )
-      SELECT 
-        id, product_type_id, product_title, description AS sarqyt_description,
-        original_price, discounted_price, quantity_available, pickup_start, pickup_end,
-        image_url AS product_image, shop_id, logo, shop, address, rate, available_until, created_at,
-        "isFavorite",
+      SELECT DISTINCT ON (pt.id)
+        s.id,
+        pt.title AS product_title,
+        s.description AS sarqyt_description,
+        s.original_price,
+        s.discounted_price,
+        s.quantity_available,
+        s.pickup_start,
+        s.pickup_end,
+        s.image_url AS product_image,
+        sh.id AS shop_id,
+        sh.image_url AS logo,
+        sh.name AS shop,
+        sh.address,
+        s.rate,
+        s.available_until,
+        s.created_at,
+        CASE WHEN f.product_type_id IS NOT NULL THEN true ELSE false END AS "isFavorite",
         CASE
-          WHEN available_until < NOW() THEN 'expired'
-          WHEN quantity_available = 0 THEN 'sold_out'
+          WHEN s.available_until < NOW() THEN 'expired'
+          WHEN s.quantity_available = 0 THEN 'sold_out'
           ELSE 'active'
         END AS status
-      FROM ranked_sarqyts
-      WHERE rn = 1
-      ORDER BY created_at DESC
-      LIMIT $${categoriesArr.length > 0 ? 4 : 3}
+      FROM sarqyts s
+      JOIN product_types pt ON pt.id = s.product_type_id
+      JOIN shops sh ON sh.id = pt.shop_id
+      LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
+      LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
+      WHERE sh.city = $1
     `;
 
     const params = [city, id];
-    if (categoriesArr.length > 0) params.push(categoriesArr);
+
+    if (categoriesArr.length > 0) {
+      query += ` AND ptc.category_id = ANY($3::int[]) `;
+      params.push(categoriesArr);
+    }
+
+    query += `
+      ORDER BY pt.id, s.created_at DESC
+      LIMIT $${params.length + 1}
+    `;
     params.push(limit);
 
     const result = await db.query(query, params);
