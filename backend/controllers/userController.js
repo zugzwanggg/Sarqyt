@@ -284,7 +284,6 @@ export const getCountries = async (req, res) => {
   }
 };
 
-// ------------------ SEARCH ------------------
 export const search = async (req, res) => {
   try {
     const { q = "", time, categories = "" } = req.query;
@@ -318,7 +317,8 @@ export const search = async (req, res) => {
     if (time && timeConditions[time]) {
       const [start, end] = timeConditions[time];
       params.push(start, end);
-      timeFilter = `AND s.pickup_start::time >= $${paramCount + 1}::time AND s.pickup_start::time < $${paramCount + 2}::time`;
+      timeFilter = `AND s.pickup_start::time >= $${paramCount + 1}::time 
+                    AND s.pickup_start::time < $${paramCount + 2}::time`;
       paramCount += 2;
     }
 
@@ -328,7 +328,7 @@ export const search = async (req, res) => {
     }
 
     const searchData = await db.query(`
-      SELECT 
+      SELECT DISTINCT ON (pt.id)
         s.id,
         pt.title AS product_title,
         s.description AS sarqyt_description,
@@ -364,13 +364,17 @@ export const search = async (req, res) => {
       LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
       LEFT JOIN orders o ON o.sarqyt_id = s.id AND o.user_id = $2 AND o.status NOT IN ('canceled')
       LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
-      WHERE sh.city = $1 
-        AND s.available_until > NOW()
+      WHERE sh.city = $1
         ${q.trim() ? `AND (pt.title ILIKE $3 OR sh.name ILIKE $3)` : ''}
         ${timeFilter}
         ${categoriesArr.length > 0 ? `AND ptc.category_id = ANY($${paramCount}::int[])` : ''}
-      GROUP BY s.id, pt.id, sh.id, f.product_type_id, o.sarqyt_id
-      ORDER BY s.created_at DESC
+      ORDER BY pt.id,
+        CASE 
+          WHEN s.available_until >= NOW() AND s.quantity_available > 0 THEN 1
+          WHEN s.available_until >= NOW() AND s.quantity_available = 0 THEN 2
+          ELSE 3
+        END,
+        s.created_at DESC
     `, params);
 
     res.status(200).json(searchData.rows);
