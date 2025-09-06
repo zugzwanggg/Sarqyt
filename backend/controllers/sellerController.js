@@ -40,8 +40,8 @@ export const acceptOrder = async (req, res) => {
       return res.status(403).json({ message: "This order does not belong to your shop" });
     }
 
-    if (order.status === "confirmed") {
-      return res.status(400).json({ message: "Order is already confirmed" });
+    if (order.status === "canceled") {
+      return res.status(400).json({ message: "Order is canceled" });
     }
     if (order.status === "completed") {
       return res.status(400).json({ message: "Order is already completed" });
@@ -58,7 +58,7 @@ export const acceptOrder = async (req, res) => {
     if (order.quantity <= 0) {
       return res.status(400).json({ message: "Order is out of stock" });
     }
-    await db.query("UPDATE orders SET status = 'confirmed' WHERE id = $1", [orderId]);
+    await db.query("UPDATE orders SET status = 'completed' WHERE id = $1", [orderId]);
 
     return res.status(200).json({
       message: "Order successfully confirmed",
