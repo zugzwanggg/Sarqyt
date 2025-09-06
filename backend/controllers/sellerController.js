@@ -1,12 +1,59 @@
 import { db } from "../db.js";
+import bcryptjs from "bcryptjs";
 
 export const acceptOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
     const { id: userId } = req.user;
 
-    if (!orderId) {
-      return res.status(400).json({ message: "Provide order id" });
+    if (!orderId) return res.status(400).json({ message: "Provide order id" });
+
+    const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
+    if (shop.rowCount === 0) {
+      return res.status(403).json({ message: "You do not own a shop" });
+    }
+
+    const orderRes = await db.query(
+      `SELECT id, shop_id, status, pickup_start, pickup_end 
+       FROM orders WHERE id = $1`,
+      [orderId]
+    );
+    if (orderRes.rowCount === 0) return res.status(404).json({ message: "Order not found" });
+
+    const order = orderRes.rows[0];
+    if (order.shop_id !== shop.rows[0].id) {
+      return res.status(403).json({ message: "This order does not belong to your shop" });
+    }
+
+    if (order.status !== "pending") {
+      return res.status(400).json({ message: "Only pending orders can be confirmed" });
+    }
+
+    const now = new Date();
+    if (order.pickup_end && now > new Date(order.pickup_end)) {
+      return res.status(400).json({ message: "Pickup window has already expired" });
+    }
+
+    await db.query(
+      "UPDATE orders SET status = 'confirmed', updated_at = NOW() WHERE id = $1",
+      [orderId]
+    );
+
+    return res.status(200).json({ message: "Order confirmed successfully" });
+  } catch (error) {
+    console.error("Error at acceptOrder:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const completeOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { pickup_code } = req.body;
+    const { id: userId } = req.user;
+
+    if (!orderId || !pickup_code) {
+      return res.status(400).json({ message: "Order id and pickup code required" });
     }
 
     const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
@@ -15,36 +62,19 @@ export const acceptOrder = async (req, res) => {
     }
 
     const orderRes = await db.query(
-      `
-      SELECT 
-        id,
-        shop_id,
-        status,
-        quantity,
-        pickup_start,
-        pickup_end,
-        pickup_code
-      FROM orders 
-      WHERE id = $1
-      `,
+      `SELECT id, shop_id, status, pickup_start, pickup_end, pickup_code 
+       FROM orders WHERE id = $1`,
       [orderId]
     );
-
-    if (orderRes.rowCount === 0) {
-      return res.status(404).json({ message: "Order not found" });
-    }
+    if (orderRes.rowCount === 0) return res.status(404).json({ message: "Order not found" });
 
     const order = orderRes.rows[0];
-
     if (order.shop_id !== shop.rows[0].id) {
       return res.status(403).json({ message: "This order does not belong to your shop" });
     }
 
-    if (order.status === "canceled") {
-      return res.status(400).json({ message: "Order is canceled" });
-    }
-    if (order.status === "completed") {
-      return res.status(400).json({ message: "Order is already completed" });
+    if (order.status !== "confirmed") {
+      return res.status(400).json({ message: "Only confirmed orders can be completed" });
     }
 
     const now = new Date();
@@ -52,20 +82,21 @@ export const acceptOrder = async (req, res) => {
       return res.status(400).json({ message: "Pickup has not started yet" });
     }
     if (order.pickup_end && now > new Date(order.pickup_end)) {
-      return res.status(400).json({ message: "Pickup window has expired" });
+      return res.status(400).json({ message: "Pickup window expired" });
+    }
+    const isValid = await bcryptjs.compare(pickup_code, order.pickup_code);
+    if (!isValid) {
+      return res.status(400).json({ message: "Invalid pickup code" });
     }
 
-    if (order.quantity <= 0) {
-      return res.status(400).json({ message: "Order is out of stock" });
-    }
-    await db.query("UPDATE orders SET status = 'completed' WHERE id = $1", [orderId]);
+    await db.query(
+      "UPDATE orders SET status = 'completed', updated_at = NOW() WHERE id = $1",
+      [orderId]
+    );
 
-    return res.status(200).json({
-      message: "Order successfully confirmed",
-      orderId: order.id
-    });
+    return res.status(200).json({ message: "Order completed successfully" });
   } catch (error) {
-    console.error("Error at acceptOrder:", error);
+    console.error("Error at completeOrder:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
