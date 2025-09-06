@@ -1,37 +1,74 @@
 import { db } from "../db.js";
 
-export const acceptOrder = async (req,res) => {
+export const acceptOrder = async (req, res) => {
   try {
-    
-    const {orderId} = req.params;
-    const {id:userId} = req.user;
+    const { orderId } = req.params;
+    const { id: userId } = req.user;
 
-    if (!orderId) return res.status(404).json({
-      message: "Provide id value"
-    })
+    if (!orderId) {
+      return res.status(400).json({ message: "Provide order id" });
+    }
+
     const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
     if (shop.rowCount === 0) {
       return res.status(403).json({ message: "You do not own a shop" });
     }
 
-    const checkOrder = await db.query("SELECT shop_id, pickup_code FROM orders WHERE id = $1", [orderId]);
-    if (checkOrder.rowCount === 0) {
+    const orderRes = await db.query(
+      `
+      SELECT 
+        id,
+        shop_id,
+        status,
+        quantity,
+        pickup_start,
+        pickup_end,
+        pickup_code
+      FROM orders 
+      WHERE id = $1
+      `,
+      [orderId]
+    );
+
+    if (orderRes.rowCount === 0) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    if (checkOrder.rows[0].shop_id !== shop.rows[0].id) {
+    const order = orderRes.rows[0];
+
+    if (order.shop_id !== shop.rows[0].id) {
       return res.status(403).json({ message: "This order does not belong to your shop" });
     }
-    
+
+    if (order.status === "confirmed") {
+      return res.status(400).json({ message: "Order is already confirmed" });
+    }
+    if (order.status === "completed") {
+      return res.status(400).json({ message: "Order is already completed" });
+    }
+
+    const now = new Date();
+    if (order.pickup_start && now < new Date(order.pickup_start)) {
+      return res.status(400).json({ message: "Pickup has not started yet" });
+    }
+    if (order.pickup_end && now > new Date(order.pickup_end)) {
+      return res.status(400).json({ message: "Pickup window has expired" });
+    }
+
+    if (order.quantity <= 0) {
+      return res.status(400).json({ message: "Order is out of stock" });
+    }
     await db.query("UPDATE orders SET status = 'confirmed' WHERE id = $1", [orderId]);
-    res.status(200).json({
-      message: "Succesfully updated"
-    })
+
+    return res.status(200).json({
+      message: "Order successfully confirmed",
+      orderId: order.id
+    });
   } catch (error) {
-    console.error('Error at acceptOrder:', error);
-    res.status(500).json({ message: error.message });
+    console.error("Error at acceptOrder:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
-}
+};
 
 export const getScanData = async (req, res) => {
   try {
