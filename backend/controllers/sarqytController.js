@@ -251,29 +251,50 @@ export const getSarqytCategories = async (req, res) => {
 };
 
 export const reserveSarqyt = async (req, res) => {
+  const client = await db.connect();
   try {
     const { id: user_id } = req.user;
     const { sarqyt_id, shop_id, quantity } = req.body;
 
-    if (!quantity || quantity < 1) {
-      return res.status(400).json({ error: "Invalid quantity" });
+    if (!sarqyt_id || !shop_id || !quantity || quantity < 1) {
+      return res.status(400).json({ error: "Invalid input" });
     }
 
-    const sarqytRes = await db.query(
-      `SELECT discounted_price, quantity_available 
+    await client.query("BEGIN");
+
+    const sarqytRes = await client.query(
+      `SELECT id, discounted_price, quantity_available, shop_id 
        FROM sarqyts 
-       WHERE id = $1`,
+       WHERE id = $1 FOR UPDATE`,
       [sarqyt_id]
     );
 
     if (sarqytRes.rows.length === 0) {
+      await client.query("ROLLBACK");
       return res.status(404).json({ error: "Sarqyt not found" });
     }
 
     const sarqyt = sarqytRes.rows[0];
 
+    if (sarqyt.shop_id !== shop_id) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "Invalid shop for this sarqyt" });
+    }
+
     if (sarqyt.quantity_available < quantity) {
+      await client.query("ROLLBACK");
       return res.status(400).json({ error: `Only ${sarqyt.quantity_available} left` });
+    }
+
+    const existing = await client.query(
+      `SELECT id FROM orders 
+       WHERE user_id = $1 AND sarqyt_id = $2 AND status = 'reserved'`,
+      [user_id, sarqyt_id]
+    );
+
+    if (existing.rows.length > 0) {
+      await client.query("ROLLBACK");
+      return res.status(400).json({ error: "You already reserved this sarqyt" });
     }
 
     const totalPrice = sarqyt.discounted_price * quantity;
@@ -282,67 +303,92 @@ export const reserveSarqyt = async (req, res) => {
     const salt = await bcryptjs.genSalt();
     const hashPickupCode = await bcryptjs.hash(pickupCode, salt);
 
-    const orderRes = await db.query(
+    const orderRes = await client.query(
       `INSERT INTO orders 
         (user_id, sarqyt_id, shop_id, quantity, total_price, pickup_code, status) 
        VALUES ($1, $2, $3, $4, $5, $6, 'reserved') 
-       RETURNING *`,
+       RETURNING id, sarqyt_id, shop_id, quantity, total_price, status, created_at`,
       [user_id, sarqyt_id, shop_id, quantity, totalPrice, hashPickupCode]
     );
 
-    await db.query(
+    await client.query(
       `UPDATE sarqyts 
        SET quantity_available = quantity_available - $1 
        WHERE id = $2`,
       [quantity, sarqyt_id]
     );
 
-    res.json({ success: true, order: orderRes.rows[0] });
+    await client.query("COMMIT");
+
+    res.json({ 
+      success: true, 
+      order: orderRes.rows[0], 
+      pickup_code: pickupCode 
+    });
+
   } catch (err) {
-    console.error("Error at reserveOrder", err);
+    await db.query("ROLLBACK");
+    console.error("Error at reserveSarqyt", err);
     res.status(500).json({ error: "Something went wrong" });
+  } finally {
+    client.release();
   }
 };
 
 export const cancelReservation = async (req, res) => {
+  const client = await db.connect();
   try {
     const { id: user_id } = req.user;
     const { order_id } = req.body;
 
-    const orderRes = await db.query(
-      `SELECT sarqyt_id, quantity, status 
+    if (!order_id) {
+      return res.status(400).json({ error: "Order ID required" });
+    }
+
+    await client.query("BEGIN");
+
+    const orderRes = await client.query(
+      `SELECT id, sarqyt_id, quantity, status 
        FROM orders 
-       WHERE id = $1 AND user_id = $2`,
+       WHERE id = $1 AND user_id = $2 FOR UPDATE`,
       [order_id, user_id]
     );
 
     if (orderRes.rows.length === 0) {
+      await client.query("ROLLBACK");
       return res.status(404).json({ error: "Order not found" });
     }
 
     const order = orderRes.rows[0];
 
     if (order.status !== "reserved") {
+      await client.query("ROLLBACK");
       return res.status(400).json({ error: "Order cannot be canceled" });
     }
 
-    await db.query(
+    await client.query(
       `UPDATE orders 
        SET status = 'canceled', updated_at = NOW() 
        WHERE id = $1`,
       [order_id]
     );
 
-    await db.query(
+    await client.query(
       `UPDATE sarqyts 
        SET quantity_available = quantity_available + $1 
        WHERE id = $2`,
       [order.quantity, order.sarqyt_id]
     );
 
+    await client.query("COMMIT");
+
     res.json({ success: true, message: "Reservation canceled" });
+
   } catch (err) {
+    await db.query("ROLLBACK");
     console.error("Error at cancelReservation", err);
     res.status(500).json({ error: "Something went wrong" });
+  } finally {
+    client.release();
   }
 };
