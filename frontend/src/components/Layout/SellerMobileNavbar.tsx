@@ -30,7 +30,7 @@ const navListRight = [
 const SellerMobileNavbar = () => {
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md px-2 py-2">
-      <ul className="flex justify-between items-center text-xs md:text-sm">
+      <ul className="flex gap-4 justify-between items-center text-xs md:text-sm">
         <div className="flex flex-1 justify-evenly">
           {navListLeft.map((item) => (
             <li key={item.path} className="text-center">
@@ -68,7 +68,7 @@ const SellerMobileNavbar = () => {
         </div>
       </ul>
 
-      <div className="absolute -top-6 left-1/2 -translate-x-1/2">
+      <div className="absolute -top-8 left-1/2 -translate-x-1/2">
         <NavLink
           to="/scanner"
           className="bg-primaryColor text-white rounded-full p-4 shadow-lg flex items-center justify-center"
