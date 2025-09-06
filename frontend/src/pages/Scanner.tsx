@@ -3,7 +3,7 @@ import { BrowserQRCodeReader } from "@zxing/browser";
 import type { IScannerControls } from "@zxing/browser";
 import { CheckCircle, ChevronLeft, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { acceptOrder, getScanData } from "../api/seller";
+import { completeOrder, getScanData } from "../api/seller";
 
 export type TypeScanData = {
   id: number;
@@ -56,12 +56,11 @@ export default function QRScanner() {
 
   const handleConfirm = async () => {
     try {
-      await acceptOrder(scannedData?.id!);
+      await completeOrder(scannedData?.id!, scannedData?.pickup_code!);
       setShowPreview(false);
       setScannedData(null);
       setSuccess(true);
 
-      // Hide success after 2 sec and resume scanning
       setTimeout(() => {
         setSuccess(false);
       }, 2000);

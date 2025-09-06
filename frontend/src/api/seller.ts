@@ -1,7 +1,7 @@
 import { api } from "../App";
 
-export const acceptOrder = async (id:number|string) => {
-  const res = await api.patch(`/api/scan/${id}`);
+export const completeOrder = async (id:number|string, pickup_code:string) => {
+  const res = await api.patch(`/api/scan/${id}`, {pickup_code});
   return res.data;
 }
 
