@@ -14,6 +14,7 @@ const SeeAll = () => {
 
   const query = new URLSearchParams(location.search);
   const type = query.get("type") || "latest";
+  const categoryId = query.get("categoryId");
   const limit = 20;
 
   const fetchSarqyts = async () => {
@@ -25,8 +26,8 @@ const SeeAll = () => {
 
       if (type === "latest") {
         url = `/api/sarqyts/new?limit=${limit}`;
-      } else {
-        url = `/api/sarqyts?categories=${type}&limit=${limit}`;
+      } else if (type === "category" && categoryId) {
+        url = `/api/sarqyts?categories=${categoryId}&limit=${limit}`;
       }
 
       const res = await api.get(url);
@@ -40,7 +41,7 @@ const SeeAll = () => {
 
   useEffect(() => {
     fetchSarqyts();
-  }, [type]);
+  }, [type, categoryId]);
 
   return (
     <div className="relative max-w-6xl mx-auto p-4">
@@ -52,10 +53,12 @@ const SeeAll = () => {
         <span className="text-sm font-medium">Back</span>
       </button>
 
-      <h1 className="text-2xl font-bold mb-6 text-center">
+      <h1 className="text-2xl font-bold mb-6 text-center mt-16">
         {type === "latest"
           ? "Latest Sarqyts"
-          : `All ${type.charAt(0).toUpperCase() + type.slice(1)}`}
+          : type === "category" && categoryId
+          ? `All from Category ${categoryId}`
+          : "All Sarqyts"}
       </h1>
 
       {loading && <p className="text-center">Loading...</p>}
