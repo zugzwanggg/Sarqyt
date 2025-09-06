@@ -42,7 +42,7 @@ export const getShopSarqytsById = async (req, res) => {
     if (!checkShop.rows.length) return res.status(404).json({ message: "Shop doesn't exist" });
 
     const sarqyts = await db.query(`
-      SELECT 
+      SELECT DISTINCT ON (pt.id)
         s.id,
         pt.title AS product_title,
         s.description AS sarqyt_description,
@@ -68,8 +68,8 @@ export const getShopSarqytsById = async (req, res) => {
         ) AS categories
       FROM product_types pt
       JOIN sarqyts s ON s.product_type_id = pt.id
-      WHERE pt.shop_id = $1 AND s.available_until > NOW()
-      ORDER BY s.created_at DESC
+      WHERE pt.shop_id = $1
+      ORDER BY pt.id, s.created_at DESC
     `, [shopId]);
 
     res.status(200).json(sarqyts.rows);
