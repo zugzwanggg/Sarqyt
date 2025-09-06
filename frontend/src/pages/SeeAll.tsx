@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import axios from "axios";
 import SarqytCard from "../components/SarqytCard";
 import type { ISarqytCard } from "../types";
+import { api } from "../App";
 
 const SeeAll = () => {
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
@@ -22,7 +22,7 @@ const SeeAll = () => {
       let url = "/api/sarqyts";
       if (type === "latest") url = `/api/sarqyts/new?limit=${limit}`; 
 
-      const res = await axios.get(url, { withCredentials: true });
+      const res = await api.get(url);
       setSarqyts(res.data);
     } catch (err) {
       setError("Failed to load sarqyts.");
