@@ -21,6 +21,7 @@ import QRScanner from "./pages/Scanner";
 import Dashboard from "./pages/Dashboard";
 import ProductsPage from "./pages/Products";
 import ProductDetailsPage from "./pages/ProductPage";
+import SellerOrdersPage from "./pages/SellerOrders";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -59,6 +60,7 @@ function App() {
         {/* Seller */}
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/products" element={<ProductsPage/>}/>
+        <Route path="/orders" element={<SellerOrdersPage/>}/>
       </Route>
 
       <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
