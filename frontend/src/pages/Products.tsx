@@ -11,14 +11,13 @@ export default function ProductsPage() {
   ]);
 
   return (
-    <div className="p-6">
-      {/* Header */}
+    <div className="py-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Shop Products</h1>
         <button
           className="flex items-center gap-2 px-4 text-sm py-2 rounded-2xl bg-primaryColor text-white shadow-md hover:opacity-90"
         >
-          <Plus size={20} /> Add Product
+          <Plus /> Add Product
         </button>
       </div>
 
