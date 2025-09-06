@@ -37,7 +37,7 @@ const OrderPage = () => {
     try {
       await cancelReservation(id!);
       alert("Order cancelled successfully");
-      fetchOrder(); 
+      fetchOrder();
     } catch (error) {
       console.error(error);
       alert("Failed to cancel order");
@@ -50,11 +50,11 @@ const OrderPage = () => {
   if (!order) return <p className="p-4 text-center">Order not found</p>;
 
   const qrValue = {
-    
     id: order.id,
-    pickup_code: order.pickup_code
-    
-  }
+    pickup_code: order.pickup_code,
+  };
+
+  const isInactive = order.status === "confirmed" || order.status === "cancelled";
 
   return (
     <div className="p-4 pb-28 space-y-6">
@@ -69,13 +69,19 @@ const OrderPage = () => {
       {/* Order summary card */}
       <OrderCard order={order} />
 
-      {/* QR code for pickup */}
-      {order.pickup_code && (
+      {/* Order status */}
+      {isInactive && (
+        <div className="bg-gray-100 text-gray-700 rounded-2xl p-4 text-center font-medium">
+          {order.status === "confirmed"
+            ? "This order has been confirmed and is awaiting pickup."
+            : "This order has been cancelled."}
+        </div>
+      )}
+
+      {!isInactive && order.pickup_code && (
         <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
           <h2 className="text-lg font-semibold">Your Pickup QR Code</h2>
-          <QRCodeCanvas value={JSON.stringify(qrValue)} 
-          size={180} />
-          {/* <p className="font-mono text-xl">{order.pickup_code}</p> */}
+          <QRCodeCanvas value={JSON.stringify(qrValue)} size={180} />
           <p className="text-gray-500 text-sm text-center">
             Show this QR code at the shop to collect your order.
           </p>
@@ -133,8 +139,7 @@ const OrderPage = () => {
         </div>
       </div>
 
-      {/* Cancel Order button */}
-      {order.status !== "cancelled" ? (
+      {!isInactive && (
         <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg p-4">
           <button
             onClick={cancelOrder}
@@ -144,10 +149,7 @@ const OrderPage = () => {
             {isCancelling ? "Cancelling..." : "Cancel Order"}
           </button>
         </div>
-      )
-      :
-      ''
-    }
+      )}
     </div>
   );
 };
