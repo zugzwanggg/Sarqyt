@@ -3,71 +3,46 @@ import { ChevronDown, LocateFixed } from "lucide-react";
 import { Link } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
-import { getNewestSarqyts, getSarqytCategories, getSarqyts } from "../api/sarqyt";
-import type { ICategory, ISarqytCard } from "../types";
+import { getNewestSarqyts, getSarqyts } from "../api/sarqyt";
+import type { ISarqytCard } from "../types";
+
+const categorySections = [
+  { id: 1, title: "Meals" },
+  { id: 3, title: "Restaurants" },
+  { id: 5, title: "Fruits & Vegetables" },
+];
 
 const Home = () => {
-  const [category, setCategory] = useState<number[] | null>(null);
-  const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const { user, setIsSelectLocation } = useUser();
-  const [categories, setCategories] = useState<ICategory[]>([]);
-  
-  const [newestSarqyts, setNewestSarqyts] = useState<ISarqytCard[]>([])
-
-  const getCategories = async () => {
-    try {
-      const res = await getSarqytCategories();
-      setCategories(res);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getSarqytsData = async () => {
-    try {
-      const data = await getSarqyts(category);
-      setSarqyts(data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  const [newestSarqyts, setNewestSarqyts] = useState<ISarqytCard[]>([]);
+  const [sectionsData, setSectionsData] = useState<Record<number, ISarqytCard[]>>({});
 
   const fetchNewSarqyts = async () => {
     try {
-      const data = await getNewestSarqyts(5, category);
-      setNewestSarqyts(data)
+      const data = await getNewestSarqyts(5, null);
+      setNewestSarqyts(data);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
+
+  const fetchCategorySarqyts = async (categoryId: number) => {
+    try {
+      const data = await getSarqyts([categoryId]);
+      setSectionsData((prev) => ({ ...prev, [categoryId]: data.slice(0, 5) })); // preview only 5
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    getCategories();
-  }, []);
-
-  useEffect(() => {
-    getSarqytsData();
     fetchNewSarqyts();
-  }, [category]);
-
-  const handleSelectCategory = (categoryId:number) => {
-    setCategory(prev => {
-      if (!prev) return [categoryId];
-      if (prev?.includes(categoryId)) {
-        return prev.filter(id => id !== categoryId)
-      } else {
-        return [...prev, categoryId]
-      }
-    })
-  }
-
-  console.log(sarqyts);
-  
+    categorySections.forEach((c) => fetchCategorySarqyts(c.id));
+  }, []);
 
   return (
     <div className="px-4 pb-10">
-      {/* Top bar */}
+      {/* Location selector */}
       <div
         onClick={() => setIsSelectLocation(true)}
         className="sticky top-0 z-10 flex items-center gap-3 bg-white py-4 shadow-sm cursor-pointer"
@@ -79,10 +54,9 @@ const Home = () => {
           <p className="font-semibold text-nowrap">Chosen Location:</p>
           <p className="truncate text-gray-600">{user?.city_name || "Select"}</p>
         </div>
-        <ChevronDown/>
+        <ChevronDown />
       </div>
 
-      {/* Greeting */}
       <div className="mt-6">
         <h1 className="text-2xl font-bold">
           Hey {user?.username || "User"} 👋
@@ -90,77 +64,8 @@ const Home = () => {
         <p className="text-gray-500">Find surprises waiting near you</p>
       </div>
 
-      {/* Categories */}
-      <ul className="flex items-center gap-2 overflow-x-auto mt-5 pb-2 no-scrollbar">
-        <li
-          onClick={() => setCategory(null)}
-          className={`whitespace-nowrap px-4 py-2 rounded-full border transition cursor-pointer ${
-            category === null
-              ? "bg-primaryColor text-white border-primaryColor"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-          }`}
-        >
-          All
-        </li>
-        {categories.map((item) => (
-          <li
-            key={item.id}
-            onClick={() => handleSelectCategory(item.id)}
-            className={`whitespace-nowrap px-4 py-2 rounded-full border transition cursor-pointer ${
-              category?.some(id => id === item.id)
-                ? "bg-primaryColor text-white border-primaryColor"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            {item.name}
-          </li>
-        ))}
-      </ul>
-
-      {/* Section header */}
-      <div className="flex items-center justify-between mt-8 mb-4">
-        <h2 className="text-xl font-semibold">Sarqyts in your area</h2>
-        <Link
-          className="font-medium text-primaryColor hover:opacity-70"
-          to="/all"
-        >
-          See all →
-        </Link>
-      </div>
-
-      {/* Sarqyt list */}
-      {sarqyts.length === 0 ? (
-        <p className="text-center text-gray-500 mt-10">
-          No sarqyts found in this category 🥲
-        </p>
-      ) : (
-        <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-          {sarqyts.map((item) => (
-            <li key={item.id} className="flex-shrink-0 w-64">
-              <SarqytCard
-                key={item.id}
-                id={item.id}
-                product_title={item.product_title}
-                pickup_start={item.pickup_start}
-                pickup_end={item.pickup_end}
-                product_image={item.product_image}
-                quantity_available={item.quantity_available}
-                original_price={item.original_price}
-                discounted_price={item.discounted_price}
-                isFavorite={item.isFavorite}
-                getSarqytsData={getSarqytsData}
-                status={item.status}
-                logo={item.logo}
-                shop={item.shop}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
-    {
-      newestSarqyts.length > 0
-      ?
-      <div className="mt-8">
+      {newestSarqyts.length > 0 && (
+        <div className="mt-8">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Newest sarqyts</h2>
             <Link
@@ -170,37 +75,47 @@ const Home = () => {
               See all →
             </Link>
           </div>
-          
+          <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
+            {newestSarqyts.map((item) => (
+              <li key={item.id} className="flex-shrink-0 w-64">
+                <SarqytCard {...item} getSarqytsData={fetchNewSarqyts} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {categorySections.map((section) => (
+        <div key={section.id} className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">{section.title}</h2>
+            <Link
+              className="font-medium text-primaryColor hover:opacity-70"
+              to={`/all?type=category&categoryId=${section.id}`}
+            >
+              See all →
+            </Link>
+          </div>
+          {sectionsData[section.id]?.length ? (
             <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
-              {newestSarqyts.map((item) => (
+              {sectionsData[section.id].map((item) => (
                 <li key={item.id} className="flex-shrink-0 w-64">
                   <SarqytCard
-                    key={item.id}
-                    id={item.id}
-                    product_title={item.product_title}
-                    pickup_start={item.pickup_start}
-                    pickup_end={item.pickup_end}
-                    product_image={item.product_image}
-                    quantity_available={item.quantity_available}
-                    original_price={item.original_price}
-                    discounted_price={item.discounted_price}
-                    isFavorite={item.isFavorite}
-                    getSarqytsData={fetchNewSarqyts}
-                    status={item.status}
-                    logo={item.logo}
-                    shop={item.shop}
+                    {...item}
+                    getSarqytsData={() => fetchCategorySarqyts(section.id)}
                   />
                 </li>
               ))}
             </ul>
+          ) : (
+            <p className="text-gray-500">
+              No {section.title.toLowerCase()} found 🥲
+            </p>
+          )}
         </div>
-        :
-        ''
-    }
-
-      
+      ))}
     </div>
-  )
+  );
 };
 
 export default Home;
