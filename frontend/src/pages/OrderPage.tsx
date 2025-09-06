@@ -54,7 +54,7 @@ const OrderPage = () => {
     pickup_code: order.pickup_code,
   };
 
-  const isInactive = order.status === "confirmed" || order.status === "cancelled";
+  const isInactive = order.status === "completed" || order.status === "cancelled";
 
   return (
     <div className="p-4 pb-28 space-y-6">
