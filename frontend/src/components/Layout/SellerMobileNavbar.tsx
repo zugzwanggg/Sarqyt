@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { LayoutDashboard, Package, ListOrdered, BarChart3, QrCode } from "lucide-react";
+import { LayoutDashboard, Package, ListOrdered, Settings, QrCode } from "lucide-react";
 
 const navList = [
   {
@@ -19,32 +19,38 @@ const navList = [
     isCenter: true,
   },
   {
-    title: "Reports",
-    path: "/reports",
-    icon: BarChart3,
-  },
-  {
     title: "Orders",
     path: "/orders",
     icon: ListOrdered,
-  }
+  },
+  {
+    title: "Settings",
+    path: "/settings",
+    icon: Settings,
+  },
 ];
 
 const SellerMobileNavbar = () => {
   return (
-    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white shadow-lg rounded-2xl px-4 py-2">
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] min-w-[300px] max-w-sm bg-white shadow-lg rounded-2xl px-2 py-2">
       <ul className="flex justify-between items-center text-sm">
         {navList.map((item) => (
-          <li key={item.path} className={item.isCenter ? "translate-y-[-20%]" : ""}>
+          <li key={item.path} className={`flex-1 text-center ${item.isCenter ? "relative" : ""}`}>
             <NavLink
               to={item.path}
               className={({ isActive }) =>
-                `flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition ${
-                  isActive ? "text-primaryColor bg-primaryColor/10" : "text-zinc-400"
-                } ${item.isCenter ? "bg-primaryColor text-white rounded-full p-3 shadow-md" : ""}`
+                `flex flex-col items-center gap-1 px-2 py-2 rounded-xl transition ${
+                  isActive && !item.isCenter
+                    ? "text-primaryColor bg-primaryColor/10"
+                    : "text-zinc-400"
+                } ${
+                  item.isCenter
+                    ? "absolute -top-6 left-1/2 -translate-x-1/2 bg-primaryColor text-white rounded-full p-4 shadow-lg"
+                    : ""
+                }`
               }
             >
-              <item.icon className="h-6 w-6" />
+              <item.icon className={`${item.isCenter ? "h-8 w-8 text-white" : "h-6 w-6"}`} />
               {!item.isCenter && <span className="text-xs">{item.title}</span>}
             </NavLink>
           </li>
