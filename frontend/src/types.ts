@@ -13,11 +13,11 @@ export interface ISarqytCard {
   status: string;
   logo: string;
   shop: string;
-  available_until: string|Date;
 }
 
 export interface IExtendedSarqytCard extends ISarqytCard {
   shop_id: number;
+  available_until: string;
   created_at: string;
   shop_img: string;
   rate: number;

@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
-import type { ISarqytCard } from "../types";
+import type { IExtendedSarqytCard } from "../types";
 import { format } from "date-fns";
 
 
 export default function ProductDetailsPage() {
-  const [sarqyts] = useState<ISarqytCard[]>([]);
+  const [sarqyts] = useState<IExtendedSarqytCard[]>([]);
   const [showForm, setShowForm] = useState(false);
 
   const product = {
