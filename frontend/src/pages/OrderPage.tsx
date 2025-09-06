@@ -59,7 +59,7 @@ const OrderPage = () => {
 
   const renderStatusBanner = () => {
     switch (order.status) {
-      case "pending":
+      case "pending" || "reserved":
         return (
           <div className="sticky top-0 z-50 bg-yellow-100 text-yellow-800 p-3 text-center font-medium shadow-md">
             Your order is pending confirmation.
