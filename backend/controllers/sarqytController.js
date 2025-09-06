@@ -50,7 +50,7 @@ export const getSarqytsByUsersCity = async (req, res) => {
       JOIN shops sh ON sh.id = pt.shop_id
       LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
       LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
-      WHERE sh.city = $1 AND s.available_until > NOW()
+      WHERE sh.city = $1
     `;
 
     const params = [city, id];
@@ -60,6 +60,16 @@ export const getSarqytsByUsersCity = async (req, res) => {
       params.push(categoriesArr);
     }
 
+    query += `
+      ORDER BY 
+        CASE 
+          WHEN s.available_until >= NOW() AND s.quantity_available > 0 THEN 1
+          WHEN s.available_until >= NOW() AND s.quantity_available = 0 THEN 2
+          ELSE 3
+        END,
+        s.created_at DESC
+    `;
+
     const result = await db.query(query, params);
     res.status(200).json(result.rows);
   } catch (error) {
@@ -68,7 +78,6 @@ export const getSarqytsByUsersCity = async (req, res) => {
   }
 };
 
-// ------------------ GET NEWEST PICKUPS ------------------
 export const getNewestSarqyts = async (req, res) => {
   try {
     const { id } = req.user;
@@ -112,7 +121,7 @@ export const getNewestSarqyts = async (req, res) => {
       JOIN shops sh ON sh.id = pt.shop_id
       LEFT JOIN favorites f ON f.product_type_id = pt.id AND f.user_id = $2
       LEFT JOIN product_type_category ptc ON ptc.product_type_id = pt.id
-      WHERE sh.city = $1 AND s.available_until > NOW()
+      WHERE sh.city = $1
     `;
 
     const params = [city, id];
@@ -122,7 +131,10 @@ export const getNewestSarqyts = async (req, res) => {
       params.push(categoriesArr);
     }
 
-    query += ` ORDER BY s.created_at DESC LIMIT $${params.length + 1}`;
+    query += `
+      ORDER BY s.created_at DESC
+      LIMIT $${params.length + 1}
+    `;
     params.push(limit);
 
     const result = await db.query(query, params);
