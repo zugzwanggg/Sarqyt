@@ -54,11 +54,43 @@ const OrderPage = () => {
     pickup_code: order.pickup_code,
   };
 
-  const isInactive = order.status === "completed" || order.status === "cancelled";
+  const isInactive =
+    order.status === "completed" || order.status === "cancelled";
+
+  const renderStatusBanner = () => {
+    switch (order.status) {
+      case "pending":
+        return (
+          <div className="sticky top-0 z-50 bg-yellow-100 text-yellow-800 p-3 text-center font-medium shadow-md">
+            Your order is pending confirmation.
+          </div>
+        );
+      case "confirmed":
+        return (
+          <div className="sticky top-0 z-50 bg-green-100 text-green-800 p-3 text-center font-medium shadow-md">
+            Your order is confirmed 🎉 You can grab your Sarqyt!
+          </div>
+        );
+      case "completed":
+        return (
+          <div className="sticky top-0 z-50 bg-blue-100 text-blue-800 p-3 text-center font-medium shadow-md">
+            This order has been completed.
+          </div>
+        );
+      case "canceled":
+        return (
+          <div className="sticky top-0 z-50 bg-red-100 text-red-800 p-3 text-center font-medium shadow-md">
+            This order has been canceled.
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="p-4 pb-28 space-y-6">
-      {/* Back button */}
+      {renderStatusBanner()}
       <button
         onClick={() => nav(-1)}
         className="flex items-center gap-2 text-primaryColor font-medium mb-4"
@@ -66,19 +98,10 @@ const OrderPage = () => {
         <ChevronLeft /> Back
       </button>
 
-      {/* Order summary card */}
       <OrderCard order={order} />
 
-      {/* Order status */}
-      {isInactive && (
-        <div className="bg-gray-100 text-gray-700 rounded-2xl p-4 text-center font-medium">
-          {order.status === "confirmed"
-            ? "This order has been confirmed and is awaiting pickup."
-            : "This order has been cancelled."}
-        </div>
-      )}
 
-      {!isInactive && order.pickup_code && (
+      {!isInactive && order.status === "pending" && order.pickup_code && (
         <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
           <h2 className="text-lg font-semibold">Your Pickup QR Code</h2>
           <QRCodeCanvas value={JSON.stringify(qrValue)} size={180} />
@@ -104,7 +127,6 @@ const OrderPage = () => {
         </div>
       </div>
 
-      {/* Sarqyt info */}
       <div className="bg-white shadow rounded-2xl p-4 space-y-2">
         <h3 className="font-semibold text-md">Your Sarqyt</h3>
         <div className="flex items-center gap-4">
@@ -125,7 +147,6 @@ const OrderPage = () => {
         </div>
       </div>
 
-      {/* Pickup time & payment info */}
       <div className="bg-white shadow rounded-2xl p-4 space-y-2">
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <Clock className="w-4 h-4" /> Pickup Time:{" "}
@@ -139,7 +160,7 @@ const OrderPage = () => {
         </div>
       </div>
 
-      {!isInactive && (
+      {order.status === "pending" && (
         <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg p-4">
           <button
             onClick={cancelOrder}
