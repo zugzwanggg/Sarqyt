@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { ChevronDown, LocateFixed } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
 import { getNewestSarqyts, getSarqyts } from "../api/sarqyt";
@@ -16,6 +16,8 @@ const Home = () => {
   const { user, setIsSelectLocation } = useUser();
   const [newestSarqyts, setNewestSarqyts] = useState<ISarqytCard[]>([]);
   const [sectionsData, setSectionsData] = useState<Record<number, ISarqytCard[]>>({});
+
+  const navigate = useNavigate();
 
   const fetchNewSarqyts = async () => {
     try {
@@ -36,6 +38,7 @@ const Home = () => {
   };
 
   useEffect(() => {
+    if (user?.role === 'seller' ) navigate('/dashboard')
     fetchNewSarqyts();
     categorySections.forEach((c) => fetchCategorySarqyts(c.id));
   }, []);
