@@ -59,7 +59,6 @@ function App() {
         {/* Seller */}
         <Route path="/dashboard" element={<Dashboard/>}/>
         <Route path="/products" element={<ProductsPage/>}/>
-        <Route path="/products/:id" element={<ProductDetailsPage/>}/>
       </Route>
 
       <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
@@ -70,6 +69,7 @@ function App() {
 
       {/* seller */}
       <Route path="/scanner" element={<QRScanner/>}/>
+      <Route path="/products/:id" element={<ProductDetailsPage/>}/>
     </Routes>
   )
 }
