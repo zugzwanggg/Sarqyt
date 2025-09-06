@@ -18,6 +18,7 @@ import SettingsPage from "./pages/Settings";
 import OrderPage from "./pages/OrderPage";
 import SeeAll from "./pages/SeeAll";
 import QRScanner from "./pages/Scanner";
+import Dashboard from "./pages/Dashboard";
 
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
@@ -47,10 +48,14 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout/>}>
+        {/* User */}
         <Route path="/" element={<Home/>}/>
         <Route path="/search" element={<Search/>}/>
         <Route path="/favorites" element={<Favorites/>}/>
         <Route path="/profile" element={<Profile/>}/>
+        
+        {/* Seller */}
+        <Route path="/dashboard" element={<Dashboard/>}/>
       </Route>
 
       <Route path="/sarqyts/:id" element={<Sarqyt/>}/>
