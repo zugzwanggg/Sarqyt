@@ -5,13 +5,31 @@ import { CheckCircle, ChevronLeft, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { acceptOrder, getScanData } from "../api/seller";
 
-type TypeScanData = {
+export type TypeScanData = {
   id: number;
-  pickup_code: string;
+  quantity: number;
+  total_price: string;
+  status: string;
+  payment_method: string;
+  payment_status: string;
+  pickup_code?: string;
+  pickup_time?: string;
+  created_at: string;
+  updated_at?: string;
+
+  sarqyt_id: number;
+  sarqyt_title: string;
+  sarqyt_image: string;
+  discounted_price: string;
+  original_price: string;
+
+  shop_id: number;
+  shop_name: string;
+  shop_image: string;
+  shop_address: string;
+  
   username: string;
   email: string;
-  product_name: string;
-  shop_name: string;
 };
 
 export default function QRScanner() {
@@ -136,10 +154,10 @@ export default function QRScanner() {
             <div className="absolute inset-0 flex items-center justify-center">
               {/* Dark overlay with transparent square */}
               <div
-                className="absolute inset-0 bg-black/50"
+                className="absolute inset-0 bg-black/60"
                 style={{
-                  WebkitMask: "radial-gradient(circle, transparent 130px, black 131px)",
-                  mask: "radial-gradient(circle, transparent 130px, black 131px)",
+                  WebkitClipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 20% 0, 20% 80%, 80% 80%, 80% 20%, 20% 20%, 20% 0)", 
+                  clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 20% 0, 20% 80%, 80% 80%, 80% 20%, 20% 20%, 20% 0)",
                 }}
               />
 
@@ -180,26 +198,34 @@ export default function QRScanner() {
 
       {/* Result Preview */}
       {showPreview && scannedData && (
-        <div className="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-6 text-center z-20">
-          <CheckCircle className="w-16 h-16 text-green-400 mb-4" />
-          <h2 className="text-xl font-bold mb-4">Order Found</h2>
+        <div className="absolute inset-0 bg-white flex flex-col items-center justify-between z-20">
+          <div className="w-full max-w-md flex-1 p-6 overflow-y-auto">
+            <img
+              src={scannedData.sarqyt_image}
+              alt={scannedData.sarqyt_title}
+              className="w-full h-40 object-cover rounded-xl mb-4 shadow"
+            />
 
-          <div className="bg-white text-black rounded-2xl p-4 w-full max-w-md text-left space-y-3 shadow-lg">
-            <div>
-              <span className="font-semibold">Customer:</span> {scannedData.username}
-            </div>
-            <div>
-              <span className="font-semibold">Product:</span> {scannedData.product_name}
-            </div>
-            <div>
-              <span className="font-semibold">Shop:</span> {scannedData.shop_name}
+            <h2 className="text-2xl font-bold mb-2">{scannedData.sarqyt_title}</h2>
+            <p className="text-gray-500 mb-4">{scannedData.shop_name}</p>
+
+            <div className="space-y-2 text-sm">
+              <div><span className="font-semibold">Customer:</span> {scannedData.username}</div>
+              <div><span className="font-semibold">Quantity:</span> {scannedData.quantity}</div>
+              <div><span className="font-semibold">Total Price:</span> {scannedData.total_price}</div>
+              <div><span className="font-semibold">Status:</span> {scannedData.status}</div>
+              <div><span className="font-semibold">Payment:</span> {scannedData.payment_status} ({scannedData.payment_method})</div>
+              <div><span className="font-semibold">Pickup Code:</span> {scannedData.pickup_code}</div>
+              <div><span className="font-semibold">Pickup Time:</span> {scannedData.pickup_time || "—"}</div>
+              <div><span className="font-semibold">Shop Address:</span> {scannedData.shop_address}</div>
             </div>
           </div>
 
-          <div className="flex gap-4 mt-6">
+          {/* Fixed bottom buttons */}
+          <div className="w-full max-w-md flex gap-4 p-4 border-t bg-white">
             <button
               onClick={handleConfirm}
-              className="px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
+              className="flex-1 px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
             >
               Confirm
             </button>
@@ -208,7 +234,7 @@ export default function QRScanner() {
                 setShowPreview(false);
                 setScannedData(null);
               }}
-              className="px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
+              className="flex-1 px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
             >
               Cancel
             </button>
