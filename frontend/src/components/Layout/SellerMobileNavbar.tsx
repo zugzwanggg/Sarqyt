@@ -32,7 +32,7 @@ const navList = [
 
 const SellerMobileNavbar = () => {
   return (
-    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[95%] min-w-[300px] max-w-sm bg-white shadow-lg rounded-2xl px-2 py-2">
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[98%] min-w-[300px] max-w-sm bg-white shadow-lg rounded-2xl px-2 py-2">
       <ul className="flex justify-between items-center text-sm">
         {navList.map((item) => (
           <li key={item.path} className={`flex-1 text-center ${item.isCenter ? "relative" : ""}`}>
