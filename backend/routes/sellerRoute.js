@@ -8,4 +8,4 @@ import { checkIsUserRoleSeller } from "../middleware/checkIsUserRoleSeller.js";
 export const sellerRouter = Router();
 
 sellerRouter.patch('/scan/:orderId', checkAuth, checkIsUserRoleSeller, acceptOrder);
-sellerRouter.get('/scan/:id', checkAuth, checkIsUserRoleSeller, getScanData);
+sellerRouter.get('/scan/:orderId', checkAuth, checkIsUserRoleSeller, getScanData);
