@@ -147,13 +147,13 @@ export const updateUserAddress = async (req, res) => {
   }
 };
 
-// ------------------ FAVORITES ------------------
+
 export const getUserFavorites = async (req, res) => {
   try {
     const { id } = req.user;
 
     const favorites = await db.query(`
-      SELECT 
+      SELECT DISTINCT ON (pt.id)
         s.id,
         pt.title AS product_title,
         s.description AS sarqyt_description,
@@ -187,9 +187,18 @@ export const getUserFavorites = async (req, res) => {
       JOIN product_types pt ON pt.id = f.product_type_id
       JOIN sarqyts s ON s.product_type_id = pt.id
       JOIN shops sh ON sh.id = pt.shop_id
-      LEFT JOIN orders o ON o.sarqyt_id = s.id AND o.user_id = $1 AND o.status NOT IN ('canceled')
-      WHERE f.user_id = $1 AND s.available_until > NOW()
-      ORDER BY s.created_at DESC
+      LEFT JOIN orders o 
+        ON o.sarqyt_id = s.id 
+       AND o.user_id = $1 
+       AND o.status NOT IN ('canceled')
+      WHERE f.user_id = $1
+      ORDER BY pt.id, 
+               CASE 
+                 WHEN s.available_until >= NOW() AND s.quantity_available > 0 THEN 1
+                 WHEN s.available_until >= NOW() AND s.quantity_available = 0 THEN 2
+                 ELSE 3
+               END,
+               s.created_at DESC
     `, [id]);
 
     res.status(200).json(favorites.rows);
