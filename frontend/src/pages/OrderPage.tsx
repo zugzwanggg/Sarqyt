@@ -101,7 +101,7 @@ const OrderPage = () => {
       <OrderCard order={order} />
 
 
-      {!isInactive && order.status === "pending" && order.pickup_code && (
+      {!isInactive && (order.status === "reserved" || order.status === "confirmed") && order.pickup_code && (
         <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
           <h2 className="text-lg font-semibold">Your Pickup QR Code</h2>
           <QRCodeCanvas value={JSON.stringify(qrValue)} size={180} />
