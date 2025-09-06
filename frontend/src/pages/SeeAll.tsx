@@ -26,7 +26,7 @@ const SeeAll = () => {
 
       if (type === "latest") {
         url = `/api/sarqyts/new?limit=${limit}`;
-      } else if (type === "category" && categoryId) {
+      } else if (categoryId) {
         url = `/api/sarqyts?categories=${categoryId}&limit=${limit}`;
       }
 
@@ -56,8 +56,8 @@ const SeeAll = () => {
       <h1 className="text-2xl font-bold mb-6 text-center mt-16">
         {type === "latest"
           ? "Latest Sarqyts"
-          : type === "category" && categoryId
-          ? `All from Category ${categoryId}`
+          : categoryId
+          ? `All from ${type}`
           : "All Sarqyts"}
       </h1>
 

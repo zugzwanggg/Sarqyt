@@ -91,7 +91,7 @@ const Home = () => {
             <h2 className="text-xl font-semibold">{section.title}</h2>
             <Link
               className="font-medium text-primaryColor hover:opacity-70"
-              to={`/all?type=category&categoryId=${section.id}`}
+              to={`/all?type=${section.title}&categoryId=${section.id}`}
             >
               See all →
             </Link>
