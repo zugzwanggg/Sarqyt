@@ -170,7 +170,7 @@ export default function QRScanner() {
                   width="100%"
                   height="100%"
                   fill="black"
-                  fillOpacity="0.6"
+                  fillOpacity="0.4"
                   mask="url(#mask)"
                 />
               </svg>
