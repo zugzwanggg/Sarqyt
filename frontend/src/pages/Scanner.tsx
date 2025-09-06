@@ -152,15 +152,17 @@ export default function QRScanner() {
 
           {!showPreview && (
             <div className="absolute inset-0 flex items-center justify-center">
-              {/* Dark overlay with transparent square */}
+            {/* Dark overlay with transparent square */}
               <div
                 className="absolute inset-0 bg-black/60"
                 style={{
-                  WebkitClipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 20% 0, 20% 80%, 80% 80%, 80% 20%, 20% 20%, 20% 0)", 
-                  clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 20% 0, 20% 80%, 80% 80%, 80% 20%, 20% 20%, 20% 0)",
+                  WebkitMask: "none",
+                  mask: "none",
+                  WebkitClipPath: "inset(calc(50% - 128px) calc(50% - 128px) calc(50% - 128px) calc(50% - 128px))",
+                  clipPath: "inset(calc(50% - 128px) calc(50% - 128px) calc(50% - 128px) calc(50% - 128px))",
                 }}
               />
-
+            
               {/* Corner borders */}
               <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 pointer-events-none">
                 <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-[var(--primaryColor)] rounded-tl-xl" />
@@ -169,6 +171,7 @@ export default function QRScanner() {
                 <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-[var(--primaryColor)] rounded-br-xl" />
               </div>
             </div>
+          
           )}
         </div>
       ) : cameraAllowed === false ? (
