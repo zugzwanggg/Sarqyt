@@ -122,7 +122,7 @@ const Home = () => {
         <h2 className="text-xl font-semibold">Sarqyts in your area</h2>
         <Link
           className="font-medium text-primaryColor hover:opacity-70"
-          to="/all?type=city"
+          to="/all"
         >
           See all →
         </Link>
@@ -165,7 +165,7 @@ const Home = () => {
             <h2 className="text-xl font-semibold">Newest sarqyts</h2>
             <Link
               className="font-medium text-primaryColor hover:opacity-70"
-              to={`/all?type=new`}
+              to={`/all?type=latest`}
             >
               See all →
             </Link>
