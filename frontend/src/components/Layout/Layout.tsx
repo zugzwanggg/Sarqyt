@@ -7,10 +7,13 @@ import {useState} from "react";
 import Onboarding from "../Onboarding";
 import ChooseLocation from "../ChooseLocation";
 import MobileNavbar from "./MobileNavbar";
+import { useUser } from "../../context/UserContext";
+import SellerMobileNavbar from "./SellerMobileNavbar";
 
 
 const Layout = () => {
 
+  const {user} = useUser();
   const [onboardingDone, setOnboardingDone] = useState(
     localStorage.getItem('onboardingdone') === "true"
   )
@@ -46,7 +49,14 @@ const Layout = () => {
         {/* <Sidebar/> */}
         <Outlet/>
 
-        <MobileNavbar/>
+        {
+          user?.role === 'seller'
+          ?
+          <SellerMobileNavbar/>
+          :
+          <MobileNavbar/>
+        }
+        
       </div>
 
       {/* <Footer/> */}

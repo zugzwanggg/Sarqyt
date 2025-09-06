@@ -1,6 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Compass, Search, Heart, CircleUser,ScanQrCode } from "lucide-react";
-import { useUser } from "../../context/UserContext";
+import { Compass, Search, Heart, CircleUser } from "lucide-react";
 
 
 const navList = [
@@ -28,17 +27,6 @@ const navList = [
 ]
 
 const MobileNavbar = () => {
-  const {user} = useUser();
-
-  if (user.role === 'seller') {
-    navList.push(
-      {
-        title: "Scanner",
-        path: "/scanner",
-        icon: ScanQrCode
-      }
-    )
-  }
 
   return (
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white shadow-lg rounded-2xl px-4 py-2">
