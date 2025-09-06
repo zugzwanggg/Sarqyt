@@ -152,18 +152,29 @@ export default function QRScanner() {
 
           {!showPreview && (
             <div className="absolute inset-0 flex items-center justify-center">
-            {/* Dark overlay with transparent square */}
-              <div
-                className="absolute inset-0 bg-black/60"
-                style={{
-                  WebkitMask: "none",
-                  mask: "none",
-                  WebkitClipPath: "inset(calc(50% - 128px) calc(50% - 128px) calc(50% - 128px) calc(50% - 128px))",
-                  clipPath: "inset(calc(50% - 128px) calc(50% - 128px) calc(50% - 128px) calc(50% - 128px))",
-                }}
-              />
+              <svg className="absolute inset-0 w-full h-full">
+                <defs>
+                  <mask id="mask">
+                    <rect width="100%" height="100%" fill="white" />
+                    <rect
+                      x="50%"
+                      y="50%"
+                      width="256"
+                      height="256"
+                      fill="black"
+                      transform="translate(-128, -128)"
+                    />
+                  </mask>
+                </defs>
+                <rect
+                  width="100%"
+                  height="100%"
+                  fill="black"
+                  fillOpacity="0.6"
+                  mask="url(#mask)"
+                />
+              </svg>
             
-              {/* Corner borders */}
               <div className="absolute w-64 h-64 -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2 pointer-events-none">
                 <div className="absolute top-0 left-0 w-12 h-12 border-t-4 border-l-4 border-[var(--primaryColor)] rounded-tl-xl" />
                 <div className="absolute top-0 right-0 w-12 h-12 border-t-4 border-r-4 border-[var(--primaryColor)] rounded-tr-xl" />
