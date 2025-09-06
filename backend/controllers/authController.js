@@ -46,8 +46,8 @@ export const telegramAuth = async (req,res) => {
       userId = existingUser.rows[0].id;
     } else {
       const insertRes = await db.query(
-        `INSERT INTO users (telegram_id, email, username)
-         VALUES ($1, $2, $3)
+        `INSERT INTO users (telegram_id, email, username, country, city)
+         VALUES ($1, $2, $3, 1, 1)
          RETURNING id`,
         [
           userData.id,
