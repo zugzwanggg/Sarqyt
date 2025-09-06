@@ -89,3 +89,11 @@ export interface IOrder {
   shop_image: string;
   shop_address: string;
 }
+
+export interface IProduct {
+  id: number | string;
+  shop_id: number | string;
+  title: string;
+  image_url: string;
+  description: string;
+}
