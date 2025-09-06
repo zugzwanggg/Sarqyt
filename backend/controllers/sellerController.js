@@ -49,11 +49,10 @@ export const acceptOrder = async (req, res) => {
 export const completeOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
-    const { pickup_code } = req.body;
     const { id: userId } = req.user;
 
-    if (!orderId || !pickup_code) {
-      return res.status(400).json({ message: "Order id and pickup code required" });
+    if (!orderId) {
+      return res.status(400).json({ message: "Order id code required" });
     }
 
     const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
@@ -83,10 +82,6 @@ export const completeOrder = async (req, res) => {
     }
     if (order.pickup_end && now > new Date(order.pickup_end)) {
       return res.status(400).json({ message: "Pickup window expired" });
-    }
-    const isValid = await bcryptjs.compare(pickup_code, order.pickup_code);
-    if (!isValid) {
-      return res.status(400).json({ message: "Invalid pickup code" });
     }
 
     await db.query(

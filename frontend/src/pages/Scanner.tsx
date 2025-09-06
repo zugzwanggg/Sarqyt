@@ -56,7 +56,7 @@ export default function QRScanner() {
 
   const handleConfirm = async () => {
     try {
-      await completeOrder(scannedData?.id!, scannedData?.pickup_code!);
+      await completeOrder(scannedData?.id!);
       setShowPreview(false);
       setScannedData(null);
       setSuccess(true);
@@ -227,8 +227,8 @@ export default function QRScanner() {
               <div><span className="font-semibold">Quantity:</span> {scannedData.quantity}</div>
               <div><span className="font-semibold">Total Price:</span> {scannedData.total_price}</div>
               <div><span className="font-semibold">Status:</span> {scannedData.status}</div>
-              <div><span className="font-semibold">Payment:</span> {scannedData.payment_status} ({scannedData.payment_method})</div>
-              <div><span className="font-semibold">Pickup Code:</span> {scannedData.pickup_code}</div>
+              {/* <div><span className="font-semibold">Payment:</span> {scannedData.payment_status} ({scannedData.payment_method})</div>
+              <div><span className="font-semibold">Pickup Code:</span> {scannedData.pickup_code}</div> */}
               <div><span className="font-semibold">Pickup Time:</span> {scannedData.pickup_time || "—"}</div>
               <div><span className="font-semibold">Shop Address:</span> {scannedData.shop_address}</div>
             </div>
