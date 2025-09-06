@@ -1,5 +1,4 @@
 import { db } from "../db.js";
-import bcryptjs from "bcryptjs";
 
 export const acceptOrder = async (req, res) => {
   try {
@@ -14,10 +13,15 @@ export const acceptOrder = async (req, res) => {
     }
 
     const orderRes = await db.query(
-      `SELECT id, shop_id, status, pickup_start, pickup_end 
-       FROM orders WHERE id = $1`,
+      `
+      SELECT o.id, o.shop_id, o.status, s.pickup_start, s.pickup_end
+      FROM orders o
+      JOIN sarqyts s ON s.id = o.sarqyt_id
+      WHERE o.id = $1
+      `,
       [orderId]
     );
+
     if (orderRes.rowCount === 0) return res.status(404).json({ message: "Order not found" });
 
     const order = orderRes.rows[0];
@@ -52,7 +56,7 @@ export const completeOrder = async (req, res) => {
     const { id: userId } = req.user;
 
     if (!orderId) {
-      return res.status(400).json({ message: "Order id code required" });
+      return res.status(400).json({ message: "Order id required" });
     }
 
     const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
@@ -61,8 +65,12 @@ export const completeOrder = async (req, res) => {
     }
 
     const orderRes = await db.query(
-      `SELECT id, shop_id, status, pickup_start, pickup_end, pickup_code 
-       FROM orders WHERE id = $1`,
+      `
+      SELECT o.id, o.shop_id, o.status, s.pickup_start, s.pickup_end
+      FROM orders o
+      JOIN sarqyts s ON s.id = o.sarqyt_id
+      WHERE o.id = $1
+      `,
       [orderId]
     );
     if (orderRes.rowCount === 0) return res.status(404).json({ message: "Order not found" });
