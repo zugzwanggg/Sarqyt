@@ -27,7 +27,7 @@ export type TypeScanData = {
   shop_name: string;
   shop_image: string;
   shop_address: string;
-  
+
   username: string;
   email: string;
 };
@@ -198,7 +198,7 @@ export default function QRScanner() {
 
       {/* Result Preview */}
       {showPreview && scannedData && (
-        <div className="absolute inset-0 bg-white flex flex-col items-center justify-between z-20">
+        <div className="absolute inset-0 bg-white flex flex-col items-center justify-between z-20 text-gray-700">
           <div className="w-full max-w-md flex-1 p-6 overflow-y-auto">
             <img
               src={scannedData.sarqyt_image}
