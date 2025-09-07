@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
+import { Navigation } from "lucide-react";
 import type { IShop } from "../types";
 
 type Props = {
@@ -9,9 +10,35 @@ type Props = {
 const YandexAllShopsMap = ({ shops }: Props) => {
   const [selectedShop, setSelectedShop] = useState<IShop | null>(null);
   const [ymaps, setYmaps] = useState<any>(null);
+  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
+  const handleGetLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords: [number, number] = [
+            position.coords.latitude,
+            position.coords.longitude,
+          ];
+          setUserLocation(coords);
+
+          if (ymaps) {
+            ymaps.setCenter(coords, 14, { duration: 500 });
+          }
+        },
+        (error) => {
+          console.error("Error getting location:", error);
+          alert("Unable to get your location");
+        }
+      );
+    } else {
+      alert("Geolocation is not supported by your browser");
+    }
+  };
 
   return (
     <div className="fixed top-0 w-screen h-screen overflow-hidden">
+      {/* Map */}
       <YMaps>
         <Map
           className="absolute inset-0 w-full h-full"
@@ -56,9 +83,26 @@ const YandexAllShopsMap = ({ shops }: Props) => {
                 }}
               />
             ))}
+          {userLocation && (
+            <Placemark
+              geometry={userLocation}
+              options={{
+                preset: "islands#circleIcon",
+                iconColor: "#FF5722",
+              }}
+            />
+          )}
         </Map>
       </YMaps>
 
+      <button
+        onClick={handleGetLocation}
+        className="absolute top-5 right-5 z-50 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 flex items-center justify-center"
+      >
+        <Navigation className="w-6 h-6 text-[#3EC171]" />
+      </button>
+
+      {/* Shop info panel */}
       {selectedShop && (
         <div className="absolute z-50 bottom-28 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
           <div className="flex items-center gap-3">
