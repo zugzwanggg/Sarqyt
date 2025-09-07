@@ -8,7 +8,6 @@ const SettingsPage = () => {
   const { user, setIsSelectLocation } = useUser();
   const navigate = useNavigate();
 
-  // Mock shop data (later fetch from backend)
   const [shop, setShop] = useState<IShop>({
     id: 1,
     name: "My Awesome Shop",
@@ -29,12 +28,10 @@ const SettingsPage = () => {
       const url = URL.createObjectURL(file);
       setPreviewImage(url);
 
-      // TODO: send `file` to backend (FormData upload)
     }
   };
 
   const handleSave = () => {
-    // TODO: send updated shop data to backend API
     console.log("Updated shop:", shop);
   };
 
@@ -148,7 +145,6 @@ const SettingsPage = () => {
         </select>
       </section>
 
-      {/* Become Seller Section (hide for sellers) */}
       {user?.role !== "seller" && (
         <section className="bg-white shadow rounded-2xl p-4">
           <h3 className="text-md font-semibold mb-2">Become a Seller</h3>
