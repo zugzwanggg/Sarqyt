@@ -9,11 +9,10 @@ const SettingsPage = () => {
   const { user, setIsSelectLocation } = useUser();
   const navigate = useNavigate();
 
-  // Mock shop data (later fetch from backend)
   const [shop, setShop] = useState<IShop>({
     id: 1,
     name: "My Awesome Shop",
-    image_url: "/shop.jpg",
+    image_url: "https://www.healthbenefitstimes.com/glossary/wp-content/uploads/2020/07/Mustard.jpg",
     rating: 4.5,
     address: "123 Main Street, Atyrau",
   });
