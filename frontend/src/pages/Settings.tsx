@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useState } from "react";
 import type { IShop } from "../types";
+import ShopAddressPicker from "../components/ShopAddressPicker";
 
 const SettingsPage = () => {
   const { user, setIsSelectLocation } = useUser();
@@ -11,7 +12,7 @@ const SettingsPage = () => {
   const [shop, setShop] = useState<IShop>({
     id: 1,
     name: "My Awesome Shop",
-    image_url: "/shop.jpg",
+    image_url: "https://www.healthbenefitstimes.com/glossary/wp-content/uploads/2020/07/Mustard.jpg",
     rating: 4.5,
     address: "123 Main Street, Atyrau",
   });
@@ -81,15 +82,11 @@ const SettingsPage = () => {
           </div>
 
           {/* Shop Address */}
-          <div>
-            <label className="block text-sm text-gray-600">Address</label>
-            <input
-              type="text"
-              value={shop.address}
-              onChange={(e) => handleChange("address", e.target.value)}
-              className="border rounded-md w-full px-3 py-2"
-            />
-          </div>
+          <ShopAddressPicker
+            value={{ address: shop.address }}
+            onChange={(val) => setShop((prev) => ({ ...prev, ...val }))}
+          />
+
 
           {/* Read-only Rating */}
           <div>
