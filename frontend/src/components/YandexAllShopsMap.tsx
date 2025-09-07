@@ -8,6 +8,7 @@ type Props = {
 
 const YandexAllShopsMap = ({ shops }: Props) => {
   const [selectedShop, setSelectedShop] = useState<IShop | null>(null);
+  const [ymaps, setYmaps] = useState<any>(null);
 
   return (
     <div className="relative w-screen h-screen">
@@ -18,43 +19,43 @@ const YandexAllShopsMap = ({ shops }: Props) => {
             center: [47.0945, 51.9238],
             zoom: 13,
           }}
-          modules={["control.ZoomControl",
-          "layout.ImageWithContent",
-          "templateLayoutFactory"]}
+          modules={["control.ZoomControl", "layout.ImageWithContent", "templateLayoutFactory"]}
           options={{
             suppressMapOpenBlock: true,
             yandexMapDisablePoiInteractivity: true,
           }}
+          onLoad={(ymapsInstance) => setYmaps(ymapsInstance)}
         >
-          {shops.map((shop) => (
-            <Placemark
-              key={shop.id}
-              geometry={[shop.lat, shop.lng]}
-              onClick={() => setSelectedShop(shop)}
-              options={{
-                iconLayout: "default#imageWithContent",
-                iconImageHref: "",
-                iconImageSize: [50, 50],
-                iconImageOffset: [-25, -25],
-                iconContentLayout: (window as any).ymaps.templateLayoutFactory.createClass(
-                  `<div style="
-                    width: 50px;
-                    height: 50px;
-                    border-radius: 50%;
-                    background-color: #3EC171;
-                    border: 3px solid #3EC171;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    overflow: hidden;
-                    box-shadow: 0 0 6px rgba(0,0,0,0.25);
-                  ">
-                    <img src='${shop.image_url}' style="width: 100%; height: 100%; object-fit: cover;" />
-                  </div>`
-                ),
-              }}
-            />
-          ))}
+          {ymaps &&
+            shops.map((shop) => (
+              <Placemark
+                key={shop.id}
+                geometry={[shop.lat, shop.lng]}
+                onClick={() => setSelectedShop(shop)}
+                options={{
+                  iconLayout: "default#imageWithContent",
+                  iconImageHref: "",
+                  iconImageSize: [50, 50],
+                  iconImageOffset: [-25, -25],
+                  iconContentLayout: ymaps.templateLayoutFactory.createClass(
+                    `<div style="
+                      width: 50px;
+                      height: 50px;
+                      border-radius: 50%;
+                      background-color: #3EC171;
+                      border: 3px solid #3EC171;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      overflow: hidden;
+                      box-shadow: 0 0 6px rgba(0,0,0,0.25);
+                    ">
+                      <img src='${shop.image_url}' style="width: 100%; height: 100%; object-fit: cover;" />
+                    </div>`
+                  ),
+                }}
+              />
+            ))}
         </Map>
       </YMaps>
 
