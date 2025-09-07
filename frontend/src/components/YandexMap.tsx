@@ -1,4 +1,5 @@
 import { YMaps, Map } from '@pbe/react-yandex-maps';
+import { Placemark } from '@pbe/react-yandex-maps/typings/geo-objects/Placemark';
 
 type Props = {
   lat: number|void;
@@ -7,14 +8,18 @@ type Props = {
 
 const YandexMap = ({lat,lng}: Props) => {
 
+
+  const atyrauCoordinates = [47.0945, 51.9238]
+
   if (!lat || !lng) {
-    lat = 47.09;
-    lng = 51.92;
+    return null;
   }
 
   return (
     <YMaps>
-      <Map className='aspect-video' defaultState={{center: [lat, lng], zoom: 8}}/>
+      <Map className='aspect-video' defaultState={{center: atyrauCoordinates, zoom: 8}}>
+        <Placemark geometry={[lat,lng]}/>
+      </Map>
     </YMaps>
   )
 }
