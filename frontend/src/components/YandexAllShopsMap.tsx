@@ -60,7 +60,7 @@ const YandexAllShopsMap = ({ shops }: Props) => {
       </YMaps>
 
       {selectedShop && (
-        <div className="absolute bottom-0 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
+        <div className="absolute z-50 bottom-5 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
           <div className="flex items-center gap-3">
             <img
               src={selectedShop.image_url}
