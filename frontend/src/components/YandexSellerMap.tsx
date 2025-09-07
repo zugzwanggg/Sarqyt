@@ -17,6 +17,18 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
     return null;
   }
 
+  const openInMaps = () => {
+    const latLng = `${lat},${lng}`;
+  
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+  
+    const url = isIOS
+      ? `http://maps.apple.com/?q=${latLng}`
+      : `https://www.google.com/maps/search/?api=1&query=${latLng}`;
+  
+    window.open(url, "_blank");
+  };
+
   return (
     <YMaps query={{ lang: "en_US" , apikey: YANDEX_MAP_API}}>
       <Map
@@ -32,18 +44,19 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
           yandexMapDisablePoiInteractivity: true,
         }}
         onLoad={(ymapsInstance) => setYmaps(ymapsInstance)}
+        onClick={openInMaps}
       >
         {ymaps && (
           <Placemark
             geometry={[lat, lng]}
             options={{
               iconLayout: "default#imageWithContent",
-              iconImageSize: [50, 50],
+              iconImageSize: [25, 25],
               iconImageOffset: [-25, -25],
               iconContentLayout: ymaps.templateLayoutFactory.createClass(
                 `<div style="
-                  width: 50px;
-                  height: 50px;
+                  width: 25px;
+                  height: 25px;
                   border-radius: 50%;
                   background-color: #3EC171;
                   border: 3px solid #3EC171;
