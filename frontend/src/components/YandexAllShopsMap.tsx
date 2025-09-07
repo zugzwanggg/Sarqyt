@@ -97,7 +97,7 @@ const YandexAllShopsMap = ({ shops }: Props) => {
 
       <button
         onClick={handleGetLocation}
-        className="absolute top-5 right-5 z-50 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 flex items-center justify-center"
+        className="absolute bottom-16 right-5 z-50 p-3 bg-white rounded-full shadow-lg hover:bg-gray-100 flex items-center justify-center"
       >
         <Navigation className="w-6 h-6 text-[#3EC171]" />
       </button>
