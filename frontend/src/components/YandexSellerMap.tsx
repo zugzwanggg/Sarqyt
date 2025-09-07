@@ -11,12 +11,14 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
   const atyrauCoordinates = [47.0945, 51.9238];
   const [ymaps, setYmaps] = useState<any>(null);
 
+  const YANDEX_MAP_API = import.meta.env.VITE_YANDEX_MAP_API_KEY;
+
   if (!lat || !lng) {
     return null;
   }
 
   return (
-    <YMaps query={{ lang: "en_US" }}>
+    <YMaps query={{ lang: "en_US" , apikey: YANDEX_MAP_API}}>
       <Map
         className="aspect-video"
         defaultState={{ center: atyrauCoordinates, zoom: 13 }}
