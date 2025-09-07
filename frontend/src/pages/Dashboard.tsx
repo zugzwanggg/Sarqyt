@@ -1,4 +1,5 @@
 import { DollarSign, Package, ListOrdered, Clock } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const stats = [
   {
@@ -58,7 +59,15 @@ const Dashboard = () => {
 
       {/* Recent Orders */}
       <div className="bg-white rounded-lg shadow p-4">
-        <h2 className="text-lg font-semibold mb-4">Recent Orders</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Recent orders</h2>
+          <Link
+            className="font-medium text-primaryColor hover:opacity-70"
+            to={`/orders`}
+          >
+            See all →
+          </Link>
+        </div>
         <ul className="divide-y divide-gray-200">
           {recentOrders.map((order) => (
             <li
