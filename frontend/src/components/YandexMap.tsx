@@ -16,7 +16,7 @@ const YandexMap = ({lat,lng}: Props) => {
 
   return (
     <YMaps>
-      <Map className='aspect-video' defaultState={{center: atyrauCoordinates, zoom: 5}}>
+      <Map className='aspect-video' defaultState={{center: atyrauCoordinates, zoom: 9}}>
         <Placemark geometry={[lat,lng]}/>
       </Map>
     </YMaps>

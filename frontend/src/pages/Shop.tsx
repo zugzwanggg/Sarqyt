@@ -83,7 +83,7 @@ const Shop = () => {
       </div>
 
       {/* Stats / About */}
-      <div className="p-4 mt-3 bg-white rounded-t-2xl">
+      <div className="p-4 my-3 bg-white rounded-t-2xl">
         <h2 className="mb-4 font-semibold text-lg">About this shop</h2>
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
