@@ -27,10 +27,26 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
         <Placemark
           geometry={[lat, lng]}
           options={{
-            iconLayout: "default#image",
-            iconImageHref: logo,
-            iconImageSize: [40, 40],
-            iconImageOffset: [-20, -20],
+            iconLayout: "default#imageWithContent",
+            iconImageHref: "", 
+            iconImageSize: [50, 50],
+            iconImageOffset: [-25, -25],
+            iconContentLayout: (window as any).ymaps.templateLayoutFactory.createClass(
+              `<div style="
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background-color: #3EC171;
+                border: 3px solid #3EC171;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                box-shadow: 0 0 6px rgba(0,0,0,0.25);
+              ">
+                <img src='${logo}' style="width: 100%; height: 100%; object-fit: cover;" />
+              </div>`
+            ),
           }}
         />
       </Map>
