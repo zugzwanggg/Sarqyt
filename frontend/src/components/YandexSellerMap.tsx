@@ -33,7 +33,7 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
     <YMaps query={{ lang: "en_US" , apikey: YANDEX_MAP_API}}>
       <Map
         className="aspect-video"
-        defaultState={{ center: atyrauCoordinates, zoom: 13 }}
+        defaultState={{ center: atyrauCoordinates, zoom: 14 }}
         modules={[
           "control.ZoomControl",
           "layout.ImageWithContent",
@@ -49,6 +49,14 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
         {ymaps && (
           <Placemark
             geometry={[lat, lng]}
+            instanceRef={(ref) => {
+              if (ref) {
+                ref.behaviors.disable("drag");
+                ref.behaviors.disable("scrollZoom");
+                ref.behaviors.disable("multiTouch");
+                ref.behaviors.disable("dblClickZoom");
+              }
+            }}
             options={{
               iconLayout: "default#imageWithContent",
               iconImageSize: [25, 25],
