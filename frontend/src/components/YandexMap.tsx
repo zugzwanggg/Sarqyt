@@ -11,10 +11,10 @@ const YandexMap = ({lat,lng}: Props) => {
     lat = 47.09;
     lng = 51.92;
   }
-  
+
   return (
     <YMaps>
-      <Map defaultState={{center: [lat, lng], zoom: 8}}/>
+      <Map className='aspect-video' defaultState={{center: [lat, lng], zoom: 8}}/>
     </YMaps>
   )
 }

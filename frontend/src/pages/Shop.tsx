@@ -96,7 +96,7 @@ const Shop = () => {
             <span className="font-bold">{shop?.rating || "This shop has no rate yet"}</span>
             <p className="text-xs text-gray-500">Rating</p>
           </div> */}
-          <YandexMap lat={shop?.lat} lng={shop?.lng}/>
+          
           <div className="flex flex-col items-center p-3 bg-lightGrayColor rounded-xl">
             <Cake className="text-green-600" />
             <span className="font-bold">1,000+</span>
@@ -104,6 +104,8 @@ const Shop = () => {
           </div>
         </div>
       </div>
+
+      <YandexMap lat={shop?.lat} lng={shop?.lng}/>
     </div>
   );
 };
