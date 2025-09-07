@@ -4,7 +4,7 @@ import ShopSarqytCard from "../components/ShopSarqytCard";
 import { useState, useEffect } from "react";
 import type { IShop, IShopSarqytCard } from "../types";
 import { getShopById, getShopSarqytsByShopId } from "../api/shop";
-import YandexMap from "../components/YandexMap";
+import YandexSellerMap from "../components/YandexSellerMap";
 
 const Shop = () => {
   const { id } = useParams();
@@ -105,7 +105,7 @@ const Shop = () => {
         </div>
       </div>
 
-      <YandexMap lat={shop?.lat} lng={shop?.lng}/>
+      <YandexSellerMap lat={shop?.lat} lng={shop?.lng} logo={shop?.image_url}/>
     </div>
   );
 };

@@ -3,9 +3,10 @@ import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
 type Props = {
   lat: number | void;
   lng: number | void;
+  logo: string | undefined;
 };
 
-const YandexMap = ({ lat, lng }: Props) => {
+const YandexSellerMap = ({ lat, lng, logo }: Props) => {
   const atyrauCoordinates = [47.0945, 51.9238];
 
   if (!lat || !lng) {
@@ -27,7 +28,7 @@ const YandexMap = ({ lat, lng }: Props) => {
           geometry={[lat, lng]}
           options={{
             iconLayout: "default#image",
-            iconImageHref: "/logo.png",
+            iconImageHref: logo,
             iconImageSize: [40, 40],
             iconImageOffset: [-20, -20],
           }}
@@ -35,6 +36,6 @@ const YandexMap = ({ lat, lng }: Props) => {
       </Map>
     </YMaps>
   );
-};
+}
 
-export default YandexMap;
+export default YandexSellerMap
