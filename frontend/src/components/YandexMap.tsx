@@ -1,5 +1,4 @@
-import { YMaps, Map } from '@pbe/react-yandex-maps';
-import { Placemark } from '@pbe/react-yandex-maps/typings/geo-objects/Placemark';
+import { YMaps, Map, Placemark } from '@pbe/react-yandex-maps';
 
 type Props = {
   lat: number|void;
@@ -17,7 +16,7 @@ const YandexMap = ({lat,lng}: Props) => {
 
   return (
     <YMaps>
-      <Map className='aspect-video' defaultState={{center: atyrauCoordinates, zoom: 8}}>
+      <Map className='aspect-video' defaultState={{center: atyrauCoordinates, zoom: 5}}>
         <Placemark geometry={[lat,lng]}/>
       </Map>
     </YMaps>
