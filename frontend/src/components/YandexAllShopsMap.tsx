@@ -18,7 +18,9 @@ const YandexAllShopsMap = ({ shops }: Props) => {
             center: [47.0945, 51.9238],
             zoom: 13,
           }}
-          modules={["control.ZoomControl"]}
+          modules={["control.ZoomControl",
+          "layout.ImageWithContent",
+          "templateLayoutFactory"]}
           options={{
             suppressMapOpenBlock: true,
             yandexMapDisablePoiInteractivity: true,
