@@ -17,7 +17,7 @@ const YandexAllShopsMap = ({ shops }: Props) => {
           className="absolute inset-0 w-full h-full"
           defaultState={{
             center: [47.0945, 51.9238],
-            zoom: 13,
+            zoom: 9,
           }}
           modules={["control.ZoomControl", "layout.ImageWithContent", "templateLayoutFactory"]}
           options={{
@@ -60,7 +60,7 @@ const YandexAllShopsMap = ({ shops }: Props) => {
       </YMaps>
 
       {selectedShop && (
-        <div className="absolute z-50 bottom-5 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
+        <div className="absolute z-50 bottom-14 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
           <div className="flex items-center gap-3">
             <img
               src={selectedShop.image_url}
