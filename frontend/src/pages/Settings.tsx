@@ -17,8 +17,20 @@ const SettingsPage = () => {
     address: "123 Main Street, Atyrau",
   });
 
-  const handleChange = (field: keyof IShop, value: string | number) => {
+  const [previewImage, setPreviewImage] = useState(shop.image_url);
+
+  const handleChange = (field: keyof IShop, value: string) => {
     setShop((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const url = URL.createObjectURL(file);
+      setPreviewImage(url);
+
+      // TODO: send `file` to backend (FormData upload)
+    }
   };
 
   const handleSave = () => {
@@ -39,60 +51,61 @@ const SettingsPage = () => {
 
       {/* Shop Profile (only for sellers) */}
       {user?.role === "seller" && (
-        <section className="bg-white shadow rounded-2xl p-4 space-y-3">
-          <h3 className="text-md font-semibold mb-3">Shop Information</h3>
+        <section className="bg-white shadow rounded-2xl p-4 space-y-4">
+          <h3 className="text-md font-semibold">Shop Information</h3>
 
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm text-gray-600">Shop Name</label>
+          {/* Shop Image */}
+          <div className="flex flex-col items-center space-y-3">
+            <img
+              src={previewImage}
+              alt="Shop"
+              className="w-32 h-32 object-cover rounded-lg border"
+            />
+            <label className="text-sm text-primaryColor cursor-pointer underline">
+              Change Image
               <input
-                type="text"
-                value={shop.name}
-                onChange={(e) => handleChange("name", e.target.value)}
-                className="border rounded-md w-full px-3 py-2"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-600">Address</label>
-              <input
-                type="text"
-                value={shop.address}
-                onChange={(e) => handleChange("address", e.target.value)}
-                className="border rounded-md w-full px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-600">Shop Image</label>
-              <input
-                type="text"
-                value={shop.image_url}
-                onChange={(e) => handleChange("image_url", e.target.value)}
-                className="border rounded-md w-full px-3 py-2"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-gray-600">Rating</label>
-              <input
-                type="number"
-                step="0.1"
-                min="0"
-                max="5"
-                value={shop.rating}
-                onChange={(e) => handleChange("rating", Number(e.target.value))}
-                className="border rounded-md w-full px-3 py-2"
-              />
-            </div>
-
-            <button
-              onClick={handleSave}
-              className="bg-primaryColor text-white w-full py-2 rounded-md"
-            >
-              Save Changes
-            </button>
+            </label>
           </div>
+
+          {/* Shop Name */}
+          <div>
+            <label className="block text-sm text-gray-600">Shop Name</label>
+            <input
+              type="text"
+              value={shop.name}
+              onChange={(e) => handleChange("name", e.target.value)}
+              className="border rounded-md w-full px-3 py-2"
+            />
+          </div>
+
+          {/* Shop Address */}
+          <div>
+            <label className="block text-sm text-gray-600">Address</label>
+            <input
+              type="text"
+              value={shop.address}
+              onChange={(e) => handleChange("address", e.target.value)}
+              className="border rounded-md w-full px-3 py-2"
+            />
+          </div>
+
+          {/* Read-only Rating */}
+          <div>
+            <span className="block text-sm text-gray-600">Rating</span>
+            <p className="text-gray-800 font-medium">{shop.rating} ★</p>
+          </div>
+
+          <button
+            onClick={handleSave}
+            className="bg-primaryColor text-white w-full py-2 rounded-md"
+          >
+            Save Changes
+          </button>
         </section>
       )}
 
@@ -135,6 +148,7 @@ const SettingsPage = () => {
         </select>
       </section>
 
+      {/* Become Seller Section (hide for sellers) */}
       {user?.role !== "seller" && (
         <section className="bg-white shadow rounded-2xl p-4">
           <h3 className="text-md font-semibold mb-2">Become a Seller</h3>
