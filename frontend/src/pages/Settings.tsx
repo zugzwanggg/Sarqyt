@@ -14,6 +14,8 @@ const SettingsPage = () => {
     image_url: "https://www.healthbenefitstimes.com/glossary/wp-content/uploads/2020/07/Mustard.jpg",
     rating: 4.5,
     address: "123 Main Street, Atyrau",
+    lat: 2,
+    lng: 1
   });
 
   const [previewImage, setPreviewImage] = useState(shop.image_url);

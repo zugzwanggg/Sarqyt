@@ -33,6 +33,8 @@ export interface IShop {
   image_url: string;
   rating: number;
   address: string;
+  lat: number;
+  lng: number;
 }
 
 export interface TelegramUser {

@@ -10,7 +10,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@pbe/react-yandex-maps": "^1.2.5",
     "@radix-ui/themes": "^3.2.1",
+    "@types/yandex-maps": "^2.1.36",
     "@zxing/browser": "^0.1.5",
     "axios": "^1.10.0",
     "date-fns": "^4.1.0",
