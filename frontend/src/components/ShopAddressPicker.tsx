@@ -1,146 +1,103 @@
-import { useEffect, useRef, useState } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface ShopAddressPickerProps {
-  onSelect: (data: { lat: number; lng: number; address: string }) => void;
+  value: { address: string; lat?: number; lng?: number };
+  onChange: (val: { address: string; lat?: number; lng?: number }) => void;
 }
 
-interface Suggestion {
-  id: string;
-  name: string;
-  full_name: string;
-  point: { lat: number; lon: number };
-}
-
-const ShopAddressPicker: React.FC<ShopAddressPickerProps> = ({ onSelect }) => {
-  const mapRef = useRef<HTMLDivElement | null>(null);
+const ShopAddressPicker = ({ value, onChange }: ShopAddressPickerProps) => {
+  const [query, setQuery] = useState(value.address || "");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const mapRef = useRef<HTMLDivElement>(null);
   const mapInstance = useRef<any>(null);
-  const markerRef = useRef<any>(null);
-
-  const [query, setQuery] = useState("");
-  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
-  const [selectedAddress, setSelectedAddress] = useState<string>("");
+  const marker = useRef<any>(null);
 
   const API_KEY = import.meta.env.VITE_2GIS_API_KEY;
+  
+  useEffect(() => {
+    if (!query) return;
+
+    const controller = new AbortController();
+    const fetchSuggestions = async () => {
+      try {
+        const res = await fetch(
+          `https://catalog.api.2gis.com/3.0/suggests?q=${encodeURIComponent(
+            query
+          )}&key=${API_KEY}`,
+          { signal: controller.signal }
+        );
+        const data = await res.json();
+        if (data?.result?.items) {
+          setSuggestions(data.result.items);
+        }
+      } catch (err) {
+        console.error("Suggest error:", err);
+      }
+    };
+
+    fetchSuggestions();
+    return () => controller.abort();
+  }, [query]);
 
   useEffect(() => {
-    const initMap = async () => {
-      const DG = (window as any).DG;
-      if (!DG || !mapRef.current) return;
+    if (!mapRef.current || mapInstance.current) return;
 
+    // @ts-ignore
+    window.DG.then((DG: any) => {
       mapInstance.current = DG.map(mapRef.current, {
-        center: [47.0945, 51.9230], 
+        center: [47.0945, 51.9230],
         zoom: 13,
       });
 
-      mapInstance.current.on("click", async (e: any) => {
+      marker.current = DG.marker([47.0945, 51.9230]).addTo(mapInstance.current);
+
+      mapInstance.current.on("click", (e: any) => {
         const { lat, lng } = e.latlng;
-        placeMarker(lat, lng);
-
-        const address = await reverseGeocode(lat, lng);
-        setSelectedAddress(address);
-        onSelect({ lat, lng, address });
+        marker.current.setLatLng([lat, lng]);
+        onChange({ ...value, lat, lng });
       });
-    };
-
-    initMap();
+    });
   }, []);
 
-  const placeMarker = (lat: number, lng: number) => {
-    const DG = (window as any).DG;
-    if (!mapInstance.current) return;
+  const handleSelect = (item: any) => {
+    const addr = item.full_name || item.name;
+    const lat = item.point?.lat;
+    const lng = item.point?.lon;
 
-    if (markerRef.current) {
-      markerRef.current.setLatLng([lat, lng]);
-    } else {
-      markerRef.current = DG.marker([lat, lng]).addTo(mapInstance.current);
-    }
-
-    mapInstance.current.setView([lat, lng], 15);
-  };
-
-  const fetchSuggestions = async (text: string) => {
-    if (!text.trim()) {
-      setSuggestions([]);
-      return;
-    }
-
-    try {
-      const res = await fetch(
-        `https://catalog.api.2gis.com/3.0/suggests?q=${encodeURIComponent(
-          text
-        )}&key=${API_KEY}&region_id=152`
-      );
-      const data = await res.json();
-      if (data.result?.items) {
-        setSuggestions(
-          data.result.items.map((item: any) => ({
-            id: item.id,
-            name: item.name,
-            full_name: item.full_name || item.name,
-            point: item.point,
-          }))
-        );
-      }
-    } catch (err) {
-      console.error("2GIS suggest error:", err);
-    }
-  };
-
-  const reverseGeocode = async (lat: number, lng: number) => {
-    try {
-      const res = await fetch(
-        `https://catalog.api.2gis.com/3.0/items/geocode?lat=${lat}&lon=${lng}&key=YOUR_API_KEY`
-      );
-      const data = await res.json();
-      return data?.result?.items?.[0]?.full_name || "Unknown address";
-    } catch {
-      return "Unknown address";
-    }
-  };
-  const handleSelectSuggestion = (s: Suggestion) => {
-    placeMarker(s.point.lat, s.point.lon);
-    setQuery(s.full_name);
+    setQuery(addr);
     setSuggestions([]);
-    setSelectedAddress(s.full_name);
+    onChange({ address: addr, lat, lng });
 
-    onSelect({ lat: s.point.lat, lng: s.point.lon, address: s.full_name });
+    if (mapInstance.current && lat && lng) {
+      mapInstance.current.setView([lat, lng], 16);
+      marker.current.setLatLng([lat, lng]);
+    }
   };
 
   return (
-    <div className="space-y-3">
-      <div className="relative">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => {
-            setQuery(e.target.value);
-            fetchSuggestions(e.target.value);
-          }}
-          placeholder="Search address or shop name..."
-          className="border rounded-md px-3 py-2 w-full"
-        />
-        {suggestions.length > 0 && (
-          <ul className="absolute z-10 bg-white border rounded-md w-full max-h-40 overflow-y-auto">
-            {suggestions.map((s) => (
-              <li
-                key={s.id}
-                onClick={() => handleSelectSuggestion(s)}
-                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
-              >
-                {s.full_name}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
-      <div ref={mapRef} className="w-full h-64 rounded-md border" />
-
-      {selectedAddress && (
-        <p className="text-sm text-gray-700">
-          📍 Selected: <span className="font-medium">{selectedAddress}</span>
-        </p>
+    <div className="space-y-2">
+      <label className="block text-sm text-gray-600">Shop Address</label>
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search shop address"
+        className="border rounded-md w-full px-3 py-2"
+      />
+      {suggestions.length > 0 && (
+        <ul className="border rounded-md bg-white max-h-48 overflow-y-auto">
+          {suggestions.map((s) => (
+            <li
+              key={s.id}
+              onClick={() => handleSelect(s)}
+              className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+            >
+              {s.full_name || s.name}
+            </li>
+          ))}
+        </ul>
       )}
+      <div ref={mapRef} className="w-full h-64 rounded-md border" />
     </div>
   );
 };
