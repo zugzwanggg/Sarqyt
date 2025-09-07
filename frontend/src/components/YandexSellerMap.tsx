@@ -22,7 +22,11 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
       <Map
         className="aspect-video"
         defaultState={{ center: atyrauCoordinates, zoom: 13 }}
-        modules={["control.ZoomControl"]}
+        modules={[
+          "control.ZoomControl",
+          "layout.ImageWithContent",
+          "templateLayoutFactory"
+        ]}
         options={{
           suppressMapOpenBlock: true,
           yandexMapDisablePoiInteractivity: true,
