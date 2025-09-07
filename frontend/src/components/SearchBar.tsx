@@ -27,7 +27,7 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
     <div className="w-full">
       {/* Search bar */}
       <div className="flex items-center gap-3 mt-4">
-        <form onSubmit={handleSearchSubmit} className="relative flex-1">
+        <form onSubmit={handleSearchSubmit} className="relative z-50 flex-1">
           <Search
             size={"1.3rem"}
             className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400"

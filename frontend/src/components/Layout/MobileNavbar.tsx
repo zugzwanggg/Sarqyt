@@ -29,7 +29,7 @@ const navList = [
 const MobileNavbar = () => {
 
   return (
-    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white shadow-lg rounded-2xl px-4 py-2">
+    <nav className="fixed z-40 bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-md bg-white shadow-lg rounded-2xl px-4 py-2">
       <ul className="flex justify-between items-center text-sm">
         {
           navList.map(item => {
