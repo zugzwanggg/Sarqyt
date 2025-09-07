@@ -11,7 +11,7 @@ const YandexAllShopsMap = ({ shops }: Props) => {
   const [ymaps, setYmaps] = useState<any>(null);
 
   return (
-    <div className="relative w-screen h-full overflow-hidden">
+    <div className="relative w-full h-full overflow-hidden">
       <YMaps>
         <Map
           className="absolute inset-0 w-full h-full"
