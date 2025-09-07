@@ -1,5 +1,5 @@
 import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
-import { useRef} from "react";
+import { useState } from "react";
 
 type Props = {
   lat: number | void;
@@ -9,7 +9,7 @@ type Props = {
 
 const YandexSellerMap = ({ lat, lng, logo }: Props) => {
   const atyrauCoordinates = [47.0945, 51.9238];
-  const placemarkRef = useRef<any>(null);
+  const [ymaps, setYmaps] = useState<any>(null);
 
   if (!lat || !lng) {
     return null;
@@ -20,18 +20,21 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
       <Map
         className="aspect-video"
         defaultState={{ center: atyrauCoordinates, zoom: 13 }}
-        modules={["templateLayoutFactory", "control.ZoomControl"]}
+        modules={["control.ZoomControl"]}
         options={{
           suppressMapOpenBlock: true,
           yandexMapDisablePoiInteractivity: true,
         }}
+        onLoad={(ymapsInstance) => setYmaps(ymapsInstance)}
       >
-        <Placemark
-          geometry={[lat, lng]}
-          instanceRef={(ref) => {
-            if (ref && (window as any).ymaps) {
-              const ymaps = (window as any).ymaps;
-              const layout = ymaps.templateLayoutFactory.createClass(
+        {ymaps && (
+          <Placemark
+            geometry={[lat, lng]}
+            options={{
+              iconLayout: "default#imageWithContent",
+              iconImageSize: [50, 50],
+              iconImageOffset: [-25, -25],
+              iconContentLayout: ymaps.templateLayoutFactory.createClass(
                 `<div style="
                   width: 50px;
                   height: 50px;
@@ -46,15 +49,10 @@ const YandexSellerMap = ({ lat, lng, logo }: Props) => {
                 ">
                   <img src='${logo}' style="width: 100%; height: 100%; object-fit: cover;" />
                 </div>`
-              );
-              ref.options.set("iconLayout", "default#imageWithContent");
-              ref.options.set("iconContentLayout", layout);
-              ref.options.set("iconImageSize", [50, 50]);
-              ref.options.set("iconImageOffset", [-25, -25]);
-            }
-            placemarkRef.current = ref;
-          }}
-        />
+              ),
+            }}
+          />
+        )}
       </Map>
     </YMaps>
   );
