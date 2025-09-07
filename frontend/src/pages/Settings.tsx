@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { useState } from "react";
 import type { IShop } from "../types";
-import ShopAddressPicker from "../components/ShopAddressPicker";
 
 const SettingsPage = () => {
   const { user, setIsSelectLocation } = useUser();
@@ -80,12 +79,6 @@ const SettingsPage = () => {
               className="border rounded-md w-full px-3 py-2"
             />
           </div>
-
-          {/* Shop Address */}
-          <ShopAddressPicker
-            value={{ address: shop.address }}
-            onChange={(val) => setShop((prev) => ({ ...prev, ...val }))}
-          />
 
 
           {/* Read-only Rating */}
