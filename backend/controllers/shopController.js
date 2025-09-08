@@ -1,4 +1,5 @@
 import { db } from "../db.js";
+import cloudinary from "../utils/cloudinary.js";
 
 // ------------------ GET SHOP ------------------
 export const getShopById = async (req, res) => {
@@ -118,15 +119,15 @@ export const editShop = async (req, res) => {
   try {
     const { shopId } = req.params;
     const { id: user_id } = req.user;
-    const { name, image_url, description, address, link, country, city, lat, lng } = req.body;
+    const { name, image_url, description, address, link, lat, lng } = req.body;
+    let file = req.file;
 
-    if (!name || !description || !address || !country || !city) {
+    if (!name || !address || !lat || !lng) {
       return res.status(400).json({ message: "Fill all the required fields" });
     }
 
-    // Check if shop exists and belongs to user
     const shopCheck = await db.query(
-      "SELECT 1 FROM shops WHERE id = $1 AND user_id = $2", 
+      "SELECT image_url FROM shops WHERE id = $1 AND user_id = $2", 
       [shopId, user_id]
     );
 
@@ -134,25 +135,49 @@ export const editShop = async (req, res) => {
       return res.status(404).json({ message: "Shop not found or access denied" });
     }
 
-    // Verify country and city exist
-    const countryCheck = await db.query("SELECT 1 FROM countries WHERE id = $1", [country]);
-    const cityCheck = await db.query("SELECT 1 FROM cities WHERE id = $1", [city]);
+    const publicId = `shop_${shopId}_logo`;
 
-    if (!countryCheck.rows.length || !cityCheck.rows.length) {
-      return res.status(400).json({ message: "Invalid country or city" });
+    if (!file) {
+      await db.query(`
+        UPDATE shops 
+        SET name = $2,  description = $3, address = $4, 
+            link = $5,  lat = $6, lng = $7
+        WHERE id = $1 AND user_id = $8
+        RETURNING *
+      `, [shopId, name,  description, address, link, lat, lng, user_id]);
+    } else {
+      await cloudinary.uploader.destroy(publicId);
+
+      await cloudinary.uploader.upload(
+        req.file.path,
+        {
+          folder: 'logos',
+          public_id: publicId,
+          overwrite: true
+        },
+        async (err, res) => {
+          if (err) return res?.status(500).json({ error: 'Cloudinary upload failed' });
+  
+          await db.query(`
+            UPDATE shops 
+            SET name = $2, image_url = $3, description = $4, address = $5, 
+                link = $6,  lat = $7, lng = $8
+            WHERE id = $1 AND user_id = $9
+            RETURNING *
+          `, [shopId, name, res?.secure_url, description, address, link, lat, lng, user_id]);
+        }
+      )
     }
 
-    const result = await db.query(`
-      UPDATE shops 
-      SET name = $2, image_url = $3, description = $4, address = $5, 
-          link = $6, country = $7, city = $8, lat = $9, lng = $10
-      WHERE id = $1 AND user_id = $11
-      RETURNING *
-    `, [shopId, name, image_url, description, address, link, country, city, lat, lng, user_id]);
+    // const countryCheck = await db.query("SELECT 1 FROM countries WHERE id = $1", [country]);
+    // const cityCheck = await db.query("SELECT 1 FROM cities WHERE id = $1", [city]);
+
+    // if (!countryCheck.rows.length || !cityCheck.rows.length) {
+    //   return res.status(400).json({ message: "Invalid country or city" });
+    // }
 
     res.status(200).json({ 
-      message: "Successfully updated", 
-      shop: result.rows[0] 
+      message: "Successfully updated"
     });
   } catch (error) {
     console.error('Error at editShop:', error);
