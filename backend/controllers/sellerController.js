@@ -177,3 +177,24 @@ export const getScanData = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const getSellerShopData = async (req,res) => {
+  try {
+
+    const {id:user_id} = req.user;
+
+    const data = await db.query("SELECT * FROM shops WHERE user_id = $1", [user_id]);
+
+    if (data.rows[0].length <= 0) {
+      return res.status(404).json({
+        message: "Data not found"
+      })
+    }
+
+    res.status(200).json(data.rows[0])
+    
+  } catch (error) {
+    console.error("Error at getSellerShopData:", error);
+    res.status(500).json({ message: error.message });
+  }
+}
