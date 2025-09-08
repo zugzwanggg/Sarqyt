@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import {
   YMaps,
   Map,
@@ -6,6 +6,7 @@ import {
   GeolocationControl,
   SearchControl,
 } from "@pbe/react-yandex-maps";
+import { X } from "lucide-react";
 
 type Props = {
   onSelect: (coords: [number, number], address: string) => void;
@@ -18,12 +19,11 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
     initialCoords || null
   );
   const [address, setAddress] = useState("");
-  const mapRef = useRef<HTMLDivElement>(null);
 
   const atyrau: [number, number] = [47.0945, 51.9238];
   const kazakhstanBounds = [
     [40.0, 46.0],
-    [56.0, 88.0], 
+    [56.0, 88.0],
   ];
 
   const fetchAddress = async (lat: number, lng: number) => {
@@ -44,67 +44,117 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
     }
   };
 
-  const handleClick = async (e: any) => {
-    const newCoords: [number, number] = e.get("coords");
+  const handleCoordsSelect = async (lat: number, lng: number) => {
+    const newCoords: [number, number] = [lat, lng];
     setCoords(newCoords);
-    const addr = await fetchAddress(newCoords[0], newCoords[1]);
+    const addr = await fetchAddress(lat, lng);
     setAddress(addr);
-    onSelect(newCoords, addr);
   };
 
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      if (mapRef.current && !mapRef.current.contains(e.target as Node)) {
-        onClose();
-      }
-    };
-    document.addEventListener("mousedown", handleOutsideClick);
-    return () => document.removeEventListener("mousedown", handleOutsideClick);
-  }, [onClose]);
+  const handleClick = async (e: any) => {
+    const [lat, lng] = e.get("coords");
+    handleCoordsSelect(lat, lng);
+  };
+
+  const handleSave = () => {
+    if (coords && address) {
+      onSelect(coords, address);
+      onClose();
+    }
+  };
 
   return (
     <YMaps query={{ apikey: import.meta.env.VITE_YANDEX_MAP_API_KEY }}>
-      <div ref={mapRef} className="relative bg-white rounded-xl shadow-lg p-2">
-        <div className="text-sm text-gray-700 mb-2">
-          {coords ? `Selected: ${address}` : "Click on the map to select address"}
+      <div className="fixed inset-0 bg-white z-50 flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b">
+          <h2 className="text-lg font-semibold">Select Location</h2>
+          <button
+            onClick={onClose}
+            className="p-2 rounded-full hover:bg-gray-100"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        <Map
-          className="w-full h-[500px] rounded-lg"
-          defaultState={{
-            center: coords || atyrau,
-            zoom: 13,
-          }}
-          modules={[
-            "control.ZoomControl",
-            "control.SearchControl",
-            "control.GeolocationControl",
-          ]}
-          onClick={handleClick}
-        >
-          <SearchControl
-            options={{
-              float: "right",
-              provider: "yandex#search",
-              boundedBy: kazakhstanBounds,
-              strictBounds: true,
+        <div className="flex-1 relative">
+          <Map
+            className="w-full h-full"
+            defaultState={{
+              center: coords || atyrau,
+              zoom: 13,
             }}
-          />
-          <GeolocationControl options={{ float: "left" }} />
+            modules={[
+              "control.ZoomControl",
+              "control.SearchControl",
+              "control.GeolocationControl",
+            ]}
+            onClick={handleClick}
+            instanceRef={(map) => {
+              if (!map) return;
 
-          {coords && (
-            <Placemark
-              geometry={coords}
+              map.controls.each((control: any) => {
+                if (control.constructor && control.constructor.name === "SearchControl") {
+                  const searchControl = control as any;
+                  searchControl.events.add("resultselect", async (e: any) => {
+                    const index = e.get("index");
+                    const results = searchControl.getResultsArray?.();
+                    if (results && results[index]) {
+                      const coords = results[index].geometry.getCoordinates();
+                      if (coords) {
+                        const [lng, lat] = coords;
+                        handleCoordsSelect(lat, lng);
+                      }
+                    }
+                  });
+                }
+
+                if (control.constructor && control.constructor.name === "GeolocationControl") {
+                  const geoControl = control as any;
+                  geoControl.events.add("locationchange", (e: any) => {
+                    const pos = e.get("position");
+                    if (pos && pos[0]) {
+                      const [lng, lat] = pos[0];
+                      handleCoordsSelect(lat, lng);
+                    }
+                  });
+                }
+              });
+            }}
+          >
+            <SearchControl
               options={{
-                iconLayout: "default#image",
-                iconImageHref:
-                  "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-                iconImageSize: [40, 40],
-                iconImageOffset: [-20, -40],
+                float: "right",
+                provider: "yandex#search",
+                boundedBy: kazakhstanBounds,
+                strictBounds: true,
               }}
             />
-          )}
-        </Map>
+            <GeolocationControl options={{ float: "left" }} />
+
+            {coords && (
+              <Placemark
+                geometry={coords}
+                options={{
+                  iconLayout: "default#image",
+                  iconImageHref:
+                    "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+                  iconImageSize: [40, 40],
+                  iconImageOffset: [-20, -40],
+                }}
+              />
+            )}
+          </Map>
+        </div>
+
+        <div className="p-4 border-t">
+          <button
+            onClick={handleSave}
+            disabled={!coords || !address}
+            className="bg-primaryColor text-white w-full py-3 rounded-lg disabled:bg-gray-400"
+          >
+            Save Location
+          </button>
+        </div>
       </div>
     </YMaps>
   );
