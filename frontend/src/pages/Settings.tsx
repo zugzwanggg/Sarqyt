@@ -46,13 +46,12 @@ const SettingsPage = () => {
     formData.append('address', shop?.address);
     formData.append('lat', shop?.lat.toString());
     formData.append('lng', shop?.lng.toString());
-    formData.append('shopId', shop?.id.toString());
     if (shopLogo) {
       formData.append('image', shopLogo)
     }
     try {
 
-      await editShop(formData);
+      await editShop(formData, shop?.id);
       await getShopData();
     } catch (error) {
       console.log(error);

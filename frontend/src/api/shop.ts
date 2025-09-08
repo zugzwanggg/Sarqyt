@@ -10,8 +10,8 @@ export const getShopSarqytsByShopId =async (shopId:number|string) => {
   return res.data;
 }
 
-export const editShop =async (data:FormData) => {
-  const res = await api.put(`/api/shops/`, data, {
+export const editShop =async (data:FormData, id:number|string) => {
+  const res = await api.put(`/api/shops/${id}`, data, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
