@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   YMaps,
   Map,
@@ -9,16 +9,22 @@ import {
 
 type Props = {
   onSelect: (coords: [number, number], address: string) => void;
+  onClose: () => void;
   initialCoords?: [number, number];
 };
 
-const YandexSelectAddressMap = ({ onSelect, initialCoords }: Props) => {
+const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => {
   const [coords, setCoords] = useState<[number, number] | null>(
     initialCoords || null
   );
   const [address, setAddress] = useState("");
+  const mapRef = useRef<HTMLDivElement>(null);
 
   const atyrau: [number, number] = [47.0945, 51.9238];
+  const kazakhstanBounds = [
+    [40.0, 46.0],
+    [56.0, 88.0], 
+  ];
 
   const fetchAddress = async (lat: number, lng: number) => {
     try {
@@ -46,15 +52,25 @@ const YandexSelectAddressMap = ({ onSelect, initialCoords }: Props) => {
     onSelect(newCoords, addr);
   };
 
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (mapRef.current && !mapRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => document.removeEventListener("mousedown", handleOutsideClick);
+  }, [onClose]);
+
   return (
     <YMaps query={{ apikey: import.meta.env.VITE_YANDEX_MAP_API_KEY }}>
-      <div className="space-y-2">
-        <div className="text-sm text-gray-700">
+      <div ref={mapRef} className="relative bg-white rounded-xl shadow-lg p-2">
+        <div className="text-sm text-gray-700 mb-2">
           {coords ? `Selected: ${address}` : "Click on the map to select address"}
         </div>
 
         <Map
-          className="aspect-video w-full rounded-lg"
+          className="w-full h-[500px] rounded-lg"
           defaultState={{
             center: coords || atyrau,
             zoom: 13,
@@ -66,7 +82,14 @@ const YandexSelectAddressMap = ({ onSelect, initialCoords }: Props) => {
           ]}
           onClick={handleClick}
         >
-          <SearchControl options={{ float: "right" }} />
+          <SearchControl
+            options={{
+              float: "right",
+              provider: "yandex#search",
+              boundedBy: kazakhstanBounds,
+              strictBounds: true,
+            }}
+          />
           <GeolocationControl options={{ float: "left" }} />
 
           {coords && (

@@ -168,6 +168,7 @@ const SettingsPage = () => {
           <div className="bg-white p-4 rounded-2xl shadow w-full max-w-2xl space-y-4">
             <h3 className="font-semibold text-md">Select Shop Location</h3>
             <YandexSelectAddressMap
+              onClose={()=>setIsMapOpen(false)}
               initialCoords={[shop.lat, shop.lng]}
               onSelect={(coords, addr) => {
                 setShop((prev) => ({
