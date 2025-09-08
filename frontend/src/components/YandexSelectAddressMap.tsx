@@ -35,8 +35,8 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
       );
       const data = await res.json();
       return (
-        data.response.GeoObjectCollection.featureMember[0].GeoObject
-          .metaDataProperty.GeocoderMetaData.text || ""
+        data.response.GeoObjectCollection.featureMember[0]?.GeoObject
+          ?.metaDataProperty?.GeocoderMetaData?.text || ""
       );
     } catch (e) {
       console.error("Geocode error", e);
@@ -51,7 +51,7 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
     setAddress(addr);
   };
 
-  const handleClick = async (e: any) => {
+  const handleClick = (e: any) => {
     const [lat, lng] = e.get("coords");
     handleCoordsSelect(lat, lng);
   };
@@ -94,12 +94,12 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
 
               map.controls.each((control: any) => {
                 if (control.constructor && control.constructor.name === "SearchControl") {
-                  const searchControl = control as any;
+                  const searchControl = control;
                   searchControl.events.add("resultselect", async (e: any) => {
                     const index = e.get("index");
-                    const results = searchControl.getResultsArray?.();
-                    if (results && results[index]) {
-                      const coords = results[index].geometry.getCoordinates();
+                    const result = searchControl.getResult(index);
+                    if (result) {
+                      const coords = result.geometry.getCoordinates();
                       if (coords) {
                         const [lng, lat] = coords;
                         handleCoordsSelect(lat, lng);
@@ -109,10 +109,10 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
                 }
 
                 if (control.constructor && control.constructor.name === "GeolocationControl") {
-                  const geoControl = control as any;
-                  geoControl.events.add("locationchange", (e: any) => {
+                  const geoControl = control;
+                  geoControl.events.add("locationchange", async (e: any) => {
                     const pos = e.get("position");
-                    if (pos && pos[0]) {
+                    if (pos) {
                       const [lng, lat] = pos[0];
                       handleCoordsSelect(lat, lng);
                     }
