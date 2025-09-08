@@ -1,9 +1,11 @@
 import { ChevronLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { IShop } from "../types";
 import YandexSelectAddressMap from "../components/YandexSelectAddressMap";
+import { editShop } from "../api/shop";
+import { getSellerShopData } from "../api/seller";
 
 const SettingsPage = () => {
   const { user, setIsSelectLocation } = useUser();
@@ -35,9 +37,34 @@ const SettingsPage = () => {
     }
   };
 
-  const handleSave = () => {
-    console.log("Updated shop:", shop);
+  const handleSave = async () => {
+    try {
+
+      await editShop(shop);
+
+    } catch (error) {
+      console.log(error);
+    }
   };
+
+  const getShopData =async () => {
+    try {
+
+      const data = await getSellerShopData();
+      setShop(data);
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=> {
+
+    if (user?.role === 'seller') {
+      getShopData();
+    }
+
+  }, [])
 
   return (
     <div className="p-4 space-y-6">
