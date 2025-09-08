@@ -10,5 +10,5 @@ shopRouter.get('/shops/:id', checkAuth, getShopById);
 shopRouter.get('/shops/:shopId/sarqyts', checkAuth, getShopSarqytsById);
 
 shopRouter.post('/shops', checkAuth, checkIsUserRoleSeller, addUserShop);
-shopRouter.put('/shops/', checkAuth, checkIsUserShopOwner, uploadImage.single('image'), editShop);
+shopRouter.put('/shops.:shopId', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, uploadImage.single('image'), editShop);
 shopRouter.delete('/shops/:shopdId', checkAuth, checkIsUserShopOwner, deleteShop);
