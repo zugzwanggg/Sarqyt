@@ -93,27 +93,24 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
               if (!map) return;
 
               map.controls.each((control: any) => {
-                if (control.constructor && control.constructor.name === "SearchControl") {
+                if (control.constructor?.name === "SearchControl") {
                   const searchControl = control;
                   searchControl.events.add("resultselect", async (e: any) => {
                     const index = e.get("index");
-                    const result = searchControl.getResult(index);
+                    const result = await searchControl.getResult(index);
                     if (result) {
-                      const coords = result.geometry.getCoordinates();
-                      if (coords) {
-                        const [lng, lat] = coords;
-                        handleCoordsSelect(lat, lng);
-                      }
+                      const [lng, lat] = result.geometry.getCoordinates();
+                      handleCoordsSelect(lat, lng);
                     }
                   });
                 }
 
-                if (control.constructor && control.constructor.name === "GeolocationControl") {
+                if (control.constructor?.name === "GeolocationControl") {
                   const geoControl = control;
                   geoControl.events.add("locationchange", async (e: any) => {
-                    const pos = e.get("position");
-                    if (pos) {
-                      const [lng, lat] = pos[0];
+                    const position = e.get("position");
+                    if (position && position[0]) {
+                      const [lng, lat] = position[0];
                       handleCoordsSelect(lat, lng);
                     }
                   });
@@ -127,6 +124,7 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
                 provider: "yandex#search",
                 boundedBy: kazakhstanBounds,
                 strictBounds: true,
+                noPlacemark: true,
               }}
             />
             <GeolocationControl options={{ float: "left" }} />
