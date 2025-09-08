@@ -47,7 +47,7 @@ const YandexSelectAddressMap = ({ onSelect, initialCoords }: Props) => {
   };
 
   return (
-    <YMaps query={{ apikey: import.meta.env.VITE_YANDEX_MAP_API }}>
+    <YMaps query={{ apikey: import.meta.env.VITE_YANDEX_MAP_API_KEY }}>
       <div className="space-y-2">
         <div className="text-sm text-gray-700">
           {coords ? `Selected: ${address}` : "Click on the map to select address"}
