@@ -63,6 +63,7 @@ const SettingsPage = () => {
 
       const data = await getSellerShopData();
       setShop(data);
+      setPreviewImage(data?.image_url)
       
     } catch (error) {
       console.log(error);
