@@ -24,7 +24,7 @@ const YandexSelectAddressMap = ({ onSelect, initialCoords }: Props) => {
     try {
       const res = await fetch(
         `https://geocode-maps.yandex.ru/1.x/?apikey=${
-          import.meta.env.VITE_YANDEX_MAP_API
+          import.meta.env.VITE_YANDEX_MAP_API_KEY
         }&format=json&geocode=${lng},${lat}`
       );
       const data = await res.json();
