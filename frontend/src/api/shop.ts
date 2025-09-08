@@ -1,6 +1,4 @@
 import { api } from "../App";
-import type { IShop } from "../types";
-
 
 export const getShopById =async (id:number|string) => {
   const res = await api.get(`/api/shops/${id}`);
@@ -12,7 +10,11 @@ export const getShopSarqytsByShopId =async (shopId:number|string) => {
   return res.data;
 }
 
-export const editShop =async (data:IShop) => {
-  const res = await api.put(`/api/shops/`, {data});
+export const editShop =async (data:FormData) => {
+  const res = await api.put(`/api/shops/`, data, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
   return res.data;
 }

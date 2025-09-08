@@ -23,6 +23,7 @@ const SettingsPage = () => {
   });
 
   const [previewImage, setPreviewImage] = useState(shop.image_url);
+  const [shopLogo, setShopLogo] = useState<File|null>(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
 
   const handleChange = (field: keyof IShop, value: string) => {
@@ -32,16 +33,26 @@ const SettingsPage = () => {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      setShopLogo(file);
       const url = URL.createObjectURL(file);
       setPreviewImage(url);
     }
   };
 
   const handleSave = async () => {
+    const formData = new FormData();
+
+    formData.append('name', shop?.name);
+    formData.append('address', shop?.address);
+    formData.append('lat', shop?.lat.toString());
+    formData.append('lng', shop?.lng.toString());
+    if (shopLogo) {
+      formData.append('image', shopLogo)
+    }
     try {
 
-      await editShop(shop);
-
+      await editShop(formData);
+      await getShopData();
     } catch (error) {
       console.log(error);
     }
