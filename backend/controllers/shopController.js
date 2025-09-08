@@ -119,7 +119,7 @@ export const editShop = async (req, res) => {
   try {
     const { shopId } = req.params;
     const { id: user_id } = req.user;
-    const { name, image_url, description, address, link, lat, lng } = req.body;
+    const { name, description, address, link, lat, lng } = req.body;
     let file = req.file;
 
     if (!name || !address || !lat || !lng) {
