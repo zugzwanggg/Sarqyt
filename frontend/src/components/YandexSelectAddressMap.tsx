@@ -1,15 +1,24 @@
 import { useState } from "react";
-import { YMaps, Map, Placemark, GeolocationControl, SearchControl } from "@pbe/react-yandex-maps";
+import {
+  YMaps,
+  Map,
+  Placemark,
+  GeolocationControl,
+  SearchControl,
+} from "@pbe/react-yandex-maps";
 
 type Props = {
   onSelect: (coords: [number, number], address: string) => void;
+  initialCoords?: [number, number];
 };
 
-const YandexSelectAddressMap = ({ onSelect }: Props) => {
-  const [coords, setCoords] = useState<[number, number] | null>(null);
-  const [address, setAddress] = useState<string>("");
+const YandexSelectAddressMap = ({ onSelect, initialCoords }: Props) => {
+  const [coords, setCoords] = useState<[number, number] | null>(
+    initialCoords || null
+  );
+  const [address, setAddress] = useState("");
 
-  const atyrauCoordinates: [number, number] = [47.0945, 51.9238];
+  const atyrau: [number, number] = [47.0945, 51.9238];
 
   const fetchAddress = async (lat: number, lng: number) => {
     try {
@@ -19,10 +28,10 @@ const YandexSelectAddressMap = ({ onSelect }: Props) => {
         }&format=json&geocode=${lng},${lat}`
       );
       const data = await res.json();
-      const text =
+      return (
         data.response.GeoObjectCollection.featureMember[0].GeoObject
-          .metaDataProperty.GeocoderMetaData.text;
-      return text;
+          .metaDataProperty.GeocoderMetaData.text || ""
+      );
     } catch (e) {
       console.error("Geocode error", e);
       return "";
@@ -32,10 +41,8 @@ const YandexSelectAddressMap = ({ onSelect }: Props) => {
   const handleClick = async (e: any) => {
     const newCoords: [number, number] = e.get("coords");
     setCoords(newCoords);
-
     const addr = await fetchAddress(newCoords[0], newCoords[1]);
     setAddress(addr);
-
     onSelect(newCoords, addr);
   };
 
@@ -47,13 +54,16 @@ const YandexSelectAddressMap = ({ onSelect }: Props) => {
         </div>
 
         <Map
-          className="aspect-video w-full rounded-lg shadow"
-          defaultState={{ center: atyrauCoordinates, zoom: 13 }}
-          modules={["control.ZoomControl", "control.SearchControl", "control.GeolocationControl"]}
-          options={{
-            suppressMapOpenBlock: true,
-            yandexMapDisablePoiInteractivity: true,
+          className="aspect-video w-full rounded-lg"
+          defaultState={{
+            center: coords || atyrau,
+            zoom: 13,
           }}
+          modules={[
+            "control.ZoomControl",
+            "control.SearchControl",
+            "control.GeolocationControl",
+          ]}
           onClick={handleClick}
         >
           <SearchControl options={{ float: "right" }} />
