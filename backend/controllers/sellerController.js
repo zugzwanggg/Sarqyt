@@ -267,6 +267,8 @@ export const getRecentOrders = async (req, res) => {
         o.sarqyt_id,
         s.id AS shop_id,
         s.name AS shop_name,
+        s.address AS shop_address,
+        sarqyts.discounted_price,
         o.quantity,
         o.total_price,
         o.status,
