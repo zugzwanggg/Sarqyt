@@ -130,7 +130,7 @@ export default function SellerOrdersPage() {
                   </p>
                   <p>
                     <span className="font-medium">User:</span>{" "}
-                    {order.username}₸
+                    {order.username}
                   </p>
                   <p>
                     <span className="font-medium">Total Price:</span>{" "}
