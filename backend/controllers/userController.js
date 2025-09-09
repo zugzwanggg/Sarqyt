@@ -7,19 +7,20 @@ export const getUserInfo = async (req, res) => {
     
     const info = await db.query(`
       SELECT 
-        id,
-        username, 
-        email, 
-        address, 
-        country,
-        city,
-        role,
-        agreement_at,
-        created_at,
-        (SELECT name FROM countries WHERE id = users.country) AS country_name,
-        (SELECT name FROM cities WHERE id = users.city) AS city_name
-      FROM users 
-      WHERE id = $1
+        u.id,
+        u.username, 
+        u.email, 
+        u.address, 
+        u.country,
+        u.city,
+        u.role,
+        u.agreement_at,
+        u.created_at,
+        (SELECT name FROM countries WHERE id = u.country) AS country_name,
+        (SELECT name FROM cities WHERE id = u.city) AS city_name,
+        (SELECT s.id FROM shops s WHERE s.user_id = u.id LIMIT 1) AS shop_id
+      FROM users u
+      WHERE u.id = $1
     `, [id]);
 
     if (!info.rows.length) {

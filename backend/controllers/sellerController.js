@@ -198,3 +198,48 @@ export const getSellerShopData = async (req,res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+export const getDashboardData = async (req, res) => {
+  try {
+    const { filter } = req.query;
+    const { shopId } = req.params; 
+    const validFilters = ["year", "month", "week", "day"];
+
+    const chosenFilter = validFilters.includes(filter) ? filter : null;
+
+    const query = `
+      WITH filtered_orders AS (
+        SELECT *
+        FROM orders
+        WHERE shop_id = $2
+          AND (
+            CASE WHEN $1 = 'year' THEN date_trunc('year', created_at) = date_trunc('year', now())
+                 WHEN $1 = 'month' THEN date_trunc('month', created_at) = date_trunc('month', now())
+                 WHEN $1 = 'week' THEN date_trunc('week', created_at) = date_trunc('week', now())
+                 WHEN $1 = 'day' THEN date_trunc('day', created_at) = date_trunc('day', now())
+                 ELSE true END
+          )
+      ),
+      filtered_sarqyts AS (
+        SELECT s.*
+        FROM sarqyts s
+        JOIN product_types pt ON s.product_type_id = pt.id
+        WHERE pt.shop_id = $2
+          AND s.available_until >= now()
+      )
+      SELECT 
+        COALESCE(SUM(CASE WHEN status = 'completed' THEN total_price END), 0) AS total_earnings,
+        (SELECT COUNT(*) FROM filtered_sarqyts) AS active_products,
+        COALESCE(COUNT(CASE WHEN status = 'pending' THEN 1 END), 0) AS pending_orders,
+        COALESCE(COUNT(CASE WHEN status = 'completed' THEN 1 END), 0) AS completed_orders
+      FROM filtered_orders;
+    `;
+
+    const { rows } = await db.query(query, [chosenFilter, shopId]);
+    res.json(rows[0]);
+
+  } catch (error) {
+   console.error("Error at getDashboardData:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
