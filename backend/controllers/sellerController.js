@@ -248,10 +248,14 @@ export const getDashboardData = async (req, res) => {
 export const getRecentOrders = async (req, res) => {
   try {
     const { shopId } = req.params;
-    const { filter = "day", status = null, limit = 20 } = req.query;
+    let { filter = "day", status = null, limit = 20 } = req.query;
 
     const validFilters = ["day", "week"];
     const chosenFilter = validFilters.includes(filter) ? filter : "day";
+
+    if (status === "null" || status === "" || status === undefined) {
+      status = null;
+    }
 
     const query = `
       SELECT 
@@ -284,7 +288,7 @@ export const getRecentOrders = async (req, res) => {
             ELSE date_trunc('day', o.created_at) = date_trunc('day', now())
           END
         )
-        AND (COALESCE($3::text, o.status) = o.status)
+        AND ($3::text IS NULL OR o.status = $3)
       ORDER BY o.created_at DESC
       LIMIT $4;
     `;
