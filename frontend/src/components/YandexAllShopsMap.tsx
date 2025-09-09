@@ -2,6 +2,7 @@ import { useState } from "react";
 import { YMaps, Map, Placemark } from "@pbe/react-yandex-maps";
 import { Navigation } from "lucide-react";
 import type { IShop } from "../types";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
   shops: IShop[];
@@ -11,6 +12,8 @@ const YandexAllShopsMap = ({ shops }: Props) => {
   const [selectedShop, setSelectedShop] = useState<IShop | null>(null);
   const [ymaps, setYmaps] = useState<any>(null);
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
+
+  const nav = useNavigate();
 
   const handleGetLocation = () => {
     if (navigator.geolocation) {
@@ -104,7 +107,7 @@ const YandexAllShopsMap = ({ shops }: Props) => {
 
       {/* Shop info panel */}
       {selectedShop && (
-        <div className="absolute z-50 bottom-28 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
+        <div onClick={()=>nav(`/shops/${selectedShop.id}`)} className="absolute z-50 bottom-28 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
           <div className="flex items-center gap-3">
             <img
               src={selectedShop.image_url}
