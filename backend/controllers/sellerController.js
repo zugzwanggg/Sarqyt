@@ -284,7 +284,7 @@ export const getRecentOrders = async (req, res) => {
             ELSE date_trunc('day', o.created_at) = date_trunc('day', now())
           END
         )
-        AND ($3::text IS NULL OR o.status = $3)
+        AND (COALESCE($3::text, o.status) = o.status)
       ORDER BY o.created_at DESC
       LIMIT $4;
     `;
