@@ -107,9 +107,10 @@ const YandexAllShopsMap = ({ shops }: Props) => {
 
       {/* Shop info panel */}
       {selectedShop && (
-        <div onClick={()=>nav(`/shops/${selectedShop.id}`)} className="absolute z-50 bottom-28 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
+        <div className="absolute z-50 bottom-28 left-0 right-0 bg-white shadow-lg rounded-t-2xl p-4 animate-slide-up">
           <div className="flex items-center gap-3">
-            <img
+            <img 
+              onClick={()=>nav(`/shops/${selectedShop.id}`)}
               src={selectedShop.image_url}
               alt={selectedShop.name}
               className="w-16 h-16 rounded-full object-cover border-2 border-[#3EC171]"
