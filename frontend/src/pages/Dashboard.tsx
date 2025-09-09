@@ -57,7 +57,7 @@ const Dashboard = () => {
   const fetchOrders = async () => {
     try {
 
-      const data = await getRecentOrders(user?.shop_id, 5, 'day');
+      const data = await getRecentOrders(user?.shop_id, 5, 'day', null);
       setOrders(data);
 
     } catch (error) {
