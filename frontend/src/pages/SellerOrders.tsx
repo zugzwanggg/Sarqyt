@@ -1,6 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { IOrder } from "../types";
+import { getRecentOrders } from "../api/seller";
+import { useUser } from "../context/UserContext";
 
 
 const mockOrders: IOrder[] = [
@@ -68,8 +70,12 @@ const mockOrders: IOrder[] = [
 const STATUS_OPTIONS = ["all", "reserved", "confirmed", "completed", "canceled"];
 
 export default function SellerOrdersPage() {
+
+  const {user} = useUser();
+
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
+  const [orders, setOrders] = useState<IOrder[]>([])
 
   const filteredOrders =
     selectedStatus === "all"
@@ -90,6 +96,21 @@ export default function SellerOrdersPage() {
         return "bg-gray-200 text-gray-600";
     }
   };
+
+  const fetchOrders = async () => {
+    try {
+
+      const data = await getRecentOrders(user?.shop_id, 30, 'day', selectedStatus);
+      setOrders(data)
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=> {
+    fetchOrders();
+  },[selectedStatus])
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -120,7 +141,7 @@ export default function SellerOrdersPage() {
         {filteredOrders.length === 0 ? (
           <p className="text-gray-500 text-sm">No orders in this status.</p>
         ) : (
-          filteredOrders.map((order) => (
+          orders.map((order) => (
             <div
               key={order.id}
               className="bg-gray-50 rounded-2xl p-4 mb-4 shadow-sm"
@@ -176,19 +197,14 @@ export default function SellerOrdersPage() {
                     <span className="font-medium">Order ID:</span> {order.id}
                   </p>
                   <p>
+                    <span className="font-medium">User:</span>{" "}
+                    {order.username}₸
+                  </p>
+                  <p>
                     <span className="font-medium">Total Price:</span>{" "}
                     {order.total_price}₸
                   </p>
-                  <p>
-                    <span className="font-medium">Payment:</span>{" "}
-                    {order.payment_method} ({order.payment_status})
-                  </p>
-                  {order.pickup_code && (
-                    <p>
-                      <span className="font-medium">Pickup Code:</span>{" "}
-                      {order.pickup_code}
-                    </p>
-                  )}
+
                   {order.pickup_time && (
                     <p>
                       <span className="font-medium">Pickup Time:</span>{" "}

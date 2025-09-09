@@ -2,7 +2,8 @@ import { DollarSign, Package, ListOrdered, Clock, type LucideProps } from "lucid
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
-import { getDashboardData } from "../api/seller";
+import { getDashboardData, getRecentOrders } from "../api/seller";
+import type { IOrder } from "../types";
 
 type TypeStats = {
   title:string;
@@ -11,15 +12,11 @@ type TypeStats = {
   color: string;
 }
 
-const recentOrders = [
-  { id: "001", product: "Pizza Magic Box", status: "Pending" },
-  { id: "002", product: "Bakery Bag", status: "Completed" },
-  { id: "003", product: "Sushi Pack", status: "Pending" },
-];
 
 const Dashboard = () => {
 
   const {user} = useUser();
+  const [orders, setOrders] = useState<IOrder[]>([]);
   const [stats, setStats] = useState<TypeStats[]>([]);
 
   const fetchStats = async () => {
@@ -57,8 +54,20 @@ const Dashboard = () => {
     }
   }
 
+  const fetchOrders = async () => {
+    try {
+
+      const data = await getRecentOrders(user?.shop_id, 5, 'day');
+      setOrders(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(()=> {
-    fetchStats()
+    fetchStats();
+    fetchOrders();
   }, [])
 
 
@@ -98,12 +107,12 @@ const Dashboard = () => {
           </Link>
         </div>
         <ul className="divide-y divide-gray-200">
-          {recentOrders.map((order) => (
+          {orders.map((order) => (
             <li
               key={order.id}
               className="flex justify-between py-2 items-center"
             >
-              <span>#{order.id} - {order.product}</span>
+              <span>#{order.id} - {order.sarqyt_title}</span>
               <span
                 className={`text-sm font-medium ${
                   order.status === "Completed"

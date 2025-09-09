@@ -90,6 +90,8 @@ export interface IOrder {
   shop_name: string;
   shop_image: string;
   shop_address: string;
+
+  username?: string;
 }
 
 export interface IProduct {

@@ -19,3 +19,8 @@ export const getDashboardData = async (shopId:number|string) => {
   const res = await api.get(`/api/dashboard/${shopId}`);
   return res.data;
 }
+
+export const getRecentOrders =async (shopId:number|string, limit?:number, day?:string|null, status?:string) => {
+  const res = await api.get(`/api/seller/${shopId}/orders?limit=${limit}&day={${day}}&status=${status}`);
+  return res.data;
+}
