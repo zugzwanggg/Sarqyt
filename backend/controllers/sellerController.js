@@ -230,7 +230,7 @@ export const getDashboardData = async (req, res) => {
       SELECT 
         COALESCE(SUM(CASE WHEN status = 'completed' THEN total_price END), 0) AS total_earnings,
         (SELECT COUNT(*) FROM filtered_sarqyts) AS active_products,
-        COALESCE(COUNT(CASE WHEN status = 'pending' THEN 1 END), 0) AS pending_orders,
+        COALESCE(COUNT(CASE WHEN status = 'reserved' THEN 1 END), 0) AS pending_orders,
         COALESCE(COUNT(CASE WHEN status = 'completed' THEN 1 END), 0) AS completed_orders
       FROM filtered_orders;
     `;
