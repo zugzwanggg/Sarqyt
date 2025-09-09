@@ -257,7 +257,7 @@ export const getRecentOrders = async (req, res) => {
       SELECT 
         o.id,
         pt.title AS sarqyt_title,
-        pt.image_url AS sarqyt_image
+        pt.image_url AS sarqyt_image,
         o.user_id,
         u.username,
         o.sarqyt_id,
