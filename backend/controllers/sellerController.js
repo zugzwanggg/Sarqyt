@@ -256,7 +256,7 @@ export const getRecentOrders = async (req, res) => {
     const query = `
       SELECT 
         o.id,
-        pt.title,
+        pt.title AS sarqyt_title,
         o.user_id,
         u.username,
         o.sarqyt_id,
