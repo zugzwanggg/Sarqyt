@@ -243,3 +243,56 @@ export const getDashboardData = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+export const getRecentOrders = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const { filter = "day", status = null, limit = 20 } = req.query;
+
+    const validFilters = ["day", "week"];
+    const chosenFilter = validFilters.includes(filter) ? filter : "day";
+
+    const query = `
+      SELECT 
+        o.id,
+        pt.title,
+        o.user_id,
+        u.username,
+        o.sarqyt_id,
+        s.id AS shop_id,
+        s.name AS shop_name,
+        o.quantity,
+        o.total_price,
+        o.status,
+        o.payment_method,
+        o.payment_status,
+        o.pickup_code,
+        o.pickup_time,
+        o.created_at
+      FROM orders o 
+      JOIN sarqyts ON o.sarqyt_id = sarqyts.id
+      JOIN product_types pt ON sarqyts.product_type_id = pt.id
+      JOIN users u ON o.user_id = u.id
+      JOIN shops s ON o.shop_id = s.id
+      WHERE o.shop_id = $1
+        AND (
+          CASE 
+            WHEN $2 = 'day' THEN date_trunc('day', o.created_at) = date_trunc('day', now())
+            WHEN $2 = 'week' THEN date_trunc('week', o.created_at) = date_trunc('week', now())
+            ELSE date_trunc('day', o.created_at) = date_trunc('day', now())
+          END
+        )
+        AND ($3::text IS NULL OR o.status = $3)
+      ORDER BY o.created_at DESC
+      LIMIT $4;
+    `;
+
+    const { rows } = await db.query(query, [shopId, chosenFilter, status, limit]);
+
+    res.status(200).json(rows);
+  } catch (error) {
+    console.error("Error at getRecentOrders:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
