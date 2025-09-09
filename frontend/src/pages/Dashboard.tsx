@@ -1,32 +1,15 @@
-import { DollarSign, Package, ListOrdered, Clock } from "lucide-react";
+import { DollarSign, Package, ListOrdered, Clock, type LucideProps } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useUser } from "../context/UserContext";
+import { getDashboardData } from "../api/seller";
 
-const stats = [
-  {
-    title: "Total Earnings",
-    value: "$1,250",
-    icon: DollarSign,
-    color: "bg-green-100 text-green-600",
-  },
-  {
-    title: "Active Products",
-    value: "12",
-    icon: Package,
-    color: "bg-blue-100 text-blue-600",
-  },
-  {
-    title: "Pending Orders",
-    value: "5",
-    icon: Clock,
-    color: "bg-yellow-100 text-yellow-600",
-  },
-  {
-    title: "Completed Orders",
-    value: "32",
-    icon: ListOrdered,
-    color: "bg-purple-100 text-purple-600",
-  },
-];
+type TypeStats = {
+  title:string;
+  value: string;
+  icon: React.ForwardRefExoticComponent<Omit<LucideProps, "ref"> & React.RefAttributes<SVGSVGElement>>;
+  color: string;
+}
 
 const recentOrders = [
   { id: "001", product: "Pizza Magic Box", status: "Pending" },
@@ -35,6 +18,52 @@ const recentOrders = [
 ];
 
 const Dashboard = () => {
+
+  const {user} = useUser();
+  const [stats, setStats] = useState<TypeStats[]>([]);
+
+  const fetchStats = async () => {
+    try {
+
+      const data = await getDashboardData(user?.shop_id);
+      setStats([
+        {
+          title: "Total Earnings",
+          value: data?.total_earnings,
+          icon: DollarSign,
+          color: "bg-green-100 text-green-600",
+        },
+        {
+          title: "Active Products",
+          value: data?.active_products,
+          icon: Package,
+          color: "bg-blue-100 text-blue-600",
+        },
+        {
+          title: "Pending Orders",
+          value: data?.pending_orders,
+          icon: Clock,
+          color: "bg-yellow-100 text-yellow-600",
+        },
+        {
+          title: "Completed Orders",
+          value: data?.completed_orders,
+          icon: ListOrdered,
+          color: "bg-purple-100 text-purple-600",
+        },
+      ])
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=> {
+    fetchStats()
+  }, [])
+
+
+
+
   return (
     <div className="p-4 pt-6 md:p-6">
       <h1 className="text-2xl font-bold mb-6">Seller Dashboard</h1>
@@ -51,7 +80,7 @@ const Dashboard = () => {
             </div>
             <div>
               <p className="text-sm text-gray-500">{item.title}</p>
-              <p className="text-lg font-semibold">{item.value}</p>
+              <p className="text-lg font-semibold">{item.value||0}</p>
             </div>
           </div>
         ))}

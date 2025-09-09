@@ -14,3 +14,8 @@ export const getSellerShopData =async () => {
   const res = await api.get(`/api/seller/`);
   return res.data;
 }
+
+export const getDashboardData = async (shopId:number|string) => {
+  const res = await api.get(`/api/dashboard/${shopId}`);
+  return res.data;
+}
