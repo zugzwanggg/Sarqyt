@@ -363,7 +363,7 @@ export const getSellerProductSarqyts = async (req, res) => {
         s.id,
         s.original_price,
         s.discounted_price,
-        s.quantity,
+        s.quantity_available,
         s.pickup_start,
         s.pickup_end,
         s.available_until,
