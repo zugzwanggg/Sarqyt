@@ -1,14 +1,28 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Plus, Search } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import type { IProduct } from "../types";
+import { useUser } from "../context/UserContext";
+import { getSellerProducts } from "../api/seller";
 
 export default function ProductsPage() {
-  const [products] = useState<IProduct[]>([
-    { id: 1, shop_id: 1, title: "Bakery Surprise Bag", image_url: "/bakery.jpg", description: "Freshly baked goods at half price!" },
-    { id: 2, shop_id: 1, title: "Sushi Surprise Box", image_url: "/sushi.jpg", description: "Delicious sushi rolls, chef’s choice." },
-    { id: 3, shop_id: 1, title: "Pizza Night Box", image_url: "/pizza.jpg", description: "Family-size pizza box with toppings." },
-  ]);
+  const {user} = useUser();
+  const [products, setProducts] = useState<IProduct[]>([]);
+
+  const fetchProducts =async () => {
+    try {
+
+      const data = await getSellerProducts(user?.shop_id)
+      setProducts(data);
+
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(()=> {
+    fetchProducts();
+  }, [])
 
   return (
     <div className="py-6 px-4 max-w-5xl mx-auto">

@@ -24,3 +24,8 @@ export const getRecentOrders =async (shopId:number|string, limit?:number, day?:s
   const res = await api.get(`/api/seller/${shopId}/orders?limit=${limit}&filter=${day}&status=${status}`);
   return res.data;
 }
+
+export const getSellerProducts =async (shopId:number|string) => {
+  const res = await api.get(`/api/sellet/${shopId}/products`);
+  return res.data;
+}
