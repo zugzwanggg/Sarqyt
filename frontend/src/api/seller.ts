@@ -29,3 +29,14 @@ export const getSellerProducts =async (shopId:number|string) => {
   const res = await api.get(`/api/seller/${shopId}/products`);
   return res.data;
 }
+
+export const getSellerProductById =async (shopId:number|string, productId:number|string) => {
+  const res = await api.get(`/api/seller/${shopId}/products/${productId}`);
+  return res.data;
+}
+
+
+export const getSellerProductSarqyts =async (shopId:number|string, productId:number|string) => {
+  const res = await api.get(`/api/seller/${shopId}/products/${productId}/sarqyts`);
+  return res.data;
+}

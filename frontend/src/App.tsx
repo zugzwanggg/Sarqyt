@@ -73,7 +73,7 @@ function App() {
 
       {/* seller */}
       <Route path="/scanner" element={<QRScanner/>}/>
-      <Route path="/products/:id" element={<ProductDetailsPage/>}/>
+      <Route path="/products/:shopId/:productId" element={<ProductDetailsPage/>}/>
     </Routes>
   )
 }
