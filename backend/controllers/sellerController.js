@@ -372,7 +372,7 @@ export const getSellerProductSarqyts = async (req, res) => {
           ELSE 'expired'
         END AS status
       FROM sarqyts s
-      WHERE s.product_id = $1 
+      WHERE s.product_type_id = $1 
         AND s.shop_id = $2
       ORDER BY s.created_at DESC
     `;
