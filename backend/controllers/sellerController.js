@@ -323,3 +323,58 @@ export const getSellerProducts = async (req,res) => {
     res.status(500).json({ message: error.message });
   }
 }
+
+export const getSellerProductById = async (req, res) => {
+  try {
+    const { shopId, productId } = req.params;
+
+    const query = `
+    SELECT 
+      pt.id,
+      pt.title,
+      pt.description,
+      pt.image_url
+    FROM product_types pt
+    WHERE pt.id = $1 AND pt.shop_id = $2
+  `;
+
+  const { rows, rowCount } = await db.query(query, [productId, shopId]);
+    if (rowCount === 0) {
+      return res.status(404).json({ message: "Product not found" });
+    }
+
+    res.status(200).json(rows[0]);
+  } catch (error) {
+    console.error("Error at getSellerProductById:", error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+export const getSellerProductSarqyts = async (req, res) => {
+  try {
+    const {shopId, productId } = req.params;
+
+    if (!productId) {
+      return res.status(400).json({ message: "Product ID is required" });
+    }
+
+    const query = `
+      SELECT s.id, s.price, s.discount_price, s.available_until, s.status
+      FROM sarqyts s
+      JOIN shops sh ON sh.id = s.shop_id
+      WHERE s.product_id = $1 AND sh.id = $2
+      ORDER BY s.created_at DESC
+    `;
+
+    const { rows, rowCount } = await db.query(query, [productId, shopId]);
+
+    if (rowCount === 0) {
+      return res.status(404).json({ message: "No sarqyts found for this product" });
+    }
+
+    return res.json(rows);
+  } catch (error) {
+    console.error("Error fetching product sarqyts:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
