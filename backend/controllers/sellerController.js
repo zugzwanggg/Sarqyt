@@ -352,17 +352,28 @@ export const getSellerProductById = async (req, res) => {
 
 export const getSellerProductSarqyts = async (req, res) => {
   try {
-    const {shopId, productId } = req.params;
+    const { shopId, productId } = req.params;
 
-    if (!productId) {
-      return res.status(400).json({ message: "Product ID is required" });
+    if (!productId || !shopId) {
+      return res.status(400).json({ message: "Product ID and Shop ID are required" });
     }
 
     const query = `
-      SELECT s.id, s.price, s.discount_price, s.available_until, s.status
+      SELECT 
+        s.id,
+        s.original_price,
+        s.discounted_price,
+        s.quantity,
+        s.pickup_start,
+        s.pickup_end,
+        s.available_until,
+        CASE 
+          WHEN s.available_until > now() THEN 'active'
+          ELSE 'expired'
+        END AS status
       FROM sarqyts s
-      JOIN shops sh ON sh.id = s.shop_id
-      WHERE s.product_id = $1 AND sh.id = $2
+      WHERE s.product_id = $1 
+        AND s.shop_id = $2
       ORDER BY s.created_at DESC
     `;
 
