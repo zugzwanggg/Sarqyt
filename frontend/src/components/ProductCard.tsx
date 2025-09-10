@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import type { IProduct } from "../types";
 
-const ProductCard = ({id, image_url, title}: IProduct) => {
+const ProductCard = ({id, shop_id, image_url, title}: IProduct) => {
 
 
   const nav = useNavigate();
@@ -9,7 +9,7 @@ const ProductCard = ({id, image_url, title}: IProduct) => {
 
   return (
     <div
-      onClick={()=>nav(`/products/${id}`)}
+      onClick={()=>nav(`/products/${shop_id}/${id}`)}
       key={id}
       className="bg-white shadow-md rounded-2xl overflow-hidden hover:shadow-lg transition"
     >
