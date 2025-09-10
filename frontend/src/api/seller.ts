@@ -21,6 +21,6 @@ export const getDashboardData = async (shopId:number|string, filter:string|null)
 }
 
 export const getRecentOrders =async (shopId:number|string, limit?:number, day?:string|null, status?:string|null) => {
-  const res = await api.get(`/api/seller/${shopId}/orders?limit=${limit}&filter={${day}}&status=${status}`);
+  const res = await api.get(`/api/seller/${shopId}/orders?limit=${limit}&filter=${day}&status=${status}`);
   return res.data;
 }
