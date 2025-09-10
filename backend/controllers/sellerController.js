@@ -303,3 +303,23 @@ export const getRecentOrders = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+
+export const getSellerProducts = async (req,res) => {
+  try {
+    const {shopId} = req.params;
+
+    const shop = await db.query("SELECT * FROM shops WHERE id = $1", [shopId]);
+
+    if (shop.rowCount == 0) {
+      return res.status(404).json({
+        message: "User doesn't own a shop"
+      })
+    }
+
+    res.status(200).json(shop.rows);
+  } catch (error) {
+    console.error("Error at getSellerProducts:", error);
+    res.status(500).json({ message: error.message });
+  }
+}

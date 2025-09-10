@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { checkAuth } from "../middleware/checkAuth.js";
 import { checkIsUserShopOwner } from "../middleware/checkIsUserShopOwner.js";
-import { acceptOrder, completeOrder, getDashboardData, getRecentOrders, getScanData, getSellerShopData } from "../controllers/sellerController.js";
+import { acceptOrder, completeOrder, getDashboardData, getRecentOrders, getScanData, getSellerProducts, getSellerShopData } from "../controllers/sellerController.js";
 import { checkIsUserRoleSeller } from "../middleware/checkIsUserRoleSeller.js";
 
 
@@ -11,5 +11,6 @@ sellerRouter.patch('/scan/:orderId', checkAuth, checkIsUserRoleSeller, completeO
 sellerRouter.get('/scan/:id', checkAuth, checkIsUserRoleSeller, getScanData);
 sellerRouter.get('/seller/', checkAuth, checkIsUserRoleSeller, getSellerShopData);
 
+sellerRouter.get('/seller/:shopId/products', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProducts);
 sellerRouter.get('/dashboard/:shopId', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getDashboardData);
 sellerRouter.get('/seller/:shopId/orders/', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getRecentOrders);
