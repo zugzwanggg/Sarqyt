@@ -15,4 +15,4 @@ sellerRouter.get('/seller/:shopId/products', checkAuth, checkIsUserRoleSeller, c
 sellerRouter.get('/dashboard/:shopId', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getDashboardData);
 sellerRouter.get('/seller/:shopId/orders/', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getRecentOrders);
 sellerRouter.get('/seller/:shopId/products/:productId', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProductById);
-sellerRouter.get('/seller/:shopId/products/:productId/seller', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProductSarqyts)
+sellerRouter.get('/seller/:shopId/products/:productId/sarqyts', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProductSarqyts)
