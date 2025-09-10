@@ -309,7 +309,7 @@ export const getSellerProducts = async (req,res) => {
   try {
     const {shopId} = req.params;
 
-    const shop = await db.query("SELECT * FROM shops WHERE id = $1", [shopId]);
+    const shop = await db.query("SELECT * FROM product_types WHERE shop_id = $1", [shopId]);
 
     if (shop.rowCount == 0) {
       return res.status(404).json({
