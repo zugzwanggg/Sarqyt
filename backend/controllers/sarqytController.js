@@ -392,7 +392,7 @@ export const cancelReservation = async (req, res) => {
     await client.query("BEGIN");
 
     const orderRes = await client.query(
-      `SELECT id, sarqyt_id, quantity, status 
+      `SELECT id, sarqyt_id, quantity, status, shop_id 
        FROM orders 
        WHERE id = $1 AND user_id = $2 FOR UPDATE`,
       [order_id, user_id]
@@ -425,6 +425,29 @@ export const cancelReservation = async (req, res) => {
     );
 
     await client.query("COMMIT");
+
+    const buyerRes = await client.query(
+      `SELECT username FROM users WHERE id = $1`,
+      [user_id]
+    );
+    const username = buyerRes.rows[0]?.username;
+
+    const sellerRes = await client.query(
+      `SELECT u.telegram_id 
+       FROM shops sh
+       JOIN users u ON sh.user_id = u.id
+       WHERE sh.id = $1`,
+      [order.shop_id]
+    );
+    const productTitle = sellerRes.rows[0]?.title;
+    const sellerTelegramId = sellerRes.rows[0]?.telegram_id;
+
+    if (sellerTelegramId) {
+      await sendTelegramMessage(sellerTelegramId, `🛒 <b>❌ Заказ отменен</b>\n\n` +
+      `📦 Товар: <b>${productTitle}</b>\n` +
+      `🔢 Кол-во: <b>${order.quantity}</b>\n` +
+      `👤 Пользователь: <b><a href="https://t.me/${username}">@${username}</a></b>`);
+    }
 
     res.json({ success: true, message: "Reservation canceled" });
 
