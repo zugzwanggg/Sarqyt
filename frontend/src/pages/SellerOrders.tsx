@@ -5,14 +5,15 @@ import { getRecentOrders } from "../api/seller";
 import { useUser } from "../context/UserContext";
 
 const STATUS_OPTIONS = [null, "reserved", "confirmed", "completed", "canceled"];
+const TIME_OPTIONS: ("day" | "week")[] = ["day", "week"];
 
 export default function SellerOrdersPage() {
-
-  const {user} = useUser();
+  const { user } = useUser();
 
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string|null>(null);
-  const [orders, setOrders] = useState<IOrder[]>([])
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [timeFilter, setTimeFilter] = useState<"day" | "week">("day");
+  const [orders, setOrders] = useState<IOrder[]>([]);
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -31,18 +32,21 @@ export default function SellerOrdersPage() {
 
   const fetchOrders = async () => {
     try {
-
-      const data = await getRecentOrders(user?.shop_id, 30, 'day', selectedStatus);
-      setOrders(data)
-      
+      const data = await getRecentOrders(
+        user?.shop_id,
+        30,
+        timeFilter,
+        selectedStatus
+      );
+      setOrders(data);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  useEffect(()=> {
+  useEffect(() => {
     fetchOrders();
-  },[selectedStatus])
+  }, [selectedStatus, timeFilter]);
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -51,27 +55,47 @@ export default function SellerOrdersPage() {
         <h1 className="text-xl font-bold">Orders</h1>
       </div>
 
-      {/* Status filter */}
-      <div className="flex gap-2 px-4 py-2 overflow-x-auto border-b">
-        {STATUS_OPTIONS.map((status) => (
-          <button
-            key={status}
-            onClick={() => setSelectedStatus(status)}
-            className={`px-4 py-1 rounded-full text-sm font-medium ${
-              selectedStatus === status
-                ? "bg-primaryColor text-white"
-                : "bg-gray-100 text-gray-700"
-            }`}
-          >
-            {status ? status.charAt(0).toUpperCase() + status.slice(1) : 'All'}
-          </button>
-        ))}
+      {/* Filters */}
+      <div className="flex flex-col gap-2 px-4 py-2 border-b sm:flex-row sm:items-center sm:justify-between">
+        {/* Status filter */}
+        <div className="flex gap-2 overflow-x-auto">
+          {STATUS_OPTIONS.map((status) => (
+            <button
+              key={status ?? "all"}
+              onClick={() => setSelectedStatus(status)}
+              className={`px-4 py-1 rounded-full text-sm font-medium transition ${
+                selectedStatus === status
+                  ? "bg-primaryColor text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {status ? status.charAt(0).toUpperCase() + status.slice(1) : "All"}
+            </button>
+          ))}
+        </div>
+
+        {/* Time filter */}
+        <div className="flex gap-2">
+          {TIME_OPTIONS.map((time) => (
+            <button
+              key={time}
+              onClick={() => setTimeFilter(time)}
+              className={`px-4 py-1 rounded-full text-sm font-medium transition ${
+                timeFilter === time
+                  ? "bg-primaryColor text-white"
+                  : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+              }`}
+            >
+              {time.charAt(0).toUpperCase() + time.slice(1)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Orders list */}
       <div className="flex-1 overflow-y-auto p-4">
         {orders.length === 0 ? (
-          <p className="text-gray-500 text-sm">No orders in this status.</p>
+          <p className="text-gray-500 text-sm">No orders in this filter.</p>
         ) : (
           orders.map((order) => (
             <div
@@ -129,14 +153,12 @@ export default function SellerOrdersPage() {
                     <span className="font-medium">Order ID:</span> {order.id}
                   </p>
                   <p>
-                    <span className="font-medium">User:</span>{" "}
-                    {order.username}
+                    <span className="font-medium">User:</span> {order.username}
                   </p>
                   <p>
                     <span className="font-medium">Total Price:</span>{" "}
                     {order.total_price}₸
                   </p>
-
                   {order.pickup_time && (
                     <p>
                       <span className="font-medium">Pickup Time:</span>{" "}
