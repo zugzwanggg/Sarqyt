@@ -1,5 +1,6 @@
+import { sendTelegramMessage } from "../bot/telegramBot.js";
 import { db } from "../db.js";
-import bcryptjs, { hash } from "bcryptjs";
+import bcryptjs from "bcryptjs";
 
 const getUserCity = async (userId) => {
   const res = await db.query("SELECT city FROM users WHERE id = $1", [userId]);
@@ -284,7 +285,7 @@ export const reserveSarqyt = async (req, res) => {
     await client.query("BEGIN");
 
     const sarqytRes = await client.query(
-      `SELECT id, discounted_price, quantity_available, shop_id 
+      `SELECT id, discounted_price, quantity_available, shop_id, product_type_id 
        FROM sarqyts 
        WHERE id = $1 FOR UPDATE`,
       [sarqyt_id]
@@ -340,6 +341,28 @@ export const reserveSarqyt = async (req, res) => {
     );
 
     await client.query("COMMIT");
+
+    const sellerRes = await db.query(
+      `SELECT u.telegram_id, u.username, pt.title 
+       FROM shops sh
+       JOIN users u ON u.id = sh.user_id
+       JOIN product_types pt ON pt.id = $2
+       WHERE sh.id = $1`,
+      [shop_id, sarqyt.product_type_id]
+    );
+
+    const sellerTelegramId = sellerRes.rows[0]?.telegram_id;
+    const productTitle = sellerRes.rows[0]?.title;
+    const username = sellerRes.rows[0]?.username;
+
+    await sendTelegramMessage(
+      sellerTelegramId,
+      `🛒 <b>Новый заказ!</b>\n\n` +
+      `📦 Товар: <b>${productTitle}</b>\n` +
+      `🔢 Кол-во: <b>${quantity}</b>\n` +
+      `💰 Сумма: <b>${totalPrice}₸</b>\n` +
+      `👤 Пользователь: <b><a href="https://t.me/${username}">@${username}</a></b>`
+    );
 
     res.json({ 
       success: true, 
