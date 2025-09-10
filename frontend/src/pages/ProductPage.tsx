@@ -63,38 +63,50 @@ export default function ProductDetailsPage() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-4 py-4">
-        {sarqyts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center text-gray-500 mt-20">
-            <img src="/empty-box.svg" alt="No sarqyts" className="w-36 h-36 mb-4 opacity-70" />
-            <p className="text-lg font-medium">No sarqyts yet</p>
-            <p className="text-sm">Add your first one below.</p>
+  {sarqyts.length === 0 ? (
+    <div className="flex flex-col items-center justify-center text-gray-500 mt-20">
+      <img src="/empty-box.svg" alt="No sarqyts" className="w-36 h-36 mb-4 opacity-70" />
+      <p className="text-lg font-medium">No sarqyts yet</p>
+      <p className="text-sm">Add your first one below.</p>
+    </div>
+  ) : (
+    sarqyts.map((s) => (
+      <div
+        key={s.id}
+        className="bg-white border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm hover:shadow-md transition"
+      >
+        <div className="flex justify-between items-center mb-2">
+          <p className="text-lg font-semibold text-primaryColor">
+            {s.discounted_price}₸{" "}
+            <span className="line-through text-gray-400 text-sm ml-1">
+              {s.original_price}₸
+            </span>
+          </p>
+          <span
+            className={`text-xs font-medium px-2 py-1 rounded-full ${
+              s.status === "active"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-600"
+            }`}
+          >
+            {s.status === "active" ? "Active" : "Expired"}
+          </span>
+        </div>
+
+            <p className="text-sm text-gray-700">Quantity left: {s.quantity_available}</p>
+            <p className="text-sm text-gray-700">
+              Pickup:{" "}
+              {s?.pickup_start && s?.pickup_end
+                ? `${format(new Date(s.pickup_start), "HH:mm")} – ${format(
+                    new Date(s.pickup_end),
+                    "HH:mm"
+                  )}`
+                : "Not set"}
+            </p>
+            <p className="text-sm text-gray-500">
+              Available until: {format(new Date(s.available_until), "dd/MM/yyyy HH:mm")}
+            </p>
           </div>
-        ) : (
-          sarqyts.map((s) => (
-            <div
-              key={s.id}
-              className="bg-gray-50 border border-gray-200 rounded-2xl p-4 mb-4 shadow-sm"
-            >
-              <p className="text-lg font-semibold text-primaryColor">
-                {s.discounted_price}₸{" "}
-                <span className="line-through text-gray-400 text-sm ml-1">
-                  {s.original_price}₸
-                </span>
-              </p>
-              <p className="text-sm text-gray-700">Quantity: {s.quantity_available}</p>
-              <p className="text-sm text-gray-700">
-                Pickup:{" "}
-                {s?.pickup_start && s?.pickup_end
-                  ? `${format(new Date(s.pickup_start), "HH:mm")} – ${format(
-                      new Date(s.pickup_end),
-                      "HH:mm"
-                    )}`
-                  : "Not set"}
-              </p>
-              <p className="text-sm text-gray-500">
-                Available until: {format(new Date(s.available_until), "dd/MM/yyyy HH:mm")}
-              </p>
-            </div>
           ))
         )}
       </div>
