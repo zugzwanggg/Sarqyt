@@ -306,24 +306,32 @@ export const getRecentOrders = async (req, res) => {
 };
 
 
-export const getSellerProducts = async (req,res) => {
+export const getSellerProducts = async (req, res) => {
   try {
-    const {shopId} = req.params;
+    const { shopId } = req.params;
 
-    const shop = await db.query("SELECT * FROM product_types WHERE shop_id = $1", [shopId]);
+    const query = `
+      SELECT * 
+      FROM product_types 
+      WHERE shop_id = $1
+      ORDER BY created_at DESC
+    `;
 
-    if (shop.rowCount == 0) {
+    const { rows, rowCount } = await db.query(query, [shopId]);
+
+    if (rowCount === 0) {
       return res.status(404).json({
-        message: "User doesn't own a shop"
-      })
+        message: "User doesn't own a shop",
+      });
     }
 
-    res.status(200).json(shop.rows);
+    res.status(200).json(rows);
   } catch (error) {
     console.error("Error at getSellerProducts:", error);
     res.status(500).json({ message: error.message });
   }
-}
+};
+
 
 export const getSellerProductById = async (req, res) => {
   try {
