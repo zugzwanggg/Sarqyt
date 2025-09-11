@@ -505,7 +505,7 @@ export const createSarqyt = async (req, res) => {
 
     const query = `
       INSERT INTO sarqyts 
-        (shop_id, product+type_id, original_price, discounted_price, quantity_available, pickup_start, pickup_end, available_until) 
+        (shop_id, product_type_id, original_price, discounted_price, quantity_available, pickup_start, pickup_end, available_until) 
       VALUES 
         ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id
