@@ -160,7 +160,7 @@ const OrderPage = () => {
         </div>
       </div>
 
-      {order.status === "reserved" && (
+      {(order.status === "reserved" || order.status === "confirmed") && (
         <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg p-4">
           <button
             onClick={cancelOrder}
