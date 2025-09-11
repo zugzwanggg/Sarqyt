@@ -1,5 +1,6 @@
 import { db } from "../db.js";
 import cloudinary from "../utils/cloudinary.js";
+import { parseISO, isBefore, isAfter } from "date-fns";
 
 export const acceptOrder = async (req, res) => {
   try {
@@ -446,6 +447,89 @@ export const createProduct = async (req, res) => {
     return res.status(200).json({ message: "Successfully created" });
   } catch (error) {
     console.error("Error at createProduct:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
+export const createSarqyt = async (req, res) => {
+  try {
+    const { shopId } = req.params;
+    const {
+      productId,
+      original_price,
+      discounted_price,
+      quantity_available,
+      pickup_start,
+      pickup_end,
+      available_until,
+    } = req.body;
+
+    if (
+      !shopId ||
+      !productId ||
+      !original_price ||
+      !discounted_price ||
+      !quantity_available ||
+      !pickup_start ||
+      !pickup_end ||
+      !available_until
+    ) {
+      return res.status(400).json({
+        message: "Provide all the required fields",
+      });
+    }
+
+    const pickupStart = parseISO(pickup_start);
+    const pickupEnd = parseISO(pickup_end);
+    const availableUntil = parseISO(available_until);
+    const now = new Date();
+
+    if (isAfter(pickupStart, pickupEnd)) {
+      return res.status(400).json({
+        message: "Pickup start cannot be after pickup end",
+      });
+    }
+
+    if (isBefore(pickupEnd, now)) {
+      return res.status(400).json({
+        message: "Pickup end cannot be in the past",
+      });
+    }
+
+    if (isBefore(availableUntil, pickupEnd)) {
+      return res.status(400).json({
+        message: "Available until must be after pickup end",
+      });
+    }
+
+    const query = `
+      INSERT INTO sarqyts 
+        (shop_id, product+type_id, original_price, discounted_price, quantity_available, pickup_start, pickup_end, available_until) 
+      VALUES 
+        ($1, $2, $3, $4, $5, $6, $7, $8)
+      RETURNING id
+    `;
+
+    const values = [
+      shopId,
+      productId,
+      original_price,
+      discounted_price,
+      quantity_available,
+      pickupStart,
+      pickupEnd,
+      availableUntil,
+    ];
+
+    const { rows } = await db.query(query, values);
+
+    res.status(201).json({
+      message: "Sarqyt created successfully",
+      sarqytId: rows[0].id,
+    });
+  } catch (error) {
+    console.error("Error at createSarqyt:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };

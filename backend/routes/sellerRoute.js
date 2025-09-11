@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { checkAuth } from "../middleware/checkAuth.js";
 import { checkIsUserShopOwner } from "../middleware/checkIsUserShopOwner.js";
-import { acceptOrder, completeOrder, createProduct, getDashboardData, getRecentOrders, getScanData, getSellerProductById, getSellerProductSarqyts, getSellerProducts, getSellerShopData } from "../controllers/sellerController.js";
+import { acceptOrder, completeOrder, createProduct, createSarqyt, getDashboardData, getRecentOrders, getScanData, getSellerProductById, getSellerProductSarqyts, getSellerProducts, getSellerShopData } from "../controllers/sellerController.js";
 import { checkIsUserRoleSeller } from "../middleware/checkIsUserRoleSeller.js";
 import { uploadImage } from "../middleware/uploadImage.js";
 
@@ -19,3 +19,4 @@ sellerRouter.get('/seller/:shopId/products/:productId', checkAuth, checkIsUserRo
 sellerRouter.get('/seller/:shopId/products/:productId/sarqyts', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProductSarqyts)
 
 sellerRouter.post('/seller/:shopId/products', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, uploadImage.single('image'), createProduct);
+sellerRouter.post('/seller/:shopId/products/sarqyt', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, createSarqyt);
