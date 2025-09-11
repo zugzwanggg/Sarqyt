@@ -151,7 +151,7 @@ export default function ProductDetailsPage() {
         )}
       </div>
 
-      <div className="fixed bottom-0 border-t bg-white p-4">
+      <div className="fixed w-full bottom-0 border-t bg-white p-4">
         <button
           onClick={() => setShowForm(true)}
           className="w-full bg-primaryColor text-white py-3 rounded-xl font-semibold shadow hover:opacity-90 flex items-center justify-center gap-2"
@@ -160,57 +160,89 @@ export default function ProductDetailsPage() {
         </button>
       </div>
 
-      {/* Add Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg overflow-y-auto max-h-[90vh]">
-            <h2 className="text-lg font-bold mb-4">Add Sarqyt</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Add Sarqyt</h2>
 
-            <div className="space-y-3">
-              <input
-                type="number"
-                placeholder="Original Price"
-                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
-              />
-              <input
-                type="number"
-                placeholder="Discounted Price"
-                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
-              />
-              <input
-                type="number"
-                placeholder="Quantity"
-                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
-              />
-              <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-5">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Original Price
+                </label>
                 <input
-                  type="time"
-                  placeholder="Pickup Start"
-                  className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
-                />
-                <input
-                  type="time"
-                  placeholder="Pickup End"
-                  className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
+                  type="number"
+                  placeholder="e.g. 2000"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
                 />
               </div>
-              <input
-                type="datetime-local"
-                placeholder="Available Until"
-                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
-              />
-            </div>
 
-            <div className="flex gap-3 mt-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Discounted Price
+                </label>
+                <input
+                  type="number"
+                  placeholder="e.g. 1200"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  placeholder="How many bags?"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pickup Start
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pickup End
+                  </label>
+                  <input
+                    type="time"
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Available Until
+                </label>
+                <input
+                  type="datetime-local"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
+                <p className="mt-1 text-xs text-gray-500">
+                  Customers can buy until this date & time
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-8">
               <button
                 onClick={() => setShowForm(false)}
-                className="flex-1 py-2 rounded-lg border border-gray-300"
+                className="flex-1 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
               >
                 Cancel
               </button>
               <button
                 onClick={() => setShowForm(false)}
-                className="flex-1 py-2 rounded-lg bg-primaryColor text-white font-semibold"
+                className="flex-1 py-2 rounded-lg bg-primaryColor text-white font-semibold shadow hover:opacity-90"
               >
                 Save
               </button>
