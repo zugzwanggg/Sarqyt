@@ -157,7 +157,7 @@ export default function ProductsPage() {
                   )
                   :
                   (
-                    <div className="text-right text-red-500 mb-2">
+                    <div className="text-right flex justify-end text-red-500 mb-1">
                       <Trash2 onClick={()=>cancelImage()}/>
                     </div>
                   )
