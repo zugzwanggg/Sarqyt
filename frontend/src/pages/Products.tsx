@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import type { IProduct } from "../types";
 import { useUser } from "../context/UserContext";
 import { getSellerProducts } from "../api/seller";
-import { Upload, Image as ImageIcon } from "lucide-react";
 
 export default function ProductsPage() {
   const { user } = useUser();
@@ -73,15 +72,16 @@ export default function ProductsPage() {
         </div>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primaryColor text-white shadow-lg hover:opacity-90 transition"
+          className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-primaryColor text-white shadow-lg hover:opacity-90 transition text-sm sm:text-base"
         >
-          <Plus size={18} /> Add Product
+          <Plus size={18} />
+          <span className="hidden xs:inline">Add Product</span>
         </button>
       </div>
 
       {/* Product Grid */}
       {products.length > 0 ? (
-        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {products.map((product) => (
             <ProductCard key={product.id} {...product} />
           ))}
@@ -108,74 +108,73 @@ export default function ProductsPage() {
 
       {/* Modal */}
       {isModalOpen && (
-  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
-    <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
-      <button
-  onClick={() => setIsModalOpen(true)}
-  className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-primaryColor text-white shadow-lg hover:opacity-90 transition text-sm sm:text-base"
->
-  <Plus size={18} />
-  <span className="hidden xs:inline">Add Product</span>
-</button>
-      
-      <h2 className="text-xl font-bold mb-4">Add New Product</h2>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="w-full border rounded-lg px-3 py-2"
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full border rounded-lg px-3 py-2"
-        />
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
 
-        {/* Modern file upload */}
-        <div>
-          <label
-            htmlFor="file-upload"
-            className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primaryColor transition"
-          >
-            <Upload className="w-8 h-8 text-gray-400 mb-2" />
-            <span className="text-gray-600 text-sm">
-              Drop file here or <span className="text-primaryColor">browse</span>
-            </span>
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageChange}
-              className="hidden"
-            />
-          </label>
-
-          {/* Preview */}
-          {previewUrl && (
-            <div className="mt-3 rounded-lg overflow-hidden">
-              <img
-                src={previewUrl}
-                alt="Preview"
-                className="w-full aspect-video object-cover rounded-lg"
+            <h2 className="text-xl font-bold mb-4">Add New Product</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
               />
-            </div>
-          )}
-        </div>
+              <textarea
+                placeholder="Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full border rounded-lg px-3 py-2"
+              />
 
-        <button
-          type="submit"
-          className="w-full bg-primaryColor text-white py-2 rounded-lg shadow hover:opacity-90 transition"
-        >
-          Create Product
-        </button>
-      </form>
-    </div>
-  </div>
-)}
-      
+              {/* Modern file upload */}
+              <div>
+                <label
+                  htmlFor="file-upload"
+                  className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primaryColor transition"
+                >
+                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                  <span className="text-gray-600 text-sm">
+                    Drop file here or{" "}
+                    <span className="text-primaryColor">browse</span>
+                  </span>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="hidden"
+                  />
+                </label>
+
+                {/* Preview */}
+                {previewUrl && (
+                  <div className="mt-3 rounded-lg overflow-hidden">
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-full aspect-video object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                className="w-full bg-primaryColor text-white py-2 rounded-lg shadow hover:opacity-90 transition"
+              >
+                Create Product
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
