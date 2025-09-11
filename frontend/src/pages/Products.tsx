@@ -88,11 +88,6 @@ export default function ProductsPage() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-gray-500 mt-24">
-          <img
-            src="/empty-box.svg"
-            alt="No products"
-            className="w-48 h-48 mb-6 opacity-70"
-          />
           <h2 className="text-lg font-semibold">No products yet</h2>
           <p className="text-sm">
             Start by adding your first product to showcase here.

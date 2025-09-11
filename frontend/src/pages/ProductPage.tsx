@@ -65,7 +65,6 @@ export default function ProductDetailsPage() {
       <div className="flex-1 overflow-y-auto px-4 py-4">
   {sarqyts.length === 0 ? (
     <div className="flex flex-col items-center justify-center text-gray-500 mt-20">
-      <img src="/empty-box.svg" alt="No sarqyts" className="w-36 h-36 mb-4 opacity-70" />
       <p className="text-lg font-medium">No sarqyts yet</p>
       <p className="text-sm">Add your first one below.</p>
     </div>
