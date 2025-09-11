@@ -3,6 +3,7 @@ import { checkAuth } from "../middleware/checkAuth.js";
 import { checkIsUserShopOwner } from "../middleware/checkIsUserShopOwner.js";
 import { acceptOrder, completeOrder, createProduct, getDashboardData, getRecentOrders, getScanData, getSellerProductById, getSellerProductSarqyts, getSellerProducts, getSellerShopData } from "../controllers/sellerController.js";
 import { checkIsUserRoleSeller } from "../middleware/checkIsUserRoleSeller.js";
+import { uploadImage } from "../middleware/uploadImage.js";
 
 
 export const sellerRouter = Router();
@@ -17,4 +18,4 @@ sellerRouter.get('/seller/:shopId/orders/', checkAuth, checkIsUserRoleSeller, ch
 sellerRouter.get('/seller/:shopId/products/:productId', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProductById);
 sellerRouter.get('/seller/:shopId/products/:productId/sarqyts', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, getSellerProductSarqyts)
 
-sellerRouter.post('/seller/:shopId/products', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, createProduct);
+sellerRouter.post('/seller/:shopId/products', checkAuth, checkIsUserRoleSeller, checkIsUserShopOwner, uploadImage.single('image'), createProduct);
