@@ -443,7 +443,8 @@ export const cancelReservation = async (req, res) => {
     const sellerTelegramId = sellerRes.rows[0]?.telegram_id;
 
     if (sellerTelegramId) {
-      await sendTelegramMessage(sellerTelegramId, `🛒 <b>❌ Заказ отменен</b>\n\n` +
+      await sendTelegramMessage(sellerTelegramId, 
+        `🛒 <b>❌ Заказ отменен</b>\n\n` +
       `📦 Товар: <b>${productTitle}</b>\n` +
       `🔢 Кол-во: <b>${order.quantity}</b>\n` +
       `👤 Пользователь: <b><a href="https://t.me/${username}">@${username}</a></b>`);

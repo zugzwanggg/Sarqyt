@@ -1,4 +1,5 @@
 import { db } from "../db.js";
+import cloudinary from "../utils/cloudinary.js";
 
 export const acceptOrder = async (req, res) => {
   try {
@@ -389,3 +390,63 @@ export const getSellerProductSarqyts = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const createProduct = async (req,res) => {
+  try {
+    const {shopId} = req.params;
+    const {title, description, categories} = req.body;
+    const file = req.file;
+
+    const catArray = categories.map(Number);
+
+    if (!shopId || !title || !description || !categories || !file) {
+      return res.satus(400).json({
+        message: "Provide all the required fields"
+      })
+    }
+
+    const checkTitle = await db.query("SELECT title FROM product_types WHERE title = $1", [title]);
+    if (checkTitle.rowCount !== 0) {
+      return res.status(400).json({
+        message: "Product with this title already exists"
+      })
+    }
+
+    const publicId = `shop_${shopId}_product_${title.toLowerCase().replace(' ').trim()}`;
+
+    await cloudinary.uploader.upload(
+      req.file.path,
+      {
+        folder: 'products',
+        public_id: publicId,
+        overwrite: true
+      },
+      async (err, res) => {
+        if (err) return res?.status(500).json({ error: 'Cloudinary upload failed' });
+
+        const product = await db.query(`
+          INSERT INTO product_types (title, description, image_url, shopId)
+          VALUES ($1, $2, $3)
+          RETURNING id
+        `, [title.trim(), description.trim(), res?.secure_url, shopId]);
+
+        await catArray.forEach(c => {
+          db.query(`
+          INSERT INTO product_type_category 
+          (category_id, product_type_id)
+          VALUES ($1, $2)
+          `, [c.id, product.rows[0].id])
+        })
+        
+      }
+    )
+
+    res.status(200).json({
+      message: "Successfully created"
+    })
+    
+  } catch (error) {
+    console.error("Error at createProduct:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
