@@ -61,9 +61,9 @@ export default function ProductDetailsPage() {
         original_price: Number(formData.original_price),
         discounted_price: Number(formData.discounted_price),
         quantity_available: Number(formData.quantity_available),
-        pickupStart: formData.pickup_start,
-        pickupEnd: formData.pickup_end,
-        availableUntil: formData.available_until,
+        pickup_start: formData.pickup_start,
+        pickup_end: formData.pickup_end,
+        available_until: formData.available_until,
       };
 
       await createSarqyt(shopId!, payload);

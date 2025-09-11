@@ -51,6 +51,6 @@ export const createProduct =async (shopId:number|string, formData:FormData) => {
 }
 
 export const createSarqyt = async (shopId:number|string, data:any) => {
-  const res = await api.post(`/api/seller/${shopId}/products/sarqyt`, {data});
+  const res = await api.post(`/api/seller/${shopId}/products/sarqyt`, data);
   return res.data;
 }
