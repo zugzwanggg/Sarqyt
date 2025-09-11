@@ -421,7 +421,7 @@ export const createProduct = async (req, res) => {
 
     const product = await db.query(
       `
-        INSERT INTO product_types (title, description, image_url, shopId)
+        INSERT INTO product_types (title, description, image_url, shop_id)
         VALUES ($1, $2, $3, $4)
         RETURNING id
       `,
