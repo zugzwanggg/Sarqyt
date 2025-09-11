@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Plus, Upload, Trash2, X } from "lucide-react";
+import { Plus, Upload, Trash2, X, Search } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import type { ICategory, IProduct } from "../types";
 import { useUser } from "../context/UserContext";
 import { getSellerProducts } from "../api/seller";
-import { getSarqytCategories } from "../api/sarqyt";
 
 export default function ProductsPage() {
   const { user } = useUser();
@@ -17,7 +16,16 @@ export default function ProductsPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const [selectedCategories, setSelectedCategories] = useState<ICategory[]>([]);
-  const [categories, setCategories] = useState<ICategory[]>([]);
+  const [categories] = useState<ICategory[]>([
+    { id: 1, name: "Meals" },
+    { id: 2, name: "Bakeries" },
+    { id: 3, name: "Vegeterian" },
+    { id: 4, name: "Fast Food" },
+    { id: 5, name: "Hotels" },
+    { id: 6, name: "Groceries" },
+  ]);
+  const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
+  const [categorySearch, setCategorySearch] = useState("");
 
   const fetchProducts = async () => {
     try {
@@ -28,18 +36,8 @@ export default function ProductsPage() {
     }
   };
 
-  const fetchCategories =async () => {
-    try {
-      const data = await getSarqytCategories();
-      setCategories(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   useEffect(() => {
     fetchProducts();
-    fetchCategories();
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,7 +139,7 @@ export default function ProductsPage() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Product Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
@@ -191,6 +189,7 @@ export default function ProductsPage() {
                   </div>
                 )}
               </div>
+
               <input
                 type="text"
                 placeholder="Title"
@@ -205,7 +204,7 @@ export default function ProductsPage() {
                 className="w-full border rounded-lg px-3 py-2"
               />
 
-              {/* Categories Selection */}
+              {/* Selected Categories */}
               <div>
                 <div className="flex flex-wrap gap-2 mb-3">
                   {selectedCategories.map((cat) => (
@@ -223,26 +222,14 @@ export default function ProductsPage() {
                       </button>
                     </span>
                   ))}
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  {categories.map((cat) => {
-                    const isSelected = selectedCategories.find(
-                      (c) => c.id === cat.id
-                    );
-                    return (
-                      <button
-                        type="button"
-                        key={cat.id}
-                        onClick={() => toggleCategory(cat)}
-                        className={`px-3 py-2 rounded-lg border text-sm font-medium transition shadow-sm 
-                          ${isSelected
-                            ? "bg-primaryColor text-white border-primaryColor"
-                            : "bg-white text-gray-700 border-gray-200 hover:border-primaryColor hover:text-primaryColor"}`}
-                      >
-                        {cat.name}
-                      </button>
-                    );
-                  })}
+
+                  <button
+                    type="button"
+                    onClick={() => setIsCategoryModalOpen(true)}
+                    className="flex items-center gap-1 px-3 py-1 rounded-full bg-primaryColor text-white text-sm shadow hover:opacity-90"
+                  >
+                    <Plus size={14} /> Add Category
+                  </button>
                 </div>
               </div>
 
@@ -253,6 +240,56 @@ export default function ProductsPage() {
                 Create Product
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Category Modal */}
+      {isCategoryModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6 relative">
+            <button
+              onClick={() => setIsCategoryModalOpen(false)}
+              className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              <X/>
+            </button>
+            <h2 className="text-lg font-semibold mb-4">Select Categories</h2>
+            <div className="flex items-center gap-2 border rounded-lg px-3 py-2 mb-4">
+              <Search className="w-4 h-4 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Search categories..."
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+                className="flex-1 outline-none text-sm"
+              />
+            </div>
+
+            <div className="max-h-64 overflow-y-auto grid grid-cols-1 gap-2">
+              {categories
+                .filter((c) =>
+                  c.name.toLowerCase().includes(categorySearch.toLowerCase())
+                )
+                .map((cat) => {
+                  const isSelected = selectedCategories.find(
+                    (c) => c.id === cat.id
+                  );
+                  return (
+                    <button
+                      type="button"
+                      key={cat.id}
+                      onClick={() => toggleCategory(cat)}
+                      className={`px-3 py-2 rounded-lg border text-sm font-medium transition shadow-sm text-left 
+                        ${isSelected
+                          ? "bg-primaryColor text-white border-primaryColor"
+                          : "bg-white text-gray-700 border-gray-200 hover:border-primaryColor hover:text-primaryColor"}`}
+                    >
+                      {cat.name}
+                    </button>
+                  );
+                })}
+            </div>
           </div>
         </div>
       )}
