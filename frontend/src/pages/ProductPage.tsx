@@ -150,7 +150,7 @@ export default function ProductDetailsPage() {
         )}
       </div>
 
-      <div className="border-t bg-white p-4">
+      <div className="fixed bottom-0 border-t bg-white p-4">
         <button
           onClick={() => setShowForm(true)}
           className="w-full bg-primaryColor text-white py-3 rounded-xl font-semibold shadow hover:opacity-90 flex items-center justify-center gap-2"

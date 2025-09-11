@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Plus, Upload } from "lucide-react";
+import { Plus, Upload, Trash2 } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import type { IProduct } from "../types";
 import { useUser } from "../context/UserContext";
@@ -58,6 +58,11 @@ export default function ProductsPage() {
       console.error(error);
     }
   };
+
+  const cancelImage = () => {
+    setImageFile(null);
+    setPreviewUrl(null);
+  }
 
   return (
     <div className="py-8 px-4 max-w-6xl mx-auto">
@@ -130,23 +135,34 @@ export default function ProductsPage() {
 
               {/* Modern file upload */}
               <div>
-                <label
-                  htmlFor="file-upload"
-                  className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primaryColor transition"
-                >
-                  <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                  <span className="text-gray-600 text-sm">
-                    Drop file here or{" "}
-                    <span className="text-primaryColor">browse</span>
-                  </span>
-                  <input
-                    id="file-upload"
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
-                </label>
+                {
+                  !previewUrl ? (
+                    <label
+                      htmlFor="file-upload"
+                      className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primaryColor transition"
+                    >
+                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                      <span className="text-gray-600 text-sm">
+                        Drop file here or{" "}
+                        <span className="text-primaryColor">browse</span>
+                      </span>
+                      <input
+                        id="file-upload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )
+                  :
+                  (
+                    <div className="text-right text-red-500 mb-2">
+                      <Trash2 onClick={()=>cancelImage()}/>
+                    </div>
+                  )
+                }
+                
 
                 {/* Preview */}
                 {previewUrl && (
