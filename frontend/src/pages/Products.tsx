@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Plus, Upload, Trash2 } from "lucide-react";
+import { Plus, Upload, Trash2, X } from "lucide-react";
 import ProductCard from "../components/ProductCard";
-import type { IProduct } from "../types";
+import type { ICategory, IProduct } from "../types";
 import { useUser } from "../context/UserContext";
 import { getSellerProducts } from "../api/seller";
 
@@ -14,6 +14,22 @@ export default function ProductsPage() {
   const [description, setDescription] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const [selectedCategories, setSelectedCategories] = useState<ICategory[]>([]);
+  const [categories] = useState<ICategory[]>([
+    {
+      id: 1,
+      name: "Meals",
+    },
+    {
+      id: 2,
+      name: "Bakeries",
+    },
+    {
+      id: 3,
+      name: "Vegeterian",
+    },
+  ]);
 
   const fetchProducts = async () => {
     try {
@@ -47,12 +63,17 @@ export default function ProductsPage() {
       formData.append("description", description);
       formData.append("image", imageFile);
       formData.append("shop_id", String(user?.shop_id));
+      formData.append(
+        "categories",
+        JSON.stringify(selectedCategories.map((c) => c.id))
+      );
 
       setIsModalOpen(false);
       setTitle("");
       setDescription("");
       setImageFile(null);
       setPreviewUrl(null);
+      setSelectedCategories([]);
       fetchProducts();
     } catch (error) {
       console.error(error);
@@ -62,7 +83,23 @@ export default function ProductsPage() {
   const cancelImage = () => {
     setImageFile(null);
     setPreviewUrl(null);
-  }
+  };
+
+  const toggleCategory = (category: ICategory) => {
+    if (selectedCategories.find((c) => c.id === category.id)) {
+      setSelectedCategories(
+        selectedCategories.filter((c) => c.id !== category.id)
+      );
+    } else {
+      setSelectedCategories([...selectedCategories, category]);
+    }
+  };
+
+  const removeCategory = (category: ICategory) => {
+    setSelectedCategories(
+      selectedCategories.filter((c) => c.id !== category.id)
+    );
+  };
 
   return (
     <div className="py-8 px-4 max-w-6xl mx-auto">
@@ -119,6 +156,43 @@ export default function ProductsPage() {
 
             <h2 className="text-xl font-bold mb-4">Add New Product</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
+              {/* Modern file upload */}
+              <div>
+                {!previewUrl ? (
+                  <label
+                    htmlFor="file-upload"
+                    className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primaryColor transition"
+                  >
+                    <Upload className="w-8 h-8 text-gray-400 mb-2" />
+                    <span className="text-gray-600 text-sm">
+                      Drop file here or {" "}
+                      <span className="text-primaryColor">browse</span>
+                    </span>
+                    <input
+                      id="file-upload"
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageChange}
+                      className="hidden"
+                    />
+                  </label>
+                ) : (
+                  <div className="text-right flex justify-end text-red-500 mb-1">
+                    <Trash2 onClick={() => cancelImage()} />
+                  </div>
+                )}
+
+                {/* Preview */}
+                {previewUrl && (
+                  <div className="mt-3 rounded-lg overflow-hidden">
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-full aspect-video object-cover rounded-lg"
+                    />
+                  </div>
+                )}
+              </div>
               <input
                 type="text"
                 placeholder="Title"
@@ -133,47 +207,45 @@ export default function ProductsPage() {
                 className="w-full border rounded-lg px-3 py-2"
               />
 
-              {/* Modern file upload */}
+              {/* Categories Selection */}
               <div>
-                {
-                  !previewUrl ? (
-                    <label
-                      htmlFor="file-upload"
-                      className="flex flex-col items-center justify-center w-full border-2 border-dashed border-gray-300 rounded-xl p-6 cursor-pointer hover:border-primaryColor transition"
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {selectedCategories.map((cat) => (
+                    <span
+                      key={cat.id}
+                      className="flex items-center gap-1 px-3 py-1 bg-primaryColor/10 text-primaryColor text-sm font-medium rounded-full border border-primaryColor/30 shadow-sm"
                     >
-                      <Upload className="w-8 h-8 text-gray-400 mb-2" />
-                      <span className="text-gray-600 text-sm">
-                        Drop file here or{" "}
-                        <span className="text-primaryColor">browse</span>
-                      </span>
-                      <input
-                        id="file-upload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="hidden"
-                      />
-                    </label>
-                  )
-                  :
-                  (
-                    <div className="text-right flex justify-end text-red-500 mb-1">
-                      <Trash2 onClick={()=>cancelImage()}/>
-                    </div>
-                  )
-                }
-                
-
-                {/* Preview */}
-                {previewUrl && (
-                  <div className="mt-3 rounded-lg overflow-hidden">
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="w-full aspect-video object-cover rounded-lg"
-                    />
-                  </div>
-                )}
+                      {cat.name}
+                      <button
+                        type="button"
+                        onClick={() => removeCategory(cat)}
+                        className="hover:bg-primaryColor/20 rounded-full p-0.5"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {categories.map((cat) => {
+                    const isSelected = selectedCategories.find(
+                      (c) => c.id === cat.id
+                    );
+                    return (
+                      <button
+                        type="button"
+                        key={cat.id}
+                        onClick={() => toggleCategory(cat)}
+                        className={`px-3 py-2 rounded-lg border text-sm font-medium transition shadow-sm 
+                          ${isSelected
+                            ? "bg-primaryColor text-white border-primaryColor"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-primaryColor hover:text-primaryColor"}`}
+                      >
+                        {cat.name}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <button
