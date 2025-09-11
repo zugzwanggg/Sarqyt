@@ -40,3 +40,12 @@ export const getSellerProductSarqyts =async (shopId:number|string, productId:num
   const res = await api.get(`/api/seller/${shopId}/products/${productId}/sarqyts`);
   return res.data;
 }
+
+export const createProduct =async (shopId:number|string, formData:FormData) => {
+  const res = await api.post(`/api/seller/${shopId}/products`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+  return res.data;
+}

@@ -3,7 +3,7 @@ import { Plus, Upload, Trash2, X, Search } from "lucide-react";
 import ProductCard from "../components/ProductCard";
 import type { ICategory, IProduct } from "../types";
 import { useUser } from "../context/UserContext";
-import { getSellerProducts } from "../api/seller";
+import { createProduct, getSellerProducts } from "../api/seller";
 
 export default function ProductsPage() {
   const { user } = useUser();
@@ -70,6 +70,9 @@ export default function ProductsPage() {
       setImageFile(null);
       setPreviewUrl(null);
       setSelectedCategories([]);
+
+      await createProduct(user?.shop_id, formData);
+
       fetchProducts();
     } catch (error) {
       console.error(error);
