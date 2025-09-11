@@ -33,6 +33,7 @@ export default function ProductDetailsPage() {
     }
   };
 
+
   useEffect(() => {
     fetchProduct();
     fetchSarqyts();

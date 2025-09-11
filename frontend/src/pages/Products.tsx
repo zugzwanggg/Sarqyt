@@ -4,6 +4,7 @@ import ProductCard from "../components/ProductCard";
 import type { ICategory, IProduct } from "../types";
 import { useUser } from "../context/UserContext";
 import { getSellerProducts } from "../api/seller";
+import { getSarqytCategories } from "../api/sarqyt";
 
 export default function ProductsPage() {
   const { user } = useUser();
@@ -16,20 +17,7 @@ export default function ProductsPage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   const [selectedCategories, setSelectedCategories] = useState<ICategory[]>([]);
-  const [categories] = useState<ICategory[]>([
-    {
-      id: 1,
-      name: "Meals",
-    },
-    {
-      id: 2,
-      name: "Bakeries",
-    },
-    {
-      id: 3,
-      name: "Vegeterian",
-    },
-  ]);
+  const [categories, setCategories] = useState<ICategory[]>([]);
 
   const fetchProducts = async () => {
     try {
@@ -40,8 +28,18 @@ export default function ProductsPage() {
     }
   };
 
+  const fetchCategories =async () => {
+    try {
+      const data = await getSarqytCategories();
+      setCategories(data);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
