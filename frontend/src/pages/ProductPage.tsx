@@ -1,26 +1,29 @@
 import { useEffect, useState } from "react";
-import { createSarqyt, getSellerProductSarqyts } from "../api/seller"; 
-import { Plus, X } from "lucide-react";
+import {
+  ArrowLeft,
+  Plus,
+  ChevronLeft,
+  ChevronRight,
+  PenLine,
+} from "lucide-react";
+import type { IExtendedSarqytCard, IProduct } from "../types";
+import { format } from "date-fns";
+import { useNavigate, useParams } from "react-router-dom";
+import {
+  createSarqyt,
+  getSellerProductById,
+  getSellerProductSarqyts,
+} from "../api/seller";
 
-type Sarqyt = {
-  id: number;
-  product_id: number;
-  original_price: number;
-  discounted_price: number;
-  quantity_available: number;
-  pickup_start: string;
-  pickup_end: string;
-  available_until: string;
-};
+export default function ProductDetailsPage() {
+  const { shopId, productId } = useParams();
+  const navigate = useNavigate();
 
-type Props = {
-  shopId: string;
-  productId: number;
-};
-
-export default function SarqytsPage({ shopId, productId }: Props) {
-  const [sarqyts, setSarqyts] = useState<Sarqyt[]>([]);
+  const [sarqyts, setSarqyts] = useState<IExtendedSarqytCard[]>([]);
+  const [product, setProduct] = useState<IProduct | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [editData, setEditData] = useState<IExtendedSarqytCard | null>(null);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -32,27 +35,38 @@ export default function SarqytsPage({ shopId, productId }: Props) {
     available_until: "",
   });
 
-  const fetchSarqyts = async () => {
+  const fetchProduct = async () => {
     try {
-      const res = await getSellerProductSarqyts(shopId, productId);
-      setSarqyts(res);
+      const data = await getSellerProductById(shopId!, productId!);
+      setProduct(data);
     } catch (error) {
-      console.error("Error fetching sarqyts:", error);
+      console.log(error);
     }
   };
 
-  useEffect(() => {
-    fetchSarqyts();
-  }, []);
+  const fetchSarqyts = async () => {
+    try {
+      const data = await getSellerProductSarqyts(shopId!, productId!);
+      setSarqyts(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleCreateSarqyt = async () => {
     setLoading(true);
     try {
-      await createSarqyt(shopId, {
-        productId,
-        ...formData,
-      });
+      const payload = {
+        productId: Number(productId),
+        original_price: Number(formData.original_price),
+        discounted_price: Number(formData.discounted_price),
+        quantity_available: Number(formData.quantity_available),
+        pickup_start: formData.pickup_start,
+        pickup_end: formData.pickup_end,
+        available_until: formData.available_until,
+      };
 
+      await createSarqyt(shopId!, payload);
       setShowForm(false);
       setFormData({
         original_price: "",
@@ -62,134 +76,318 @@ export default function SarqytsPage({ shopId, productId }: Props) {
         pickup_end: "",
         available_until: "",
       });
-
       await fetchSarqyts();
     } catch (error) {
-      console.error("Error creating sarqyt:", error);
+      console.log(error);
     } finally {
       setLoading(false);
     }
   };
 
+  useEffect(() => {
+    fetchProduct();
+    fetchSarqyts();
+  }, [shopId, productId]);
+
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold">Sarqyts</h2>
+    <div className="flex flex-col min-h-screen bg-gray-50">
+      {/* Product header */}
+      <div className="relative">
+        <img
+          src={product?.image_url}
+          alt={product?.title}
+          className="w-full h-56 object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+
+        <button
+          onClick={() => navigate(-1)}
+          className="absolute top-4 left-4 bg-white/90 hover:bg-white p-2 rounded-full shadow"
+        >
+          <ArrowLeft className="w-5 h-5 text-gray-800" />
+        </button>
+
+        <div className="absolute bottom-3 left-4 right-4">
+          <div className="bg-white/90 backdrop-blur-md rounded-xl p-3 shadow">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900">
+              {product?.title}
+            </h1>
+            <p className="text-sm text-gray-600">{product?.description}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Sarqyts list */}
+      <div className="flex-1 overflow-y-auto px-4 py-6">
+        {sarqyts.length === 0 ? (
+          <div className="flex flex-col items-center justify-center text-gray-500 mt-16">
+            <p className="text-lg font-medium">No sarqyts yet</p>
+            <p className="text-sm">Start by adding your first one.</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {sarqyts.map((s) => (
+              <div
+                key={s.id}
+                className="bg-white rounded-xl p-4 shadow hover:shadow-md transition relative"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <p className="text-lg font-semibold text-primaryColor">
+                    {s.discounted_price}₸{" "}
+                    <span className="line-through text-gray-400 text-sm ml-1">
+                      {s.original_price}₸
+                    </span>
+                  </p>
+                  <span
+                    className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      s.status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-600"
+                    }`}
+                  >
+                    {s.status === "active" ? "Active" : "Expired"}
+                  </span>
+                </div>
+                <p className="text-sm text-gray-700">
+                  Quantity left: {s.quantity_available}
+                </p>
+                <p className="text-sm text-gray-700">
+                  Pickup:{" "}
+                  {s?.pickup_start && s?.pickup_end
+                    ? `${format(new Date(s.pickup_start), "HH:mm")} – ${format(
+                        new Date(s.pickup_end),
+                        "HH:mm"
+                      )}`
+                    : "Not set"}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Available until:{" "}
+                  {format(new Date(s.available_until), "dd/MM/yyyy HH:mm")}
+                </p>
+
+                {s.status === "active" && (
+                  <button
+                    onClick={() => setEditData(s)}
+                    className="absolute top-3 right-3 p-1 rounded-full hover:bg-gray-100"
+                  >
+                    <PenLine className="w-4 h-4 text-gray-600" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {sarqyts.length > 0 && (
+          <div className="flex justify-center items-center gap-2 mt-6">
+            <button
+              disabled={page === 1}
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              className="p-2 rounded border bg-white disabled:opacity-50"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <span className="px-3 py-1 bg-primaryColor text-white rounded text-sm">
+              {page}
+            </span>
+            <button
+              onClick={() => setPage((p) => p + 1)}
+              className="p-2 rounded border bg-white"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Bottom add button */}
+      <div className="fixed w-full bottom-0 border-t bg-white p-4">
         <button
           onClick={() => setShowForm(true)}
-          className="flex items-center gap-2 bg-primaryColor text-white px-4 py-2 rounded-lg shadow hover:opacity-90"
+          className="w-full bg-primaryColor text-white py-3 rounded-xl font-semibold shadow hover:opacity-90 flex items-center justify-center gap-2"
         >
-          <Plus size={18} /> Add Sarqyt
+          <Plus className="w-5 h-5" /> Add Sarqyt
         </button>
       </div>
 
-      {sarqyts.length === 0 ? (
-        <p className="text-gray-500">No sarqyts yet.</p>
-      ) : (
-        <div className="grid gap-4">
-          {sarqyts.map((s) => (
-            <div
-              key={s.id}
-              className="border p-4 rounded-lg shadow-sm flex justify-between items-center"
-            >
+      {/* Add Modal */}
+      {showForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg overflow-y-auto max-h-[90vh]">
+            <h2 className="text-xl font-bold mb-4 text-gray-900">Add Sarqyt</h2>
+
+            <div className="space-y-5">
+              {/* Original Price */}
               <div>
-                <p className="font-semibold">#{s.id}</p>
-                <p>
-                  {s.discounted_price}₸ /{" "}
-                  <span className="line-through text-gray-400">
-                    {s.original_price}₸
-                  </span>
-                </p>
-                <p>Available: {s.quantity_available}</p>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Original Price
+                </label>
+                <input
+                  type="number"
+                  value={formData.original_price}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      original_price: e.target.value,
+                    })
+                  }
+                  placeholder="e.g. 2000"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
               </div>
-              <div className="text-sm text-gray-600">
-                <p>Pickup: {s.pickup_start} - {s.pickup_end}</p>
-                <p>Until: {s.available_until}</p>
+
+              {/* Discounted Price */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Discounted Price
+                </label>
+                <input
+                  type="number"
+                  value={formData.discounted_price}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      discounted_price: e.target.value,
+                    })
+                  }
+                  placeholder="e.g. 1200"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
+              </div>
+
+              {/* Quantity */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Quantity
+                </label>
+                <input
+                  type="number"
+                  value={formData.quantity_available}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      quantity_available: e.target.value,
+                    })
+                  }
+                  placeholder="How many bags?"
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
+              </div>
+
+              {/* Pickup Times */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pickup Start
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formData.pickup_start}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        pickup_start: e.target.value,
+                      })
+                    }
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Pickup End
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formData.pickup_end}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        pickup_end: e.target.value,
+                      })
+                    }
+                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                  />
+                </div>
+              </div>
+
+              {/* Available Until */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Available Until
+                </label>
+                <input
+                  type="datetime-local"
+                  value={formData.available_until}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      available_until: e.target.value,
+                    })
+                  }
+                  className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
+                />
               </div>
             </div>
-          ))}
+
+            {/* Actions */}
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => setShowForm(false)}
+                className="flex-1 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleCreateSarqyt}
+                disabled={loading}
+                className="flex-1 py-2 rounded-lg bg-primaryColor text-white font-semibold shadow hover:opacity-90 disabled:opacity-50"
+              >
+                {loading ? "Saving..." : "Save"}
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg w-full max-w-lg shadow-lg relative">
-            <button
-              onClick={() => setShowForm(false)}
-              className="absolute top-3 right-3 text-gray-500 hover:text-black"
-            >
-              <X size={20} />
-            </button>
-
-            <h3 className="text-xl font-semibold mb-4">Add Sarqyt</h3>
+      {/* Edit Modal (simplified for now) */}
+      {editData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg overflow-y-auto max-h-[90vh]">
+            <h2 className="text-lg font-bold mb-4">Edit Sarqyt</h2>
 
             <div className="space-y-3">
               <input
                 type="number"
-                placeholder="Original Price"
-                value={formData.original_price}
-                onChange={(e) =>
-                  setFormData({ ...formData, original_price: e.target.value })
-                }
-                className="w-full border rounded-lg px-3 py-2 outline-none"
+                defaultValue={editData.original_price}
+                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
               />
-
               <input
                 type="number"
-                placeholder="Discounted Price"
-                value={formData.discounted_price}
-                onChange={(e) =>
-                  setFormData({ ...formData, discounted_price: e.target.value })
-                }
-                className="w-full border rounded-lg px-3 py-2 outline-none"
+                defaultValue={editData.discounted_price}
+                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
               />
-
               <input
                 type="number"
-                placeholder="Quantity Available"
-                value={formData.quantity_available}
-                onChange={(e) =>
-                  setFormData({ ...formData, quantity_available: e.target.value })
-                }
-                className="w-full border rounded-lg px-3 py-2 outline-none"
-              />
-
-              <input
-                type="datetime-local"
-                value={formData.pickup_start}
-                onChange={(e) =>
-                  setFormData({ ...formData, pickup_start: e.target.value })
-                }
-                className="w-full border rounded-lg px-3 py-2 outline-none"
-              />
-
-              <input
-                type="datetime-local"
-                value={formData.pickup_end}
-                onChange={(e) =>
-                  setFormData({ ...formData, pickup_end: e.target.value })
-                }
-                className="w-full border rounded-lg px-3 py-2 outline-none"
-              />
-
-              <input
-                type="datetime-local"
-                value={formData.available_until}
-                onChange={(e) =>
-                  setFormData({ ...formData, available_until: e.target.value })
-                }
-                className="w-full border rounded-lg px-3 py-2 outline-none"
+                defaultValue={editData.quantity_available}
+                className="w-full border p-2 rounded-lg focus:ring-2 focus:ring-primaryColor outline-none"
               />
             </div>
 
-            <button
-              onClick={handleCreateSarqyt}
-              disabled={loading}
-              className="mt-4 bg-primaryColor text-white w-full py-2 rounded-lg hover:opacity-90 disabled:opacity-50"
-            >
-              {loading ? "Saving..." : "Save Sarqyt"}
-            </button>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setEditData(null)}
+                className="flex-1 py-2 rounded-lg border border-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setEditData(null)}
+                className="flex-1 py-2 rounded-lg bg-primaryColor text-white font-semibold"
+              >
+                Save
+              </button>
+            </div>
           </div>
         </div>
       )}
