@@ -11,11 +11,11 @@ export function initBot() {
     const chatId = msg.chat.id;
     bot.sendMessage(
       chatId,
-      `Hello Zigger! 👋\nWelcome to our Telegram Mini App bot.`
+      `Здравствуйте! 👋\nДобро пожаловать в наш Telegram Mini App бот.`
     );
 
     
-    bot.sendMessage(msg.chat.id, "Open the Mini App:", {
+    bot.sendMessage(msg.chat.id, "Открыть саркыт:", {
       reply_markup: {
         inline_keyboard: [
           [
@@ -27,6 +27,17 @@ export function initBot() {
         ]
       }
     });
+  });
+
+  // /help
+  bot.onText(/\/help/, (msg) => {
+    const chatId = msg.chat.id;
+    bot.sendMessage(
+      chatId,
+      `📌 Доступные команды:
+  /start – открыть приложение  
+  /help – помощь`
+    );
   });
 
   console.log("Telegram Bot started");
