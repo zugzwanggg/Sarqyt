@@ -1,13 +1,15 @@
 import { Router } from "express";
 import { checkAuth } from "../middleware/checkAuth.js";
 import { checkIsUserShopOwner } from "../middleware/checkIsUserShopOwner.js";
-import { acceptOrder, completeOrder, createProduct, createSarqyt, getDashboardData, getRecentOrders, getScanData, getSellerProductById, getSellerProductSarqyts, getSellerProducts, getSellerShopData } from "../controllers/sellerController.js";
+import { acceptOrder, cancelOrder, completeOrder, createProduct, createSarqyt, getDashboardData, getRecentOrders, getScanData, getSellerProductById, getSellerProductSarqyts, getSellerProducts, getSellerShopData } from "../controllers/sellerController.js";
 import { checkIsUserRoleSeller } from "../middleware/checkIsUserRoleSeller.js";
 import { uploadImage } from "../middleware/uploadImage.js";
 
 
 export const sellerRouter = Router();
 
+sellerRouter.patch('/scan/:orderId/cancel', checkAuth, checkIsUserRoleSeller, cancelOrder);
+sellerRouter.patch('/scan/:orderId/confirm', checkAuth, checkIsUserRoleSeller, acceptOrder);
 sellerRouter.patch('/scan/:orderId', checkAuth, checkIsUserRoleSeller, completeOrder);
 sellerRouter.get('/scan/:id', checkAuth, checkIsUserRoleSeller, getScanData);
 sellerRouter.get('/seller/', checkAuth, checkIsUserRoleSeller, getSellerShopData);

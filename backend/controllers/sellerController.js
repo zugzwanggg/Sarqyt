@@ -2,6 +2,56 @@ import { db } from "../db.js";
 import cloudinary from "../utils/cloudinary.js";
 import { parseISO, isBefore, isAfter } from "date-fns";
 
+export const cancelOrder = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { id: userId } = req.user;
+
+    if (!orderId) {
+      return res.status(400).json({ message: "Order id required" });
+    }
+
+    const shop = await db.query("SELECT id FROM shops WHERE user_id = $1", [userId]);
+    if (shop.rowCount === 0) {
+      return res.status(403).json({ message: "You do not own a shop" });
+    }
+
+    const orderRes = await db.query(
+      `
+      SELECT o.id, o.shop_id, o.status
+      FROM orders o
+      WHERE o.id = $1
+      `,
+      [orderId]
+    );
+
+    if (orderRes.rowCount === 0) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    const order = orderRes.rows[0];
+    if (order.shop_id !== shop.rows[0].id) {
+      return res.status(403).json({ message: "This order does not belong to your shop" });
+    }
+
+  
+    if (order.status !== "pending" && order.status !== "confirmed") {
+      return res.status(400).json({ message: "Only pending or confirmed orders can be cancelled" });
+    }
+
+    await db.query(
+      "UPDATE orders SET status = 'canceled', updated_at = NOW() WHERE id = $1",
+      [orderId]
+    );
+
+    return res.status(200).json({ message: "Order cancelled successfully" });
+  } catch (error) {
+    console.error("Error at cancelOrder:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 export const acceptOrder = async (req, res) => {
   try {
     const { orderId } = req.params;
