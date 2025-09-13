@@ -84,9 +84,23 @@
   "form.quantity": "Quantity",
   "form.quantityPlaceholder": "Enter quantity",
   "messages.noSarqyts": "No Sarqyts found",
-  "onboarding.back": "Back",
-  "onboarding.next": "Next",
-  "onboarding.skip": "Skip",
+  "onboarding": {
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Next",
+    "step1": {
+      "title": "Welcome to Sarqyt",
+      "description": "Discover the Kazakh tradition of saving food and reduce waste by connecting with local restaurants and cafes."
+    },
+    "step2": {
+      "title": "Save Delicious Food",
+      "description": "Browse available surprises from nearby restaurants and bakeries and grab them before they go to waste."
+    },
+    "step3": {
+      "title": "Join the Community",
+      "description": "Rate, share, and enjoy sustainable eating while supporting local businesses in Kazakhstan."
+    }
+  },
   "order.cancel": "Cancel Order",
   "order.cancelConfirm": "Are you sure you want to cancel?",
   "order.cancelFail": "Failed to cancel order",
