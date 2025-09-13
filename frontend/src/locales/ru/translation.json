@@ -137,6 +137,8 @@
   "orders.user": "Пользователь",
   "orders.viewDetails": "Посмотреть детали",
   "product.addSarqyt": "Добавить саркыт",
+  "orders.time.day": "Сегодня",
+  "orders.time.week": "Эта неделя",
   "product.availableUntil": "Доступно до",
   "product.editSarqyt": "Редактировать саркыт",
   "product.noSarqyts": "Саркыт отсутствует",

@@ -71,7 +71,7 @@ export default function SellerOrdersPage() {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {status ? t(`orders.status.${status}`) : t("orders.status.all")}
+              {status ? t(`order.status.${status}`) : t("orders.status.all")}
             </button>
           ))}
         </div>

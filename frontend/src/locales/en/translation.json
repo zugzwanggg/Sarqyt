@@ -136,6 +136,8 @@
   "orders.totalPrice": "Total Price",
   "orders.user": "User",
   "orders.viewDetails": "View Details",
+  "orders.time.day": "Day",
+  "orders.time.week": "Week",
   "product.addSarqyt": "Add Sarqyt",
   "product.availableUntil": "Available Until",
   "product.editSarqyt": "Edit Sarqyt",

@@ -137,6 +137,8 @@
   "orders.user": "Пайдаланушы",
   "orders.viewDetails": "Толығырақ көру",
   "product.addSarqyt": "Сарқыт қосу",
+  "orders.time.day": "Бүгін",
+  "orders.time.week": "Бұл апта",
   "product.availableUntil": "Қол жетімділігі аяқталу уақыты",
   "product.editSarqyt": "Сарқытты өңдеу",
   "product.noSarqyts": "Сарқыттар жоқ",
