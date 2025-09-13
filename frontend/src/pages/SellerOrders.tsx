@@ -17,6 +17,10 @@ export default function SellerOrdersPage() {
   const [timeFilter, setTimeFilter] = useState<"day" | "week">("day");
   const [orders, setOrders] = useState<IOrder[]>([]);
 
+  const [actionOrder, setActionOrder] = useState<IOrder | null>(null);
+  const [actionType, setActionType] = useState<"confirm" | "cancel" | null>(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+
   const getStatusStyles = (status: string) => {
     switch (status) {
       case "reserved":
@@ -49,6 +53,31 @@ export default function SellerOrdersPage() {
   useEffect(() => {
     fetchOrders();
   }, [selectedStatus, timeFilter]);
+
+  const isToday = (dateStr: string) => {
+    const orderDate = new Date(dateStr);
+    const today = new Date();
+    return (
+      orderDate.getDate() === today.getDate() &&
+      orderDate.getMonth() === today.getMonth() &&
+      orderDate.getFullYear() === today.getFullYear()
+    );
+  };
+
+  const handleActionClick = (order: IOrder, type: "confirm" | "cancel") => {
+    setActionOrder(order);
+    setActionType(type);
+    setShowConfirmModal(true);
+  };
+
+  const handleConfirmAction = () => {
+    if (actionOrder && actionType) {
+      console.log(`Backend should handle ${actionType} for order ${actionOrder.id}`);
+      setShowConfirmModal(false);
+      setActionOrder(null);
+      setActionType(null);
+    }
+  };
 
   return (
     <div className="flex flex-col h-screen bg-white">
@@ -102,7 +131,7 @@ export default function SellerOrdersPage() {
           orders.map((order) => (
             <div
               key={order.id}
-              className="bg-gray-50 rounded-2xl p-4 mb-4 shadow-sm"
+              className="bg-gray-50 rounded-2xl p-4 mb-4 shadow-sm relative"
             >
               {/* Basic info row */}
               <div className="flex items-center justify-between">
@@ -113,12 +142,10 @@ export default function SellerOrdersPage() {
                     className="w-14 h-14 rounded-lg object-cover"
                   />
                   <div>
-                    <h2 className="font-semibold text-sm">
-                      {order.sarqyt_title}
-                    </h2>
+                    <h2 className="font-semibold text-sm">{order.sarqyt_title}</h2>
                     <p className="text-xs text-gray-600">
-                      {t("orders.qty")}: {order.quantity} •{" "}
-                      {order.discounted_price}₸ {t("orders.each")}
+                      {t("orders.qty")}: {order.quantity} • {order.discounted_price}₸{" "}
+                      {t("orders.each")}
                     </p>
                   </div>
                 </div>
@@ -140,13 +167,11 @@ export default function SellerOrdersPage() {
               >
                 {expandedOrder === order.id ? (
                   <>
-                    {t("orders.hideDetails")}{" "}
-                    <ChevronUp className="w-4 h-4 ml-1" />
+                    {t("orders.hideDetails")} <ChevronUp className="w-4 h-4 ml-1" />
                   </>
                 ) : (
                   <>
-                    {t("orders.viewDetails")}{" "}
-                    <ChevronDown className="w-4 h-4 ml-1" />
+                    {t("orders.viewDetails")} <ChevronDown className="w-4 h-4 ml-1" />
                   </>
                 )}
               </button>
@@ -168,9 +193,7 @@ export default function SellerOrdersPage() {
                   </p>
                   {order.pickup_time && (
                     <p>
-                      <span className="font-medium">
-                        {t("orders.pickupTime")}:
-                      </span>{" "}
+                      <span className="font-medium">{t("orders.pickupTime")}:</span>{" "}
                       {new Date(order.pickup_time).toLocaleString()}
                     </p>
                   )}
@@ -182,12 +205,58 @@ export default function SellerOrdersPage() {
                     <span className="font-medium">{t("orders.shop")}:</span>{" "}
                     {order.shop_name}, {order.shop_address}
                   </p>
+
+                  {isToday(order.created_at) &&
+                    (order.status === "reserved" || order.status === "confirmed") && (
+                      <div className="flex gap-2 mt-2">
+                        {order.status === "reserved" && (
+                          <button
+                            onClick={() => handleActionClick(order, "confirm")}
+                            className="flex-1 bg-green-500 text-white py-2 rounded-lg font-medium"
+                          >
+                            {t("orders.confirm")}
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleActionClick(order, "cancel")}
+                          className="flex-1 bg-red-500 text-white py-2 rounded-lg font-medium"
+                        >
+                          {t("orders.cancel")}
+                        </button>
+                      </div>
+                    )}
                 </div>
               )}
             </div>
           ))
         )}
       </div>
+
+      {/* Confirmation modal */}
+      {showConfirmModal && actionOrder && actionType && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+          <div className="bg-white rounded-2xl p-6 w-full max-w-sm space-y-4">
+            <h3 className="text-lg font-semibold">
+              {t(`orders.${actionType}ConfirmTitle`)}
+            </h3>
+            <p className="text-sm text-gray-600">{t(`orders.${actionType}ConfirmMessage`)}</p>
+            <div className="flex gap-2">
+              <button
+                className="flex-1 bg-gray-200 py-2 rounded-lg font-medium"
+                onClick={() => setShowConfirmModal(false)}
+              >
+                {t("common.cancel")}
+              </button>
+              <button
+                className="flex-1 bg-primaryColor text-white py-2 rounded-lg font-medium"
+                onClick={handleConfirmAction}
+              >
+                {t("common.confirm")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
