@@ -58,14 +58,14 @@ export default function OrderCard({ order }: { order: IOrder }) {
               order.status
             )}`}
           >
-            {t(`orderStatus.${order.status}`)}
+            {t(`order.status.${order.status}`)}
           </span>
         </div>
 
         <div className="flex flex-col gap-1 text-sm">
           <span className="flex items-center gap-2">
             <CreditCard className="w-4 h-4" /> {t("orderCard.paymentMethod")}:{" "}
-            {order.payment_method} ({t(`paymentStatus.${order.payment_status}`)})
+            {order.payment_method} ({t(`payment.status.${order.payment_status}`)})
           </span>
 
           {order.pickup_time && (
