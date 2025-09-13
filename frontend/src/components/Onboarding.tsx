@@ -8,7 +8,7 @@ const steps = [
     descriptionKey: "onboarding.step1.description",
   },
   {
-    img: "/step2-surprise-food.png",
+    img: "/step2-surprise-food.jpg",
     titleKey: "onboarding.step2.title",
     descriptionKey: "onboarding.step2.description",
   },
