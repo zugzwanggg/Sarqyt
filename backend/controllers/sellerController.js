@@ -81,7 +81,7 @@ export const acceptOrder = async (req, res) => {
       return res.status(403).json({ message: "This order does not belong to your shop" });
     }
 
-    if (order.status !== "pending") {
+    if (order.status !== "reserved") {
       return res.status(400).json({ message: "Only pending orders can be confirmed" });
     }
 
