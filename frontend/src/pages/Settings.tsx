@@ -13,6 +13,10 @@ const SettingsPage = () => {
   const { user } = useUser();
   const navigate = useNavigate();
 
+  const [selectedLanguage, setSelectedLanguage] = useState(
+    localStorage.getItem("lang") || i18n.language
+  );
+
   const [shop, setShop] = useState<IShop>({
     id: 1,
     name: t("My Awesome Shop"),
@@ -27,7 +31,16 @@ const SettingsPage = () => {
   const [previewImage, setPreviewImage] = useState(shop.image_url);
   const [shopLogo, setShopLogo] = useState<File | null>(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
+
+  useEffect(() => {
+    i18n.changeLanguage(selectedLanguage);
+  }, []);
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    setSelectedLanguage(lang);
+    localStorage.setItem("lang", lang);
+  };
 
   const handleChange = (field: keyof IShop, value: string) => {
     setShop((prev) => ({ ...prev, [field]: value }));
@@ -66,11 +79,6 @@ const SettingsPage = () => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const handleLanguageChange = (lang: string) => {
-    i18n.changeLanguage(lang);
-    setSelectedLanguage(lang);
   };
 
   useEffect(() => {
