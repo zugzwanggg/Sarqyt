@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ShopAddressPickerProps {
   value: { address: string; lat?: number; lng?: number };
@@ -6,6 +7,7 @@ interface ShopAddressPickerProps {
 }
 
 const ShopAddressPicker = ({ value, onChange }: ShopAddressPickerProps) => {
+  const { t } = useTranslation();
   const [query, setQuery] = useState(value.address || "");
   const [suggestions, setSuggestions] = useState<any[]>([]);
   const mapRef = useRef<HTMLDivElement>(null);
@@ -13,7 +15,7 @@ const ShopAddressPicker = ({ value, onChange }: ShopAddressPickerProps) => {
   const marker = useRef<any>(null);
 
   const API_KEY = import.meta.env.VITE_2GIS_API_KEY;
-  
+
   useEffect(() => {
     if (!query) return;
 
@@ -45,11 +47,11 @@ const ShopAddressPicker = ({ value, onChange }: ShopAddressPickerProps) => {
     // @ts-ignore
     window.DG.then((DG: any) => {
       mapInstance.current = DG.map(mapRef.current, {
-        center: [47.0945, 51.9230],
+        center: [47.0945, 51.923],
         zoom: 13,
       });
 
-      marker.current = DG.marker([47.0945, 51.9230]).addTo(mapInstance.current);
+      marker.current = DG.marker([47.0945, 51.923]).addTo(mapInstance.current);
 
       mapInstance.current.on("click", (e: any) => {
         const { lat, lng } = e.latlng;
@@ -76,12 +78,14 @@ const ShopAddressPicker = ({ value, onChange }: ShopAddressPickerProps) => {
 
   return (
     <div className="space-y-2">
-      <label className="block text-sm text-gray-600">Shop Address</label>
+      <label className="block text-sm text-gray-600">
+        {t("shopAddress.label")}
+      </label>
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search shop address"
+        placeholder={t("shopAddress.placeholder")}
         className="border rounded-md w-full px-3 py-2"
       />
       {suggestions.length > 0 && (

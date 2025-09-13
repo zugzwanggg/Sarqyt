@@ -4,8 +4,10 @@ import ProductCard from "../components/ProductCard";
 import type { ICategory, IProduct } from "../types";
 import { useUser } from "../context/UserContext";
 import { createProduct, getSellerProducts } from "../api/seller";
+import { useTranslation } from "react-i18next";
 
 export default function ProductsPage() {
+  const { t } = useTranslation();
   const { user } = useUser();
   const [products, setProducts] = useState<IProduct[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -17,12 +19,12 @@ export default function ProductsPage() {
 
   const [selectedCategories, setSelectedCategories] = useState<ICategory[]>([]);
   const [categories] = useState<ICategory[]>([
-    { id: 1, name: "Meals" },
-    { id: 2, name: "Bakeries" },
-    { id: 3, name: "Vegeterian" },
-    { id: 4, name: "Fast Food" },
-    { id: 5, name: "Hotels" },
-    { id: 6, name: "Groceries" },
+    { id: 1, name: t("Meals") },
+    { id: 2, name: t("Bakeries") },
+    { id: 3, name: t("Vegetarian") },
+    { id: 4, name: t("Fast Food") },
+    { id: 5, name: t("Hotels") },
+    { id: 6, name: t("Groceries") },
   ]);
   const [isCategoryModalOpen, setIsCategoryModalOpen] = useState(false);
   const [categorySearch, setCategorySearch] = useState("");
@@ -105,10 +107,10 @@ export default function ProductsPage() {
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">
-            Shop Products
+            {t("Shop Products")}
           </h1>
           <p className="text-sm text-gray-500">
-            Manage and organize your shop’s products
+            {t("Manage and organize your shop’s products")}
           </p>
         </div>
         <button
@@ -116,7 +118,7 @@ export default function ProductsPage() {
           className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-xl bg-primaryColor text-white shadow-lg hover:opacity-90 transition text-sm sm:text-base"
         >
           <Plus size={18} />
-          <span className="hidden xs:inline">Add Product</span>
+          <span className="hidden xs:inline">{t("Add Product")}</span>
         </button>
       </div>
 
@@ -129,15 +131,13 @@ export default function ProductsPage() {
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center text-center text-gray-500 mt-24">
-          <h2 className="text-lg font-semibold">No products yet</h2>
-          <p className="text-sm">
-            Start by adding your first product to showcase here.
-          </p>
+          <h2 className="text-lg font-semibold">{t("No products yet")}</h2>
+          <p className="text-sm">{t("Start by adding your first product to showcase here.")}</p>
           <button
             onClick={() => setIsModalOpen(true)}
             className="mt-6 flex items-center gap-2 px-4 py-2 rounded-xl bg-primaryColor text-white shadow-md hover:opacity-90 transition"
           >
-            <Plus size={18} /> Add Product
+            <Plus size={18} /> {t("Add Product")}
           </button>
         </div>
       )}
@@ -153,7 +153,7 @@ export default function ProductsPage() {
               ✕
             </button>
 
-            <h2 className="text-xl font-bold mb-4">Add New Product</h2>
+            <h2 className="text-xl font-bold mb-4">{t("Add New Product")}</h2>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Modern file upload */}
               <div>
@@ -164,8 +164,8 @@ export default function ProductsPage() {
                   >
                     <Upload className="w-8 h-8 text-gray-400 mb-2" />
                     <span className="text-gray-600 text-sm">
-                      Drop file here or {" "}
-                      <span className="text-primaryColor">browse</span>
+                      {t("Drop file here or")}{" "}
+                      <span className="text-primaryColor">{t("browse")}</span>
                     </span>
                     <input
                       id="file-upload"
@@ -195,13 +195,13 @@ export default function ProductsPage() {
 
               <input
                 type="text"
-                placeholder="Title"
+                placeholder={t("Title")}
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 className="w-full border rounded-lg px-3 py-2"
               />
               <textarea
-                placeholder="Description"
+                placeholder={t("Description")}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full border rounded-lg px-3 py-2"
@@ -231,7 +231,7 @@ export default function ProductsPage() {
                     onClick={() => setIsCategoryModalOpen(true)}
                     className="flex items-center gap-1 px-3 py-1 rounded-full bg-primaryColor text-white text-sm shadow hover:opacity-90"
                   >
-                    <Plus size={14} /> Add Category
+                    <Plus size={14} /> {t("Add Category")}
                   </button>
                 </div>
               </div>
@@ -240,7 +240,7 @@ export default function ProductsPage() {
                 type="submit"
                 className="w-full bg-primaryColor text-white py-2 rounded-lg shadow hover:opacity-90 transition"
               >
-                Create Product
+                {t("Create Product")}
               </button>
             </form>
           </div>
@@ -255,14 +255,14 @@ export default function ProductsPage() {
               onClick={() => setIsCategoryModalOpen(false)}
               className="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
             >
-              <X/>
+              <X />
             </button>
-            <h2 className="text-lg font-semibold mb-4">Select Categories</h2>
+            <h2 className="text-lg font-semibold mb-4">{t("Select Categories")}</h2>
             <div className="flex items-center gap-2 border rounded-lg px-3 py-2 mb-4">
               <Search className="w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search categories..."
+                placeholder={t("Search categories...")}
                 value={categorySearch}
                 onChange={(e) => setCategorySearch(e.target.value)}
                 className="flex-1 outline-none text-sm"
@@ -284,9 +284,11 @@ export default function ProductsPage() {
                       key={cat.id}
                       onClick={() => toggleCategory(cat)}
                       className={`px-3 py-2 rounded-lg border text-sm font-medium transition shadow-sm text-left 
-                        ${isSelected
-                          ? "bg-primaryColor text-white border-primaryColor"
-                          : "bg-white text-gray-700 border-gray-200 hover:border-primaryColor hover:text-primaryColor"}`}
+                        ${
+                          isSelected
+                            ? "bg-primaryColor text-white border-primaryColor"
+                            : "bg-white text-gray-700 border-gray-200 hover:border-primaryColor hover:text-primaryColor"
+                        }`}
                     >
                       {cat.name}
                     </button>

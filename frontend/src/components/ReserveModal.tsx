@@ -1,5 +1,6 @@
 import { X, Minus, Plus } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ReserveModalProps {
   onClose: () => void;
@@ -10,6 +11,7 @@ interface ReserveModalProps {
 
 const ReserveModal = ({ onClose, onConfirm, title, price }: ReserveModalProps) => {
   const [quantity, setQuantity] = useState(1);
+  const { t } = useTranslation();
 
   const handleDecrease = () => {
     if (quantity > 1) setQuantity((prev) => prev - 1);
@@ -30,10 +32,9 @@ const ReserveModal = ({ onClose, onConfirm, title, price }: ReserveModalProps) =
           <X />
         </button>
 
-        <h2 className="text-xl font-semibold mb-2">Confirm Reservation</h2>
+        <h2 className="text-xl font-semibold mb-2">{t("reserveModal.title")}</h2>
         <p className="text-gray-600 mb-4">
-          Do you want to reserve <span className="font-medium">{title}</span> for{" "}
-          <span className="text-primaryColor font-bold">{price}</span>?
+          {t("reserveModal.message", { title, price })}
         </p>
 
         {/* Quantity Selector */}
@@ -58,13 +59,13 @@ const ReserveModal = ({ onClose, onConfirm, title, price }: ReserveModalProps) =
             onClick={onClose}
             className="flex-1 border border-gray-300 rounded-xl py-3 text-gray-600 font-medium hover:bg-gray-100 transition"
           >
-            Cancel
+            {t("reserveModal.cancel")}
           </button>
           <button
             onClick={() => onConfirm(quantity)}
             className="flex-1 bg-primaryColor text-white rounded-xl py-3 font-medium hover:opacity-90 transition"
           >
-            Confirm
+            {t("reserveModal.confirm")}
           </button>
         </div>
       </div>

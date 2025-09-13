@@ -14,8 +14,11 @@ import {
   getSellerProductById,
   getSellerProductSarqyts,
 } from "../api/seller";
+import { useTranslation } from "react-i18next";
 
 export default function ProductDetailsPage() {
+  const { t } = useTranslation();
+
   const { shopId, productId } = useParams();
   const navigate = useNavigate();
 
@@ -121,8 +124,8 @@ export default function ProductDetailsPage() {
       <div className="flex-1 overflow-y-auto px-4 py-6">
         {sarqyts.length === 0 ? (
           <div className="flex flex-col items-center justify-center text-gray-500 mt-16">
-            <p className="text-lg font-medium">No sarqyts yet</p>
-            <p className="text-sm">Start by adding your first one.</p>
+            <p className="text-lg font-medium">{t("product.noSarqyts")}</p>
+            <p className="text-sm">{t("product.startByAdding")}</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -145,23 +148,23 @@ export default function ProductDetailsPage() {
                         : "bg-red-100 text-red-600"
                     }`}
                   >
-                    {s.status === "active" ? "Active" : "Expired"}
+                    {s.status === "active" ? t("status.active") : t("status.expired")}
                   </span>
                 </div>
                 <p className="text-sm text-gray-700">
-                  Quantity left: {s.quantity_available}
+                  {t("product.quantityLeft")}: {s.quantity_available}
                 </p>
                 <p className="text-sm text-gray-700">
-                  Pickup:{" "}
+                  {t("product.pickup")}:{" "}
                   {s?.pickup_start && s?.pickup_end
                     ? `${format(new Date(s.pickup_start), "HH:mm")} – ${format(
                         new Date(s.pickup_end),
                         "HH:mm"
                       )}`
-                    : "Not set"}
+                    : t("product.notSet")}
                 </p>
                 <p className="text-sm text-gray-500">
-                  Available until:{" "}
+                  {t("product.availableUntil")}:{" "}
                   {format(new Date(s.available_until), "dd/MM/yyyy HH:mm")}
                 </p>
 
@@ -207,7 +210,7 @@ export default function ProductDetailsPage() {
           onClick={() => setShowForm(true)}
           className="w-full bg-primaryColor text-white py-3 rounded-xl font-semibold shadow hover:opacity-90 flex items-center justify-center gap-2"
         >
-          <Plus className="w-5 h-5" /> Add Sarqyt
+          <Plus className="w-5 h-5" /> {t("product.addSarqyt")}
         </button>
       </div>
 
@@ -215,24 +218,19 @@ export default function ProductDetailsPage() {
       {showForm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
           <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg overflow-y-auto max-h-[90vh]">
-            <h2 className="text-xl font-bold mb-4 text-gray-900">Add Sarqyt</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-900">{t("product.addSarqyt")}</h2>
 
             <div className="space-y-5">
               {/* Original Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Original Price
+                  {t("form.originalPrice")}
                 </label>
                 <input
                   type="number"
                   value={formData.original_price}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      original_price: e.target.value,
-                    })
-                  }
-                  placeholder="e.g. 2000"
+                  onChange={(e) => setFormData({ ...formData, original_price: e.target.value })}
+                  placeholder={t("form.originalPricePlaceholder")}
                   className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
                 />
               </div>
@@ -240,7 +238,7 @@ export default function ProductDetailsPage() {
               {/* Discounted Price */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Discounted Price
+                  {t("form.discountedPrice")}
                 </label>
                 <input
                   type="number"
@@ -251,7 +249,7 @@ export default function ProductDetailsPage() {
                       discounted_price: e.target.value,
                     })
                   }
-                  placeholder="e.g. 1200"
+                  placeholder={t("form.discountedPricePlaceholder")}
                   className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
                 />
               </div>
@@ -259,7 +257,7 @@ export default function ProductDetailsPage() {
               {/* Quantity */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Quantity
+                  {t("form.quantity")}
                 </label>
                 <input
                   type="number"
@@ -270,7 +268,7 @@ export default function ProductDetailsPage() {
                       quantity_available: e.target.value,
                     })
                   }
-                  placeholder="How many bags?"
+                  placeholder={t("form.quantityPlaceholder")}
                   className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-primaryColor outline-none"
                 />
               </div>
@@ -279,7 +277,7 @@ export default function ProductDetailsPage() {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pickup Start
+                    {t("form.pickupStart")}
                   </label>
                   <input
                     type="datetime-local"
@@ -295,7 +293,7 @@ export default function ProductDetailsPage() {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Pickup End
+                    {t("form.pickupEnd")}
                   </label>
                   <input
                     type="datetime-local"
@@ -314,7 +312,7 @@ export default function ProductDetailsPage() {
               {/* Available Until */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Available Until
+                  {t("form.availableUntil")}
                 </label>
                 <input
                   type="datetime-local"
@@ -336,25 +334,25 @@ export default function ProductDetailsPage() {
                 onClick={() => setShowForm(false)}
                 className="flex-1 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50"
               >
-                Cancel
+                {t("actions.cancel")}
               </button>
               <button
                 onClick={handleCreateSarqyt}
                 disabled={loading}
                 className="flex-1 py-2 rounded-lg bg-primaryColor text-white font-semibold shadow hover:opacity-90 disabled:opacity-50"
               >
-                {loading ? "Saving..." : "Save"}
+                {loading ? t("actions.saving") : t("actions.save")}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Edit Modal (simplified for now) */}
+      {/* Edit Modal */}
       {editData && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white w-full max-w-md rounded-2xl p-6 shadow-lg overflow-y-auto max-h-[90vh]">
-            <h2 className="text-lg font-bold mb-4">Edit Sarqyt</h2>
+            <h2 className="text-lg font-bold mb-4">{t("product.editSarqyt")}</h2>
 
             <div className="space-y-3">
               <input
@@ -379,13 +377,13 @@ export default function ProductDetailsPage() {
                 onClick={() => setEditData(null)}
                 className="flex-1 py-2 rounded-lg border border-gray-300"
               >
-                Cancel
+                {t("actions.cancel")}
               </button>
               <button
                 onClick={() => setEditData(null)}
                 className="flex-1 py-2 rounded-lg bg-primaryColor text-white font-semibold"
               >
-                Save
+                {t("actions.save")}
               </button>
             </div>
           </div>

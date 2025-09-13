@@ -6,8 +6,10 @@ import OrderCard from "../components/OrderCard";
 import type { IOrder } from "../types";
 import { getOrderById } from "../api/order";
 import { cancelReservation } from "../api/sarqyt";
+import { useTranslation } from "react-i18next";
 
 const OrderPage = () => {
+  const { t } = useTranslation(); // hook for translations
   const { id } = useParams<{ id: string }>();
   const nav = useNavigate();
   const [order, setOrder] = useState<IOrder | null>(null);
@@ -31,56 +33,52 @@ const OrderPage = () => {
 
   const cancelOrder = async () => {
     if (!order) return;
-    if (!confirm("Are you sure you want to cancel this order?")) return;
+    if (!confirm(t("order.cancelConfirm"))) return;
 
     setIsCancelling(true);
     try {
       await cancelReservation(id!);
-      alert("Order cancelled successfully");
+      alert(t("order.cancelSuccess"));
       fetchOrder();
     } catch (error) {
       console.error(error);
-      alert("Failed to cancel order");
+      alert(t("order.cancelFail"));
     } finally {
       setIsCancelling(false);
     }
   };
 
-  if (isLoading) return <p className="p-4 text-center">Loading...</p>;
-  if (!order) return <p className="p-4 text-center">Order not found</p>;
+  if (isLoading) return <p className="p-4 text-center">{t("common.loading")}</p>;
+  if (!order) return <p className="p-4 text-center">{t("order.notFound")}</p>;
 
-  const qrValue = {
-    id: order.id,
-    pickup_code: order.pickup_code,
-  };
+  const qrValue = { id: order.id, pickup_code: order.pickup_code };
 
-  const isInactive =
-    order.status === "completed" || order.status === "cancelled";
+  const isInactive = order.status === "completed" || order.status === "cancelled";
 
   const renderStatusBanner = () => {
     switch (order.status) {
       case "reserved":
         return (
           <div className="sticky top-0 z-50 bg-yellow-100 text-yellow-800 p-3 text-center font-medium shadow-md">
-            Your order is pending confirmation.
+            {t("order.status.reserved")}
           </div>
         );
       case "confirmed":
         return (
           <div className="sticky top-0 z-50 bg-green-100 text-green-800 p-3 text-center font-medium shadow-md">
-            Your order is confirmed 🎉 You can grab your Sarqyt!
+            {t("order.status.confirmed")}
           </div>
         );
       case "completed":
         return (
           <div className="sticky top-0 z-50 bg-blue-100 text-blue-800 p-3 text-center font-medium shadow-md">
-            This order has been completed.
+            {t("order.status.completed")}
           </div>
         );
       case "canceled":
         return (
           <div className="sticky top-0 z-50 bg-red-100 text-red-800 p-3 text-center font-medium shadow-md">
-            This order has been canceled.
+            {t("order.status.canceled")}
           </div>
         );
       default:
@@ -95,25 +93,26 @@ const OrderPage = () => {
         onClick={() => nav(-1)}
         className="flex items-center gap-2 text-primaryColor font-medium mb-4"
       >
-        <ChevronLeft /> Back
+        <ChevronLeft /> {t("common.back")}
       </button>
 
       <OrderCard order={order} />
 
-
-      {!isInactive && (order.status === "reserved" || order.status === "confirmed") && order.pickup_code && (
-        <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
-          <h2 className="text-lg font-semibold">Your Pickup QR Code</h2>
-          <QRCodeCanvas value={JSON.stringify(qrValue)} size={180} />
-          <p className="text-gray-500 text-sm text-center">
-            Show this QR code at the shop to collect your order.
-          </p>
-        </div>
-      )}
+      {!isInactive &&
+        (order.status === "reserved" || order.status === "confirmed") &&
+        order.pickup_code && (
+          <div className="bg-white shadow rounded-2xl p-6 flex flex-col items-center gap-4">
+            <h2 className="text-lg font-semibold">{t("order.pickupQrTitle")}</h2>
+            <QRCodeCanvas value={JSON.stringify(qrValue)} size={180} />
+            <p className="text-gray-500 text-sm text-center">
+              {t("order.pickupQrDesc")}
+            </p>
+          </div>
+        )}
 
       {/* Shop information */}
       <div className="bg-white shadow rounded-2xl p-4 space-y-2">
-        <h3 className="font-semibold text-md">Shop Information</h3>
+        <h3 className="font-semibold text-md">{t("order.shopInfo")}</h3>
         <div className="flex items-center gap-4">
           <img
             src={order.shop_image}
@@ -128,7 +127,7 @@ const OrderPage = () => {
       </div>
 
       <div className="bg-white shadow rounded-2xl p-4 space-y-2">
-        <h3 className="font-semibold text-md">Your Sarqyt</h3>
+        <h3 className="font-semibold text-md">{t("order.yourSarqyt")}</h3>
         <div className="flex items-center gap-4">
           <img
             src={order.sarqyt_image}
@@ -138,10 +137,10 @@ const OrderPage = () => {
           <div>
             <p className="font-medium">{order.sarqyt_title}</p>
             <p className="text-sm text-gray-500">
-              Quantity: {order.quantity} × {order.discounted_price} ₸
+              {t("order.quantity")}: {order.quantity} × {order.discounted_price} ₸
             </p>
             <p className="text-primaryColor font-semibold">
-              Total: {order.total_price} ₸
+              {t("order.total")}: {order.total_price} ₸
             </p>
           </div>
         </div>
@@ -149,13 +148,13 @@ const OrderPage = () => {
 
       <div className="bg-white shadow rounded-2xl p-4 space-y-2">
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <Clock className="w-4 h-4" /> Pickup Time:{" "}
+          <Clock className="w-4 h-4" /> {t("order.pickupTime")}:{" "}
           {order.pickup_time
             ? new Date(order.pickup_time).toLocaleString()
-            : "Not set"}
+            : t("order.notSet")}
         </div>
         <div className="flex items-center gap-2 text-sm text-gray-600">
-          <CreditCard className="w-4 h-4" /> Payment: {order.payment_method} (
+          <CreditCard className="w-4 h-4" /> {t("order.payment")}: {order.payment_method} (
           {order.payment_status})
         </div>
       </div>
@@ -167,7 +166,7 @@ const OrderPage = () => {
             disabled={isCancelling}
             className="w-full bg-red-500 text-white rounded-2xl py-3 font-semibold hover:opacity-90 transition"
           >
-            {isCancelling ? "Cancelling..." : "Cancel Order"}
+            {isCancelling ? t("order.cancelling") : t("order.cancel")}
           </button>
         </div>
       )}

@@ -16,11 +16,13 @@ import {
 } from "../api/sarqyt";
 import type { IExtendedSarqytCard } from "../types";
 import ReserveModal from "../components/ReserveModal";
-import {format} from "date-fns";
+import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const Sarqyt = () => {
   const { id } = useParams();
   const nav = useNavigate();
+  const { t } = useTranslation();
 
   const [sarqyt, setSarqyt] = useState<IExtendedSarqytCard>();
   const [textCrop, setTextCrop] = useState(true);
@@ -52,10 +54,8 @@ const Sarqyt = () => {
     }
   };
 
-  const handleConfirmReserve = async (quantity:number) => {
-
+  const handleConfirmReserve = async (quantity: number) => {
     try {
-
       await reserveSarqyt(id!, sarqyt?.shop_id!, quantity);
       getSarqyt();
     } catch (error) {
@@ -64,11 +64,6 @@ const Sarqyt = () => {
       setIsReserveOpen(false);
     }
   };
-
-  console.log(sarqyt);
-  
-
-  
 
   return (
     <div className="pb-28">
@@ -111,7 +106,9 @@ const Sarqyt = () => {
               alt={sarqyt?.product_title}
             />
           </Link>
-          <h1 className="text-xl font-bold drop-shadow-md">{sarqyt?.product_title}</h1>
+          <h1 className="text-xl font-bold drop-shadow-md">
+            {sarqyt?.product_title}
+          </h1>
         </div>
       </div>
 
@@ -123,17 +120,19 @@ const Sarqyt = () => {
               size={20}
               className="text-yellow-500 fill-yellow-500 drop-shadow-sm"
             />
-            <span className="font-medium">{sarqyt?.rate ?? "New"}</span>
+            <span className="font-medium">{sarqyt?.rate ?? t("sarqyt.new")}</span>
           </div>
           <div className="flex items-center gap-2 text-gray-700">
             <Clock size={20} className="text-primaryColor" />
             <p className="text-sm">
-              Collect:{" "}
+              {t("sarqyt.collect")}{" "}
               <span className="font-medium">
-                {sarqyt?.pickup_start && sarqyt?.pickup_end 
-                  ? `${format(new Date(sarqyt.pickup_start), "HH:mm")}–${format(new Date(sarqyt.pickup_end), "HH:mm")}`
-                  : "Time not available"
-                }
+                {sarqyt?.pickup_start && sarqyt?.pickup_end
+                  ? `${format(new Date(sarqyt.pickup_start), "HH:mm")}–${format(
+                      new Date(sarqyt.pickup_end),
+                      "HH:mm"
+                    )}`
+                  : t("sarqyt.noTime")}
               </span>
             </p>
           </div>
@@ -157,7 +156,7 @@ const Sarqyt = () => {
         <div className="flex-1">
           <p className="font-medium text-primaryColor">{sarqyt?.address}</p>
           <span className="text-sm text-gray-500">
-            Tap for more information about this shop
+            {t("sarqyt.shopInfo")}
           </span>
         </div>
         <ChevronRight className="text-gray-400" />
@@ -165,18 +164,19 @@ const Sarqyt = () => {
 
       {/* Description */}
       <div className="p-4">
-        <h2 className="text-lg font-semibold mb-2">What you could get</h2>
+        <h2 className="text-lg font-semibold mb-2">{t("sarqyt.whatYouGet")}</h2>
         <p className={`${textCrop ? "line-clamp-4" : ""} text-gray-700`}>
           {sarqyt?.sarqyt_description}
         </p>
-        {sarqyt?.sarqyt_description && sarqyt?.sarqyt_description.length > 150 && (
-          <button
-            onClick={() => setTextCrop((prev) => !prev)}
-            className="mt-2 text-primaryColor font-medium"
-          >
-            {textCrop ? "Read more" : "Show less"}
-          </button>
-        )}
+        {sarqyt?.sarqyt_description &&
+          sarqyt?.sarqyt_description.length > 150 && (
+            <button
+              onClick={() => setTextCrop((prev) => !prev)}
+              className="mt-2 text-primaryColor font-medium"
+            >
+              {textCrop ? t("sarqyt.readMore") : t("sarqyt.showLess")}
+            </button>
+          )}
 
         {/* Categories */}
         <div className="flex flex-wrap gap-2 mt-4">
@@ -191,50 +191,50 @@ const Sarqyt = () => {
         </div>
       </div>
 
-
+      {/* Bottom reserve button */}
       <div className="fixed bottom-0 left-0 w-full bg-white border-t shadow-lg px-4 py-5">
-  {sarqyt?.status === "expired" && (
-    <button
-      disabled
-      className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
-    >
-      Expired
-    </button>
-  )}
+        {sarqyt?.status === "expired" && (
+          <button
+            disabled
+            className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+          >
+            {t("sarqyt.expired")}
+          </button>
+        )}
 
-  {sarqyt?.status === "sold_out" && (
-      <button
-        disabled
-        className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
-      >
-        Sold Out
-      </button>
-    )}
+        {sarqyt?.status === "sold_out" && (
+          <button
+            disabled
+            className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+          >
+            {t("sarqyt.soldOut")}
+          </button>
+        )}
 
-    {sarqyt?.status === "active" && sarqyt?.isReserved && (
-      <button
-        disabled
-        className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
-      >
-        Already Reserved
-      </button>
-    )}
+        {sarqyt?.status === "active" && sarqyt?.isReserved && (
+          <button
+            disabled
+            className="w-full bg-gray-300 text-gray-600 font-semibold rounded-2xl py-4 text-lg shadow-md cursor-not-allowed"
+          >
+            {t("sarqyt.alreadyReserved")}
+          </button>
+        )}
 
-    {sarqyt?.status === "active" && !sarqyt?.isReserved && (
-      <button
-        onClick={() => setIsReserveOpen(true)}
-        className="w-full bg-gradient-to-r from-primaryColor to-green-500 text-white font-semibold rounded-2xl py-4 text-lg shadow-md hover:opacity-90 transition"
-      >
-        Reserve
-      </button>
-    )}
-  </div>
+        {sarqyt?.status === "active" && !sarqyt?.isReserved && (
+          <button
+            onClick={() => setIsReserveOpen(true)}
+            className="w-full bg-gradient-to-r from-primaryColor to-green-500 text-white font-semibold rounded-2xl py-4 text-lg shadow-md hover:opacity-90 transition"
+          >
+            {t("sarqyt.reserve")}
+          </button>
+        )}
+      </div>
 
       {isReserveOpen && (
         <ReserveModal
           onClose={() => setIsReserveOpen(false)}
           onConfirm={handleConfirmReserve}
-          title={sarqyt?.product_title ?? "Unknown"}
+          title={sarqyt?.product_title ?? t("sarqyt.unknown")}
           price={sarqyt?.discounted_price ?? ""}
         />
       )}

@@ -23,6 +23,9 @@ import ProductsPage from "./pages/Products";
 import ProductDetailsPage from "./pages/ProductPage";
 import SellerOrdersPage from "./pages/SellerOrders";
 
+
+import './i18n';
+
 export const api = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_BASE_URL,
   withCredentials: true,

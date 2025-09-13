@@ -4,8 +4,10 @@ import SarqytCard from "../components/SarqytCard";
 import type { ISarqytCard } from "../types";
 import { api } from "../App";
 import { ArrowLeft } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const SeeAll = () => {
+  const { t } = useTranslation();
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -33,7 +35,7 @@ const SeeAll = () => {
       const res = await api.get(url);
       setSarqyts(res.data);
     } catch (err) {
-      setError("Failed to load sarqyts.");
+      setError(t("errors.loadFailed"));
     } finally {
       setLoading(false);
     }
@@ -50,21 +52,21 @@ const SeeAll = () => {
         className="fixed top-4 left-4 flex items-center gap-2 px-3 py-2 rounded-full bg-white shadow-md hover:bg-gray-100 transition"
       >
         <ArrowLeft className="w-5 h-5" />
-        <span className="text-sm font-medium">Back</span>
+        <span className="text-sm font-medium">{t("buttons.back")}</span>
       </button>
 
       <h1 className="text-2xl font-bold mb-6 text-center mt-16">
         {type === "latest"
-          ? "Latest Sarqyts"
+          ? t("titles.latestSarqyts")
           : categoryId
-          ? `All from ${type}`
-          : "All Sarqyts"}
+          ? t("titles.allFromCategory", { category: type })
+          : t("titles.allSarqyts")}
       </h1>
 
-      {loading && <p className="text-center">Loading...</p>}
+      {loading && <p className="text-center">{t("common.loading")}</p>}
       {error && <p className="text-center text-red-600">{error}</p>}
       {!loading && !error && !sarqyts.length && (
-        <p className="text-center">No sarqyts found.</p>
+        <p className="text-center">{t("messages.noSarqyts")}</p>
       )}
 
       <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">

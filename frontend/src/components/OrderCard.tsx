@@ -1,8 +1,12 @@
 import { Calendar, CreditCard, Store, Hash, CheckCircle, Clock } from "lucide-react";
 import type { IOrder } from "../types";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function OrderCard({ order }: { order: IOrder }) {
+  const { t } = useTranslation();
+  const nav = useNavigate();
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -20,14 +24,15 @@ export default function OrderCard({ order }: { order: IOrder }) {
     }
   };
 
-  const nav = useNavigate();
-
   return (
-    <div onClick={()=>nav(`/orders/${order.id}`)} className="w-full max-w-md rounded-2xl shadow-md border border-gray-200 bg-white">
+    <div
+      onClick={() => nav(`/orders/${order.id}`)}
+      className="w-full max-w-md rounded-2xl shadow-md border border-gray-200 bg-white"
+    >
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <h2 className="flex items-center gap-2 font-semibold text-lg">
-            <Hash className="w-4 h-4" /> Order #{order.id}
+            <Hash className="w-4 h-4" /> {t("orderCard.order")} #{order.id}
           </h2>
           <span className="text-sm text-gray-500 flex items-center gap-1">
             <Calendar className="w-3 h-3" />{" "}
@@ -42,8 +47,7 @@ export default function OrderCard({ order }: { order: IOrder }) {
             <Store className="w-4 h-4" /> {order.shop_name}
           </span>
           <span className="flex items-center gap-2 text-sm">
-            <CheckCircle className="w-4 h-4" /> {order.sarqyt_title} ×{" "}
-            {order.quantity}
+            <CheckCircle className="w-4 h-4" /> {order.sarqyt_title} × {order.quantity}
           </span>
         </div>
 
@@ -54,24 +58,19 @@ export default function OrderCard({ order }: { order: IOrder }) {
               order.status
             )}`}
           >
-            {order.status}
+            {t(`orderStatus.${order.status}`)}
           </span>
         </div>
 
         <div className="flex flex-col gap-1 text-sm">
           <span className="flex items-center gap-2">
-            <CreditCard className="w-4 h-4" /> {order.payment_method} (
-            {order.payment_status})
+            <CreditCard className="w-4 h-4" /> {t("orderCard.paymentMethod")}:{" "}
+            {order.payment_method} ({t(`paymentStatus.${order.payment_status}`)})
           </span>
-          {/* {order.pickup_code && (
-            <span className="flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Pickup code:{" "}
-              <span className="font-mono font-semibold">{order.pickup_code}</span>
-            </span>
-          )} */}
+
           {order.pickup_time && (
             <span className="flex items-center gap-2">
-              <Clock className="w-4 h-4" /> Picked at{" "}
+              <Clock className="w-4 h-4" /> {t("orderCard.pickedAt")}{" "}
               {new Date(order.pickup_time).toLocaleString()}
             </span>
           )}

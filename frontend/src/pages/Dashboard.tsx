@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useUser } from "../context/UserContext";
 import { getDashboardData, getRecentOrders } from "../api/seller";
 import type { IOrder } from "../types";
+import { useTranslation } from "react-i18next";
 
 type TypeStats = {
   title: string;
@@ -16,6 +17,7 @@ type TypeStats = {
 
 const Dashboard = () => {
   const { user } = useUser();
+  const { t } = useTranslation();
   const [orders, setOrders] = useState<IOrder[]>([]);
   const [stats, setStats] = useState<TypeStats[]>([]);
   const [filter, setFilter] = useState<"day" | "week" | "month" | "year">("day");
@@ -25,25 +27,25 @@ const Dashboard = () => {
       const data = await getDashboardData(user?.shop_id, filter);
       setStats([
         {
-          title: "Total Earnings",
+          title: t("Total Earnings"),
           value: data?.total_earnings,
           icon: DollarSign,
           color: "bg-green-100 text-green-600",
         },
         {
-          title: "Active Products",
+          title: t("Active Products"),
           value: data?.active_products,
           icon: Package,
           color: "bg-blue-100 text-blue-600",
         },
         {
-          title: "Pending Orders",
+          title: t("Pending Orders"),
           value: data?.pending_orders,
           icon: Clock,
           color: "bg-yellow-100 text-yellow-600",
         },
         {
-          title: "Completed Orders",
+          title: t("Completed Orders"),
           value: data?.completed_orders,
           icon: ListOrdered,
           color: "bg-purple-100 text-purple-600",
@@ -73,7 +75,7 @@ const Dashboard = () => {
   return (
     <div className="p-4 pt-6 md:p-6 space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <h1 className="text-2xl font-bold mb-4 sm:mb-0">Seller Dashboard</h1>
+        <h1 className="text-2xl font-bold mb-4 sm:mb-0">{t("Seller Dashboard")}</h1>
 
         {/* Filter buttons */}
         <div className="flex gap-2 bg-gray-100 rounded-lg p-1">
@@ -88,7 +90,7 @@ const Dashboard = () => {
                     : "text-gray-600 hover:bg-gray-200"
                 }`}
             >
-              {f.charAt(0).toUpperCase() + f.slice(1)}
+              {t(f.charAt(0).toUpperCase() + f.slice(1))}
             </button>
           ))}
         </div>
@@ -115,12 +117,12 @@ const Dashboard = () => {
       {/* Recent Orders */}
       <div className="bg-white rounded-xl shadow p-4">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Recent Orders</h2>
+          <h2 className="text-xl font-semibold">{t("Recent Orders")}</h2>
           <Link
             className="font-medium text-primaryColor hover:opacity-70"
             to={`/orders`}
           >
-            See all →
+            {t("See all →")}
           </Link>
         </div>
         <ul className="divide-y divide-gray-200">
@@ -142,13 +144,13 @@ const Dashboard = () => {
                       : "text-yellow-600"
                   }`}
                 >
-                  {order.status}
+                  {t(order.status)} 
                 </span>
               </li>
             ))
           ) : (
             <li className="py-4 text-center text-gray-500 text-sm">
-              No recent orders
+              {t("No recent orders")}
             </li>
           )}
         </ul>

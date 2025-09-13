@@ -13,8 +13,11 @@ type Props = {
   onClose: () => void;
   initialCoords?: [number, number];
 };
+import { useTranslation } from "react-i18next";
 
 const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => {
+  const { t } = useTranslation();
+
   const [coords, setCoords] = useState<[number, number] | null>(
     initialCoords || null
   );
@@ -67,7 +70,7 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
     <YMaps query={{ apikey: import.meta.env.VITE_YANDEX_MAP_API_KEY }}>
       <div className="fixed inset-0 bg-white z-50 flex flex-col">
         <div className="flex items-center justify-between p-4 border-b">
-          <h2 className="text-lg font-semibold">Select Location</h2>
+          <h2 className="text-lg font-semibold">{t("Select Location")}</h2>
           <button
             onClick={onClose}
             className="p-2 rounded-full hover:bg-gray-100"
@@ -150,7 +153,7 @@ const YandexSelectAddressMap = ({ onSelect, onClose, initialCoords }: Props) => 
             disabled={!coords || !address}
             className="bg-primaryColor text-white w-full py-3 rounded-lg disabled:bg-gray-400"
           >
-            Save Location
+            {t("Save Location")}
           </button>
         </div>
       </div>

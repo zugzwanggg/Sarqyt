@@ -2,6 +2,7 @@ import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { IShopSarqytCard } from "../types";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 const ShopSarqytCard = ({
   id,
@@ -11,6 +12,8 @@ const ShopSarqytCard = ({
   pickup_end,
   product_image,
 }: IShopSarqytCard) => {
+  const { t } = useTranslation();
+
   return (
     <Link
       to={`/sarqyts/${id}`}
@@ -25,7 +28,8 @@ const ShopSarqytCard = ({
         <div className="flex flex-col">
           <h3 className="font-medium text-gray-800 line-clamp-1">{product_title}</h3>
           <span className="text-sm text-gray-500">
-            Today: {format(new Date(pickup_start), "HH:mm")} –{" "}
+            {t("shopSarqytCard.today")}:{" "}
+            {format(new Date(pickup_start), "HH:mm")} –{" "}
             {format(new Date(pickup_end), "HH:mm")}
           </span>
           <span className="text-primaryColor font-bold text-lg">

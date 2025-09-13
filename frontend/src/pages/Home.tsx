@@ -5,6 +5,7 @@ import SarqytCard from "../components/SarqytCard";
 import { useUser } from "../context/UserContext";
 import { getNewestSarqyts, getSarqyts } from "../api/sarqyt";
 import type { ISarqytCard } from "../types";
+import { useTranslation } from "react-i18next";
 
 const categorySections = [
   { id: 1, title: "Meals" },
@@ -14,6 +15,7 @@ const categorySections = [
 
 const Home = () => {
   const { user, setIsSelectLocation } = useUser();
+  const { t } = useTranslation();
   const [newestSarqyts, setNewestSarqyts] = useState<ISarqytCard[]>([]);
   const [sectionsData, setSectionsData] = useState<Record<number, ISarqytCard[]>>({});
 
@@ -31,14 +33,14 @@ const Home = () => {
   const fetchCategorySarqyts = async (categoryId: number) => {
     try {
       const data = await getSarqyts([categoryId]);
-      setSectionsData((prev) => ({ ...prev, [categoryId]: data.slice(0, 5) })); // preview only 5
+      setSectionsData((prev) => ({ ...prev, [categoryId]: data.slice(0, 5) }));
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
-    if (user?.role === 'seller' ) navigate('/dashboard')
+    if (user?.role === "seller") navigate("/dashboard");
     fetchNewSarqyts();
     categorySections.forEach((c) => fetchCategorySarqyts(c.id));
   }, []);
@@ -54,28 +56,30 @@ const Home = () => {
           <LocateFixed className="text-primaryColor" />
         </span>
         <div className="flex items-center gap-2 overflow-hidden">
-          <p className="font-semibold text-nowrap">Chosen Location:</p>
-          <p className="truncate text-gray-600">{user?.city_name || "Select"}</p>
+          <p className="font-semibold text-nowrap">{t("Chosen Location:")}</p>
+          <p className="truncate text-gray-600">
+            {user?.city_name || t("Select")}
+          </p>
         </div>
         <ChevronDown />
       </div>
 
       <div className="mt-6">
         <h1 className="text-2xl font-bold">
-          Hey {user?.username || "User"} 👋
+          {t("Hey {{username}} 👋", { username: user?.username || t("User") })}
         </h1>
-        <p className="text-gray-500">Find surprises waiting near you</p>
+        <p className="text-gray-500">{t("Find surprises waiting near you")}</p>
       </div>
 
       {newestSarqyts.length > 0 && (
         <div className="mt-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Newest sarqyts</h2>
+            <h2 className="text-xl font-semibold">{t("Newest sarqyts")}</h2>
             <Link
               className="font-medium text-primaryColor hover:opacity-70"
               to={`/all?type=latest`}
             >
-              See all →
+              {t("See all →")}
             </Link>
           </div>
           <ul className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
@@ -91,12 +95,12 @@ const Home = () => {
       {categorySections.map((section) => (
         <div key={section.id} className="mt-8">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">{section.title}</h2>
+            <h2 className="text-xl font-semibold">{t(section.title)}</h2>
             <Link
               className="font-medium text-primaryColor hover:opacity-70"
               to={`/all?type=${section.title}&categoryId=${section.id}`}
             >
-              See all →
+              {t("See all →")}
             </Link>
           </div>
           {sectionsData[section.id]?.length ? (
@@ -112,7 +116,9 @@ const Home = () => {
             </ul>
           ) : (
             <p className="text-gray-500">
-              No {section.title.toLowerCase()} found 🥲
+              {t("No {{category}} found 🥲", {
+                category: t(section.title).toLowerCase(),
+              })}
             </p>
           )}
         </div>

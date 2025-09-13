@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import type { ISarqytCard } from "../types";
 import { addSarqytToFavorites, removeSarqytFromFavorites } from "../api/sarqyt";
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 
 interface SarqytCardProps extends ISarqytCard {
   showShopInfo?: boolean;
@@ -26,6 +27,7 @@ const SarqytCard = ({
   showShopInfo = false,
 }: SarqytCardProps) => {
   const nav = useNavigate();
+  const { t } = useTranslation();
 
   const handleCardClick = () => {
     nav(`/sarqyts/${id}`);
@@ -48,7 +50,6 @@ const SarqytCard = ({
   };
 
   const isDisabled = status === "expired" || status === "sold_out";
-
 
   return (
     <div
@@ -99,7 +100,9 @@ const SarqytCard = ({
         {isDisabled && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40">
             <span className="rounded-full bg-gray-800/80 px-4 py-2 text-sm font-semibold text-white uppercase tracking-wide">
-              {status === "expired" ? "Expired" : "Sold Out"}
+              {status === "expired"
+                ? t("sarqytCard.status.expired")
+                : t("sarqytCard.status.soldOut")}
             </span>
           </div>
         )}
@@ -112,7 +115,7 @@ const SarqytCard = ({
           <p className="text-sm text-gray-500 line-clamp-2">{sarqyt_description}</p>
         )}
         <p className="text-sm text-gray-500">
-          Collect today:{" "}
+          {t("sarqytCard.collectToday")}{" "}
           <span className="font-medium">
             {format(new Date(pickup_start), "HH:mm")}–{format(new Date(pickup_end), "HH:mm")}
           </span>
@@ -129,7 +132,7 @@ const SarqytCard = ({
           </div>
           {quantity_available !== undefined && !isDisabled && (
             <span className="rounded-full bg-primaryColor/10 px-3 py-1 text-xs font-medium text-primaryColor">
-              {quantity_available} left
+              {t("sarqytCard.left", { count: quantity_available })}
             </span>
           )}
         </div>

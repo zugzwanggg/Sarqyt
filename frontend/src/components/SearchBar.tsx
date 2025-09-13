@@ -1,17 +1,20 @@
 import { Search, SlidersHorizontal, X, Clock } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface SearchBarProps {
   onSearch: (query: string) => void;
-  onFilter: (query: string, period:string) => void;
+  onFilter: (query: string, period: string) => void;
 }
 
 const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
+  const { t } = useTranslation();
   const [searchValue, setSearchValue] = useState("");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState<string>("");
 
-  const periods = ["morning", "afternoon", "evening"];
+  // Periods with translation keys
+  const periods: string[] = ["morning", "afternoon", "evening"];
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,7 +40,7 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
             onChange={(e) => setSearchValue(e.target.value)}
             className="w-full pl-11 pr-4 py-3 rounded-full border border-zinc-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-primaryColor/50"
             type="text"
-            placeholder="Search sarqyts..."
+            placeholder={t("search.placeholder")} // 🔹 i18n
           />
         </form>
 
@@ -45,6 +48,7 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
           onClick={() => setIsFilterOpen((prev) => !prev)}
           className="flex items-center justify-center h-12 w-12 rounded-full bg-primaryColor/10 text-primaryColor hover:bg-primaryColor/20 transition"
           type="button"
+          aria-label={t("search.filters")} // 🔹 i18n
         >
           <SlidersHorizontal />
         </button>
@@ -54,10 +58,11 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
       {isFilterOpen && (
         <div className="mt-4 p-4 border-2 rounded-md bg-white shadow-lg z-10">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="font-semibold text-lg">Filters</h3>
+            <h3 className="font-semibold text-lg">{t("filters.title")}</h3>
             <button
               onClick={() => setIsFilterOpen(false)}
               className="text-zinc-500 hover:text-zinc-800"
+              aria-label={t("filters.close")}
             >
               <X size={20} />
             </button>
@@ -68,7 +73,7 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <Clock size={18} className="text-blue-600" />
-                <h4 className="font-medium">Pickup Time</h4>
+                <h4 className="font-medium">{t("filters.pickupTime")}</h4>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 {periods.map((period) => (
@@ -82,7 +87,7 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
                           : "bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200"
                       }`}
                   >
-                    {period}
+                    {t(`filters.periods.${period}`)} {/* 🔹 i18n */}
                   </button>
                 ))}
               </div>
@@ -100,7 +105,7 @@ const SearchBar = ({ onSearch, onFilter }: SearchBarProps) => {
                       : "bg-gray-200 text-gray-500 cursor-not-allowed"
                   }`}
               >
-                Apply Filters
+                {t("filters.apply")} {/* 🔹 i18n */}
               </button>
             </div>
           </div>

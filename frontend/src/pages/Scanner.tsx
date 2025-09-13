@@ -4,6 +4,7 @@ import type { IScannerControls } from "@zxing/browser";
 import { CheckCircle, ChevronLeft, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { completeOrder, getScanData } from "../api/seller";
+import { useTranslation } from "react-i18next";
 
 export type TypeScanData = {
   id: number;
@@ -36,6 +37,7 @@ export default function QRScanner() {
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const controlsRef = useRef<IScannerControls | null>(null);
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const [scannedData, setScannedData] = useState<TypeScanData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
@@ -50,7 +52,7 @@ export default function QRScanner() {
       setShowPreview(true);
     } catch (err) {
       console.error(err);
-      setError("Failed to fetch order details. Please try again.");
+      setError(t("scanner.fetchError"));
     }
   };
 
@@ -66,7 +68,7 @@ export default function QRScanner() {
       }, 2000);
     } catch (err) {
       console.error(err);
-      setError("Failed to confirm the order. Please try again.");
+      setError(t("scanner.confirmError"));
     }
   };
 
@@ -100,7 +102,7 @@ export default function QRScanner() {
             try {
               onResult(JSON.parse(result.getText()));
             } catch {
-              setError("Invalid QR Code format.");
+              setError(t("scanner.invalidQR"));
               console.log(error);
             }
           }
@@ -110,7 +112,7 @@ export default function QRScanner() {
         })
         .catch((err) => {
           console.error("QR Scanner init error:", err);
-          setError("Failed to initialize camera.");
+          setError(t("scanner.initError"));
         });
     }
 
@@ -127,14 +129,14 @@ export default function QRScanner() {
         className="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 bg-black/60 rounded-full text-white z-20"
       >
         <ChevronLeft className="w-5 h-5" />
-        <span className="text-sm font-medium">Back</span>
+        <span className="text-sm font-medium">{t("common.back")}</span>
       </button>
 
       {/* Success Overlay */}
       {success && (
         <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center z-30">
           <CheckCircle className="w-20 h-20 text-green-400 mb-4" />
-          <h2 className="text-2xl font-bold">Order Confirmed!</h2>
+          <h2 className="text-2xl font-bold">{t("scanner.orderConfirmed")}</h2>
         </div>
       )}
 
@@ -181,16 +183,15 @@ export default function QRScanner() {
                 <div className="absolute bottom-0 right-0 w-12 h-12 border-b-4 border-r-4 border-[var(--primaryColor)] rounded-br-xl" />
               </div>
             </div>
-          
           )}
         </div>
       ) : cameraAllowed === false ? (
         <div className="flex-1 flex items-center justify-center text-gray-400">
-          Camera access denied. Please enable it in settings.
+          {t("scanner.cameraDenied")}
         </div>
       ) : (
         <div className="flex-1 flex items-center justify-center text-gray-400">
-          Checking permissions...
+          {t("scanner.checkingPermissions")}
         </div>
       )}
 
@@ -198,13 +199,13 @@ export default function QRScanner() {
       {error && (
         <div className="absolute inset-0 bg-black/80 flex flex-col items-center justify-center p-6 text-center z-30">
           <XCircle className="w-16 h-16 text-red-500 mb-4" />
-          <h2 className="text-lg font-bold mb-2">Something went wrong</h2>
+          <h2 className="text-lg font-bold mb-2">{t("scanner.errorTitle")}</h2>
           <p className="text-sm text-gray-300 mb-4">{error}</p>
           <button
             onClick={() => setError(null)}
             className="px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
           >
-            Close
+            {t("common.close")}
           </button>
         </div>
       )}
@@ -223,14 +224,12 @@ export default function QRScanner() {
             <p className="text-gray-500 mb-4">{scannedData.shop_name}</p>
 
             <div className="space-y-2 text-sm">
-              <div><span className="font-semibold">Customer:</span> {scannedData.username}</div>
-              <div><span className="font-semibold">Quantity:</span> {scannedData.quantity}</div>
-              <div><span className="font-semibold">Total Price:</span> {scannedData.total_price}</div>
-              <div><span className="font-semibold">Status:</span> {scannedData.status}</div>
-              {/* <div><span className="font-semibold">Payment:</span> {scannedData.payment_status} ({scannedData.payment_method})</div>
-              <div><span className="font-semibold">Pickup Code:</span> {scannedData.pickup_code}</div> */}
-              <div><span className="font-semibold">Pickup Time:</span> {scannedData.pickup_time || "—"}</div>
-              <div><span className="font-semibold">Shop Address:</span> {scannedData.shop_address}</div>
+              <div><span className="font-semibold">{t("scanner.customer")}:</span> {scannedData.username}</div>
+              <div><span className="font-semibold">{t("scanner.quantity")}:</span> {scannedData.quantity}</div>
+              <div><span className="font-semibold">{t("scanner.totalPrice")}:</span> {scannedData.total_price}</div>
+              <div><span className="font-semibold">{t("scanner.status")}:</span> {scannedData.status}</div>
+              <div><span className="font-semibold">{t("scanner.pickupTime")}:</span> {scannedData.pickup_time || "—"}</div>
+              <div><span className="font-semibold">{t("scanner.shopAddress")}:</span> {scannedData.shop_address}</div>
             </div>
           </div>
 
@@ -240,7 +239,7 @@ export default function QRScanner() {
               onClick={handleConfirm}
               className="flex-1 px-6 py-3 bg-primaryColor rounded-xl font-medium text-white shadow-lg hover:bg-primaryColor/90 transition"
             >
-              Confirm
+              {t("common.confirm")}
             </button>
             <button
               onClick={() => {
@@ -249,7 +248,7 @@ export default function QRScanner() {
               }}
               className="flex-1 px-6 py-3 bg-red-500 rounded-xl font-medium text-white shadow-lg hover:bg-red-500/90 transition"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
         </div>

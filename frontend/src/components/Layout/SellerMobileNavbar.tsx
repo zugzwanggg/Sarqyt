@@ -1,33 +1,20 @@
 import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Package, ListOrdered, Settings, QrCode } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const navListLeft = [
-  {
-    title: "Dashboard",
-    path: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    title: "Products",
-    path: "/products",
-    icon: Package,
-  },
+  { title: "Dashboard", path: "/dashboard", icon: LayoutDashboard },
+  { title: "Products", path: "/products", icon: Package },
 ];
 
 const navListRight = [
-  {
-    title: "Orders",
-    path: "/orders",
-    icon: ListOrdered,
-  },
-  {
-    title: "Settings",
-    path: "/settings",
-    icon: Settings,
-  },
+  { title: "Orders", path: "/orders", icon: ListOrdered },
+  { title: "Settings", path: "/settings", icon: Settings },
 ];
 
 const SellerMobileNavbar = () => {
+  const { t } = useTranslation();
+
   return (
     <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md px-2 py-2">
       <ul className="flex gap-3 justify-between items-center text-xs md:text-sm">
@@ -43,7 +30,7 @@ const SellerMobileNavbar = () => {
                 }
               >
                 <item.icon className="h-6 w-6" />
-                <span className="text-xs">{item.title}</span>
+                <span className="text-xs">{t(item.title)}</span>
               </NavLink>
             </li>
           ))}
@@ -61,7 +48,7 @@ const SellerMobileNavbar = () => {
                 }
               >
                 <item.icon className="h-6 w-6" />
-                <span className="text-xs">{item.title}</span>
+                <span className="text-xs">{t(item.title)}</span>
               </NavLink>
             </li>
           ))}

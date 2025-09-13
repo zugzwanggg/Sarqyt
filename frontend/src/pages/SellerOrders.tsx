@@ -3,12 +3,14 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import type { IOrder } from "../types";
 import { getRecentOrders } from "../api/seller";
 import { useUser } from "../context/UserContext";
+import { useTranslation } from "react-i18next";
 
 const STATUS_OPTIONS = [null, "reserved", "confirmed", "completed", "canceled"];
 const TIME_OPTIONS: ("day" | "week")[] = ["day", "week"];
 
 export default function SellerOrdersPage() {
   const { user } = useUser();
+  const { t } = useTranslation();
 
   const [expandedOrder, setExpandedOrder] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function SellerOrdersPage() {
     <div className="flex flex-col h-screen bg-white">
       {/* Header */}
       <div className="p-4 border-b">
-        <h1 className="text-xl font-bold">Orders</h1>
+        <h1 className="text-xl font-bold">{t("orders.title")}</h1>
       </div>
 
       {/* Filters */}
@@ -69,7 +71,7 @@ export default function SellerOrdersPage() {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {status ? status.charAt(0).toUpperCase() + status.slice(1) : "All"}
+              {status ? t(`orders.status.${status}`) : t("orders.status.all")}
             </button>
           ))}
         </div>
@@ -86,7 +88,7 @@ export default function SellerOrdersPage() {
                   : "bg-gray-100 text-gray-700 hover:bg-gray-200"
               }`}
             >
-              {time.charAt(0).toUpperCase() + time.slice(1)}
+              {t(`orders.time.${time}`)}
             </button>
           ))}
         </div>
@@ -95,7 +97,7 @@ export default function SellerOrdersPage() {
       {/* Orders list */}
       <div className="flex-1 overflow-y-auto p-4">
         {orders.length === 0 ? (
-          <p className="text-gray-500 text-sm">No orders in this filter.</p>
+          <p className="text-gray-500 text-sm">{t("orders.noOrders")}</p>
         ) : (
           orders.map((order) => (
             <div
@@ -115,7 +117,8 @@ export default function SellerOrdersPage() {
                       {order.sarqyt_title}
                     </h2>
                     <p className="text-xs text-gray-600">
-                      Qty: {order.quantity} • {order.discounted_price}₸ each
+                      {t("orders.qty")}: {order.quantity} •{" "}
+                      {order.discounted_price}₸ {t("orders.each")}
                     </p>
                   </div>
                 </div>
@@ -124,7 +127,7 @@ export default function SellerOrdersPage() {
                     order.status
                   )}`}
                 >
-                  {order.status}
+                  {t(`orders.status.${order.status}`)}
                 </span>
               </div>
 
@@ -137,11 +140,13 @@ export default function SellerOrdersPage() {
               >
                 {expandedOrder === order.id ? (
                   <>
-                    Hide details <ChevronUp className="w-4 h-4 ml-1" />
+                    {t("orders.hideDetails")}{" "}
+                    <ChevronUp className="w-4 h-4 ml-1" />
                   </>
                 ) : (
                   <>
-                    View details <ChevronDown className="w-4 h-4 ml-1" />
+                    {t("orders.viewDetails")}{" "}
+                    <ChevronDown className="w-4 h-4 ml-1" />
                   </>
                 )}
               </button>
@@ -150,28 +155,32 @@ export default function SellerOrdersPage() {
               {expandedOrder === order.id && (
                 <div className="mt-3 text-sm text-gray-700 space-y-2">
                   <p>
-                    <span className="font-medium">Order ID:</span> {order.id}
+                    <span className="font-medium">{t("orders.orderId")}:</span>{" "}
+                    {order.id}
                   </p>
                   <p>
-                    <span className="font-medium">User:</span> {order.username}
+                    <span className="font-medium">{t("orders.user")}:</span>{" "}
+                    {order.username}
                   </p>
                   <p>
-                    <span className="font-medium">Total Price:</span>{" "}
+                    <span className="font-medium">{t("orders.totalPrice")}:</span>{" "}
                     {order.total_price}₸
                   </p>
                   {order.pickup_time && (
                     <p>
-                      <span className="font-medium">Pickup Time:</span>{" "}
+                      <span className="font-medium">
+                        {t("orders.pickupTime")}:
+                      </span>{" "}
                       {new Date(order.pickup_time).toLocaleString()}
                     </p>
                   )}
                   <p>
-                    <span className="font-medium">Created At:</span>{" "}
+                    <span className="font-medium">{t("orders.createdAt")}:</span>{" "}
                     {new Date(order.created_at).toLocaleString()}
                   </p>
                   <p>
-                    <span className="font-medium">Shop:</span> {order.shop_name},{" "}
-                    {order.shop_address}
+                    <span className="font-medium">{t("orders.shop")}:</span>{" "}
+                    {order.shop_name}, {order.shop_address}
                   </p>
                 </div>
               )}

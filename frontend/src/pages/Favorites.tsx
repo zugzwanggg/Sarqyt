@@ -4,56 +4,50 @@ import { Link } from "react-router-dom"
 import { useEffect, useState } from "react"
 import { getUserFavorites } from "../api/user"
 import type { ISarqytCard } from "../types"
-
+import { useTranslation } from "react-i18next"
 
 const Favorites = () => {
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([])
-
+  const { t } = useTranslation()
 
   const getFavorites = async () => {
     try {
-
-      const data = await getUserFavorites();
+      const data = await getUserFavorites()
       setSarqyts(data)
-
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
-  useEffect(()=> {
+  useEffect(() => {
     getFavorites()
   }, [])
-
-  console.log(sarqyts);
-  
 
   return (
     <div className="px-4 ">
       <h1 className="text-2xl mt-8 mb-4">
-        Favorites
+        {t("Favorites")}
       </h1>
 
-
-      {
-        sarqyts.length <= 0 
-        ? 
-          <div className="flex flex-col items-center justify-center h-[70vh] text-center">
-            <UtensilsCrossed size={'4rem'} className="mb-6 text-primaryColor"/>
-            <h2 className="text-xl font-semibold">You have no favorites</h2>
-            <p className="w-72 mb-4 text-gray-500">
-              Seems you haven't added anything to your favorites yet.
-            </p>
-            <Link 
-              to="/search" 
-              className="px-4 py-2 rounded-xl bg-primaryColor text-white font-medium hover:opacity-90 transition"
-            >
-              Browse Sarqyts
-            </Link>
-          </div>
-        :
+      {sarqyts.length <= 0 ? (
+        <div className="flex flex-col items-center justify-center h-[70vh] text-center">
+          <UtensilsCrossed size={"4rem"} className="mb-6 text-primaryColor" />
+          <h2 className="text-xl font-semibold">
+            {t("You have no favorites")}
+          </h2>
+          <p className="w-72 mb-4 text-gray-500">
+            {t("Seems you haven't added anything to your favorites yet.")}
+          </p>
+          <Link
+            to="/search"
+            className="px-4 py-2 rounded-xl bg-primaryColor text-white font-medium hover:opacity-90 transition"
+          >
+            {t("Browse Sarqyts")}
+          </Link>
+        </div>
+      ) : (
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-          {sarqyts.map(item => (
+          {sarqyts.map((item) => (
             <li key={item.id}>
               <SarqytCard
                 key={item.id}
@@ -74,10 +68,7 @@ const Favorites = () => {
             </li>
           ))}
         </ul>
-      }
-
-      
-      
+      )}
     </div>
   )
 }

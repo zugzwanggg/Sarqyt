@@ -7,7 +7,7 @@ import { search } from "../api/user";
 import { SearchX } from "lucide-react";
 import YandexAllShopsMap from "../components/YandexAllShopsMap"; 
 import type { IShop } from "../types";
-
+import { useTranslation } from "react-i18next";
 
 export const dummyShops: IShop[] = [
   {
@@ -22,7 +22,7 @@ export const dummyShops: IShop[] = [
   {
     id: 2,
     name: "Coffee Matters",
-    image_url: "https://www.bing.com/images/search?view=detailV2&ccid=fXd%2bQ1rD&id=2C6BDAAA493A26EBEFEC2B85DC1A6F38CED7A5A7&thid=OIP.fXd-Q1rDJz30CBbMsYoEwAHaDN&mediaurl=https%3a%2f%2fimg.postershop.me%2f10397%2fConfig%2f257652_1698210458.4511_original.png&cdnurl=https%3a%2f%2fth.bing.com%2fth%2fid%2fR.7d777e435ac3273df40816ccb18a04c0%3frik%3dp6XXzjhvGtyFKw%26pid%3dImgRaw%26r%3d0&exph=1362&expw=3140&q=khan+doner+atyrau&FORM=IRPRST&ck=7C74BF96B90C137C74CF7B12DEC808C7&selectedIndex=2&itb=1",
+    image_url: "https://img.postershop.me/10397/Config/257652_1698210458.4511_original.png",
     rating: 4.5,
     address: "Satpayev Ave, Atyrau",
     lat: 47.1020,
@@ -58,9 +58,10 @@ export const dummyShops: IShop[] = [
 ];
 
 const Search = () => {
+  const { t } = useTranslation();
   const [sarqyts, setSarqyts] = useState<ISarqytCard[]>([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState<"list" | "map">("list"); // toggle state
+  const [view, setView] = useState<"list" | "map">("list");
 
   const getSarqytsData = async () => {
     try {
@@ -116,7 +117,7 @@ const Search = () => {
             }`}
             onClick={() => setView("list")}
           >
-            List
+            {t("search.list")}
           </button>
           <button
             className={`px-4 py-2 rounded-lg font-medium ${
@@ -126,7 +127,7 @@ const Search = () => {
             }`}
             onClick={() => setView("map")}
           >
-            Map
+            {t("search.map")}
           </button>
         </div>
       </div>
@@ -134,7 +135,7 @@ const Search = () => {
       {/* Loading State */}
       {view === "list" && loading && (
         <div className="flex justify-center mt-10">
-          <span className="text-gray-500">Loading...</span>
+          <span className="text-gray-500">{t("common.loading")}</span>
         </div>
       )}
 
@@ -142,7 +143,7 @@ const Search = () => {
       {view === "list" && !loading && sarqyts.length === 0 && (
         <div className="flex flex-col items-center justify-center mt-16 text-center text-gray-500 px-4">
           <SearchX className="w-40 h-40 mb-4" />
-          <p>No sarqyts found. Try a different search.</p>
+          <p>{t("search.noResults")}</p>
         </div>
       )}
 

@@ -6,25 +6,28 @@ import type { IShop } from "../types";
 import YandexSelectAddressMap from "../components/YandexSelectAddressMap";
 import { editShop } from "../api/shop";
 import { getSellerShopData } from "../api/seller";
+import { useTranslation } from "react-i18next";
 
 const SettingsPage = () => {
-  const { user, setIsSelectLocation } = useUser();
+  const { t, i18n } = useTranslation();
+  const { user } = useUser();
   const navigate = useNavigate();
 
   const [shop, setShop] = useState<IShop>({
     id: 1,
-    name: "My Awesome Shop",
+    name: t("My Awesome Shop"),
     image_url:
       "https://www.healthbenefitstimes.com/glossary/wp-content/uploads/2020/07/Mustard.jpg",
     rating: 4.5,
-    address: "123 Main Street, Atyrau",
+    address: t("123 Main Street, Atyrau"),
     lat: 47.0945,
     lng: 51.9238,
   });
 
   const [previewImage, setPreviewImage] = useState(shop.image_url);
-  const [shopLogo, setShopLogo] = useState<File|null>(null);
+  const [shopLogo, setShopLogo] = useState<File | null>(null);
   const [isMapOpen, setIsMapOpen] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(i18n.language);
 
   const handleChange = (field: keyof IShop, value: string) => {
     setShop((prev) => ({ ...prev, [field]: value }));
@@ -41,16 +44,13 @@ const SettingsPage = () => {
 
   const handleSave = async () => {
     const formData = new FormData();
+    formData.append("name", shop?.name);
+    formData.append("address", shop?.address);
+    formData.append("lat", shop?.lat.toString());
+    formData.append("lng", shop?.lng.toString());
+    if (shopLogo) formData.append("image", shopLogo);
 
-    formData.append('name', shop?.name);
-    formData.append('address', shop?.address);
-    formData.append('lat', shop?.lat.toString());
-    formData.append('lng', shop?.lng.toString());
-    if (shopLogo) {
-      formData.append('image', shopLogo)
-    }
     try {
-
       await editShop(formData, shop?.id);
       await getShopData();
     } catch (error) {
@@ -58,25 +58,26 @@ const SettingsPage = () => {
     }
   };
 
-  const getShopData =async () => {
+  const getShopData = async () => {
     try {
-
       const data = await getSellerShopData();
       setShop(data);
-      setPreviewImage(data?.image_url)
-      
+      setPreviewImage(data?.image_url);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
-  useEffect(()=> {
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+    setSelectedLanguage(lang);
+  };
 
-    if (user?.role === 'seller') {
+  useEffect(() => {
+    if (user?.role === "seller") {
       getShopData();
     }
-
-  }, [])
+  }, []);
 
   return (
     <div className="p-4 space-y-6">
@@ -86,23 +87,23 @@ const SettingsPage = () => {
         className="flex items-center gap-2 text-gray-600 mb-4"
       >
         <ChevronLeft className="w-5 h-5" />
-        <span className="text-sm font-medium">Back</span>
+        <span className="text-sm font-medium">{t("Back")}</span>
       </button>
 
-      {/* Shop Profile (only for sellers) */}
+      {/* Shop Profile */}
       {user?.role === "seller" && (
         <section className="bg-white shadow rounded-2xl p-4 space-y-4">
-          <h3 className="text-md font-semibold">Shop Information</h3>
+          <h3 className="text-md font-semibold">{t("Shop Information")}</h3>
 
           {/* Shop Image */}
           <div className="flex flex-col items-center space-y-3">
             <img
               src={previewImage}
-              alt="Shop"
+              alt={shop.name}
               className="w-32 h-32 object-cover rounded-lg border"
             />
             <label className="text-sm text-primaryColor cursor-pointer underline">
-              Change Image
+              {t("Change Image")}
               <input
                 type="file"
                 accept="image/*"
@@ -114,7 +115,7 @@ const SettingsPage = () => {
 
           {/* Shop Name */}
           <div>
-            <label className="block text-sm text-gray-600">Shop Name</label>
+            <label className="block text-sm text-gray-600">{t("Shop Name")}</label>
             <input
               type="text"
               value={shop.name}
@@ -125,19 +126,19 @@ const SettingsPage = () => {
 
           {/* Shop Address */}
           <div>
-            <span className="block text-sm text-gray-600">Address</span>
+            <span className="block text-sm text-gray-600">{t("Address")}</span>
             <p className="text-gray-800">{shop.address}</p>
             <button
               onClick={() => setIsMapOpen(true)}
               className="text-primaryColor text-sm underline"
             >
-              Change Location
+              {t("Change Location")}
             </button>
           </div>
 
           {/* Read-only Rating */}
           <div>
-            <span className="block text-sm text-gray-600">Rating</span>
+            <span className="block text-sm text-gray-600">{t("Rating")}</span>
             <p className="text-gray-800 font-medium">{shop.rating} ★</p>
           </div>
 
@@ -145,7 +146,7 @@ const SettingsPage = () => {
             onClick={handleSave}
             className="bg-primaryColor text-white w-full py-2 rounded-md"
           >
-            Save Changes
+            {t("Save Changes")}
           </button>
         </section>
       )}
@@ -163,51 +164,27 @@ const SettingsPage = () => {
         </div>
       </section>
 
-      {/* Information Section */}
-      <section className="bg-white shadow rounded-2xl p-4 space-y-3">
-        <h3 className="text-md font-semibold">Information</h3>
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-600">Location</span>
-            <button
-              onClick={() => setIsSelectLocation(true)}
-              className="text-primaryColor text-sm underline"
-            >
-              {shop.address || "Set Location"}
-            </button>
-          </div>
-        </div>
-      </section>
-
       {/* Language Section */}
       <section className="bg-white shadow rounded-2xl p-4 space-y-3">
-        <h3 className="text-md font-semibold">Language</h3>
-        <select className="border rounded-md px-3 py-2 w-full">
-          <option>English</option>
-          <option>Русский</option>
-          <option>Қазақша</option>
+        <h3 className="text-md font-semibold">{t("Language")}</h3>
+        <select
+          value={selectedLanguage}
+          onChange={(e) => handleLanguageChange(e.target.value)}
+          className="border rounded-md px-3 py-2 w-full"
+        >
+          <option value="en">English</option>
+          <option value="ru">Русский</option>
+          <option value="kk">Қазақша</option>
         </select>
       </section>
-
-      {user?.role !== "seller" && (
-        <section className="bg-white shadow rounded-2xl p-4">
-          <h3 className="text-md font-semibold mb-2">Become a Seller</h3>
-          <p className="text-sm text-gray-600 mb-3">
-            Start selling your products and reach more customers.
-          </p>
-          <button className="bg-primaryColor text-white w-full py-2 rounded-md">
-            Apply Now
-          </button>
-        </section>
-      )}
 
       {/* Map Overlay */}
       {isMapOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-2xl shadow w-full max-w-2xl space-y-4">
-            <h3 className="font-semibold text-md">Select Shop Location</h3>
+            <h3 className="font-semibold text-md">{t("Select Shop Location")}</h3>
             <YandexSelectAddressMap
-              onClose={()=>setIsMapOpen(false)}
+              onClose={() => setIsMapOpen(false)}
               initialCoords={[shop.lat, shop.lng]}
               onSelect={(coords, addr) => {
                 setShop((prev) => ({
@@ -222,7 +199,7 @@ const SettingsPage = () => {
               onClick={() => setIsMapOpen(false)}
               className="bg-primaryColor text-white w-full py-2 rounded-md"
             >
-              Save Location
+              {t("Save Location")}
             </button>
           </div>
         </div>
