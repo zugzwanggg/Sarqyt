@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import type { IOrder } from "../types";
-import { getRecentOrders } from "../api/seller";
+import { cancelOrder, confirmOrder, getRecentOrders } from "../api/seller";
 import { useUser } from "../context/UserContext";
 import { useTranslation } from "react-i18next";
 
@@ -70,13 +70,26 @@ export default function SellerOrdersPage() {
     setShowConfirmModal(true);
   };
 
-  const handleConfirmAction = () => {
-    if (actionOrder && actionType) {
-      console.log(`Backend should handle ${actionType} for order ${actionOrder.id}`);
-      setShowConfirmModal(false);
-      setActionOrder(null);
-      setActionType(null);
+  const handleConfirmAction = async () => {
+    try {
+      if (actionOrder && actionType) {
+        
+        if (actionType === 'confirm') {
+          await confirmOrder(actionOrder.id);
+        } else if (actionType === 'cancel') {
+          await cancelOrder(actionOrder.id);
+        }
+        
+        await fetchOrders()
+        setShowConfirmModal(false);
+        setActionOrder(null);
+        setActionType(null);
+      }
+      
+    } catch (error) {
+      console.log(error);
     }
+    
   };
 
   return (

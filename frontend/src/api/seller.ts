@@ -1,5 +1,16 @@
 import { api } from "../App";
 
+
+export const cancelOrder =async (id:number|string) => {
+  const res = await api.patch(`/api/scan/${id}/cancel`);
+  return res.data;
+}
+
+export const confirmOrder =async (id:number|string) => {
+  const res = await api.patch(`/api/scan/${id}/confirm`);
+  return res.data;
+}
+
 export const completeOrder = async (id:number|string) => {
   const res = await api.patch(`/api/scan/${id}`);
   return res.data;
