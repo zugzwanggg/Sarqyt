@@ -127,7 +127,7 @@ export default function SellerOrdersPage() {
                     order.status
                   )}`}
                 >
-                  {t(`orders.status.${order.status}`)}
+                  {t(`order.status.${order.status}`)}
                 </span>
               </div>
 
