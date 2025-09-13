@@ -3,17 +3,17 @@ import { useTranslation } from "react-i18next";
 
 const steps = [
   {
-    img: "/images/step1-food-savings.png", // placeholder: a plate of food or food basket
+    img: "/step1-food-savings.jpg", 
     titleKey: "onboarding.step1.title",
     descriptionKey: "onboarding.step1.description",
   },
   {
-    img: "/images/step2-surprise-food.png", // placeholder: wrapped meal or takeaway surprise
+    img: "/step2-surprise-food.png",
     titleKey: "onboarding.step2.title",
     descriptionKey: "onboarding.step2.description",
   },
   {
-    img: "/images/step3-community.png", // placeholder: people/community icon, Kazakh elements
+    img: "/step3-community.jpg",
     titleKey: "onboarding.step3.title",
     descriptionKey: "onboarding.step3.description",
   },
